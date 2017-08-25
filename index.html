@@ -239,17 +239,17 @@
         <main class="main-content"></main>
     </div>
 
-    <div class="modal modal--shortcuts closed">
-        <div class="modal-content">
+    <div class="modal modal--shortcuts closed" aria-hidden="true" aria-labelledby="shortcuts-title" role="dialog">
+        <div class="modal-content" role="document">
             <button class="close-modal" type="button">Close</button>
 
-            <h2>Shortcuts</h2>
+            <h2 id="shortcuts-title">Shortcuts</h2>
 
             <div class="shortcut-table-wrapper">
                 <table class="shortcut-table">
                     <thead>
                         <tr>
-                            <th>&nbsp;<!-- fake news --></th>
+                            <th aria-hidden="true">&nbsp;</th>
                             <th>Documents</th>
                         </tr>
                     </thead>
@@ -258,8 +258,8 @@
                             <td class="interaction__trigger">
                                 <div class="shortcut-group">
                                     <div class="shortcut">
-                                        <kbd>↓</kbd>
-                                        <kbd>↑</kbd>
+                                        <kbd title="Down arrow key">↓</kbd>
+                                        <kbd title="Up arrow key">↑</kbd>
                                     </div>
                                 </div>
                             </td>
@@ -273,7 +273,7 @@
                 <table class="shortcut-table">
                     <thead>
                         <tr>
-                            <th>&nbsp;<!-- fake news --></th>
+                            <th aria-hidden="true">&nbsp;</th>
                             <th>Pages</th>
                         </tr>
                     </thead>
@@ -282,14 +282,14 @@
                             <td class="interaction__trigger">
                                 <div class="shortcut-group">
                                     <div class="shortcut">
-                                        <kbd>→</kbd>
-                                        <kbd>←</kbd>
+                                        <kbd title="Right arrow key">→</kbd>
+                                        <kbd title="Left arrow key">←</kbd>
                                     </div>
                                 </div>
                                 <div class="shortcut-group">
                                     <div class="shortcut">
-                                        <kbd class="shortcut__modifier">Modifier</kbd>
-                                        <kbd>↕</kbd>
+                                        <kbd title="Modifier key" class="shortcut__modifier">Modifier</kbd>
+                                        <kbd title="Scroll wheel up/down">↕</kbd>
                                     </div>
                                 </div>
                             </td>
@@ -301,14 +301,14 @@
                             <td class="interaction__trigger">
                                 <div class="shortcut-group">
                                     <div class="shortcut">
-                                        <kbd>Ctrl</kbd>
-                                        <kbd>←</kbd>
+                                        <kbd title="Ctrl key">Ctrl</kbd>
+                                        <kbd title="Left arrow key">←</kbd>
                                     </div>
                                 </div>
                                 <div class="shortcut-group">
                                     <div class="shortcut">
-                                        <kbd>Ctrl</kbd>
-                                        <kbd>→</kbd>
+                                        <kbd title="Ctrl key">Ctrl</kbd>
+                                        <kbd title="Right arrow key">→</kbd>
                                     </div>
                                 </div>
                             </td>
