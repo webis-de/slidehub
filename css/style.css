@@ -193,8 +193,13 @@ button:enabled:focus {
     border-bottom: 1px solid var(--color-grey);
 }
 
+.interaction__trigger {
+    min-width: 130px;
+}
+
 .shortcut-table-wrapper {
     display: flex;
+    flex-wrap: wrap;
 }
 
 .shortcut-table:not(:last-child) {
