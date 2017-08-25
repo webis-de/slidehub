@@ -1,0 +1,284 @@
+:root {
+    --base-spacing: 12px;
+
+    --grey-color: #d3d3d3;
+    --grey-color-dark: #666;
+    --grey-color-light: #efefef;
+    --accent-color: cornflowerblue;
+
+    /* Hierarchy of z-index values (i.e. planes) */
+    --plane-active-item: 2;
+    --plane-toolbox: 10;
+    --plane-modal: 100;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    overflow-y: scroll;
+    font-size: 1em;
+    line-height: 1.5;
+    /* GitHub system font stack */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+body,
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+}
+
+/**
+ * Set `margin-bottom` to maintain vertycal rhythm
+ */
+h1, h2, h3, h4, h5, h6,
+p, blockquote, pre,
+ul, ol, dl,
+figure {
+    margin-bottom: 1.5rem;
+}
+
+
+img {
+    max-width: 100%;
+    border: 0;
+}
+
+img,
+svg {
+    vertical-align: middle;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+table, caption, tbody, tfoot, thead, tr, th, td {
+    margin: 0;
+    padding: calc(var(--base-spacing) / 2);
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+th {
+    text-align: left;
+    font-weight: bold;
+}
+
+kbd {
+    padding: calc(var(--base-spacing) / 4) var(--base-spacing);
+    border: 1px solid var(--grey-color);
+    border-radius: 4px;
+    box-shadow: 0 1px var(--grey-color-dark);
+    /*font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";*/
+    font-family: "Fira Mono", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    text-transform: capitalize;
+}
+
+.wrapper {
+    padding-right: var(--base-spacing);
+    padding-left: var(--base-spacing);
+}
+
+@media only screen and (min-width: 1000px) {
+    .wrapper {
+        margin-right: calc(var(--base-spacing) * 2);
+        margin-left: calc(var(--base-spacing) * 2);
+    }
+}
+
+.toolbox {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: var(--plane-toolbox);
+    display: flex;
+    align-items: baseline;
+    padding: calc(var(--base-spacing) / 2);
+    color: #fff;
+    background-color: #333;
+}
+
+.toolbox > *:not(:last-child) {
+    margin-right: calc(var(--base-spacing) * 2);
+}
+
+.site-title {
+    margin-bottom: 0;
+    font-size: 1rem;
+}
+
+.modal {
+    position: fixed;
+    z-index: var(--plane-modal);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.modal.closed {
+    display: none;
+}
+
+.modal-content {
+    overflow: auto;
+    padding: calc(var(--base-spacing) * 2);
+    box-shadow: 0 0 10px #000;
+    background-color: #fff;
+}
+
+.modal-content h2 {
+    margin-bottom: 0;
+    border-bottom: 1px solid var(--grey-color);
+}
+
+.shortcut-table-wrapper {
+    display: flex;
+}
+
+.shortcut-table:not(:last-child) {
+    margin-right: calc(var(--base-spacing) * 2);
+}
+
+.shortcut-group:not(:last-child) {
+    margin-bottom: calc(var(--base-spacing) / 2);
+}
+
+td .shortcut {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.shortcut kbd + kbd {
+    margin-left: calc(var(--base-spacing) / 4);
+}
+
+
+
+.main-content {
+    margin: calc(var(--base-spacing) * 6) auto;
+}
+
+.doc-view {
+    --page-aspect-ratio: 1.25;
+    --page-width: 300px;
+    --page-height: calc(var(--page-width) / var(--page-aspect-ratio));
+    --border-width: 1px;
+
+    /* Default plane for all views */
+    position: relative;
+    z-index: 1;
+
+    overflow: hidden;
+    border: 1px solid var(--grey-color);
+}
+
+/*
+* Collapse vertical borders by applying a negative margin on one side.
+*
+* Details: Applying a border in general leads to stacking borders when elements
+* appear right next to each other. Since `doc-view` is stacked vertically by
+* default, removing the redundant border width can be done by applying a
+* negative in one of the two dimensions.
+*/
+.doc-view:not(:last-child) {
+    margin-bottom: calc(-1 * var(--border-width));
+}
+
+.doc-view:focus {
+    outline: 0;
+}
+
+.doc-view:focus,
+.doc-view.active {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 2px 0 var(--accent-color);
+
+    /*
+    * Elevate the active view above all other views. This is used to make its
+    * border visible when negative margins are used to collapse the border
+    * widths.
+    */
+    z-index: var(--plane-active-item);
+}
+
+.doc {
+    /* Clears floated .doc__page elements */
+    display: flow-root;
+}
+
+.doc.select-disabled {
+    /* as per: https://stackoverflow.com/a/4407335/2036825 */
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version */
+}
+
+.modifier-pressed .doc {
+    cursor: ew-resize;
+}
+
+.doc.horizontal-dragging {
+    cursor: ew-resize;
+}
+
+.doc.vertical-dragging {
+    cursor: ns-resize;
+}
+
+.doc__page {
+    float: left;
+    width: var(--page-width);
+    /*height: calc(var(--page-width) / var(--page-aspect-ratio));*/
+    height: var(--page-height);
+
+    border: var(--border-width) solid var(--grey-color);
+    margin: calc(-1 * var(--border-width));
+
+    /* Make sure transparent slides appear on white background */
+    background-color: #fff;
+}
+
+.doc__page:not(.doc-info) {
+    text-align: center;
+}
+
+/*.doc__page:not(.doc-info) {
+    display: flex;
+    align-items: center;
+}*/
+
+.doc__page > img {
+    /* Maintain aspect-ratio while filling the container */
+    object-fit: contain;
+
+    /* alt text styles  */
+    margin-right: auto;
+    margin-left: auto;
+    line-height: var(--page-height);
+    font-style: italic;
+}
+
+.doc-info {
+    padding: calc(var(--base-spacing) / 2);
+}
+
+.doc-info > h3 {
+    margin-bottom: 0;
+    font-weight: normal;
+    font-size: 1rem;
+}
