@@ -168,6 +168,8 @@ button:enabled:focus {
     position: fixed;
     z-index: var(--plane-modal);
     top: 0;
+    right: 0; /* test */
+    bottom: 0; /* test */
     left: 0;
     width: 100%;
     height: 100%;
