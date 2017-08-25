@@ -1,15 +1,19 @@
 :root {
     --base-spacing: 12px;
 
-    --grey-color: #d3d3d3;
-    --grey-color-dark: #666;
-    --grey-color-light: #efefef;
-    --accent-color: cornflowerblue;
+    --color-text: #000;
+    --color-background: #fff;
+    --color-accent: #4070c5;
+    --color-accent-light: #8cb3f9;
+    --color-accent-dark: #2c56a0;
+    --color-grey: #d3d3d3;
+    --color-grey-light: #efefef;
+    --color-grey-dark: #666;
 
     /* Hierarchy of z-index values (i.e. planes) */
-    --plane-active-item: 2;
-    --plane-toolbox: 10;
-    --plane-modal: 100;
+    --plane-active-item: 200;
+    --plane-toolbox: 300;
+    --plane-modal: 400;
 }
 
 *,
@@ -24,6 +28,8 @@ html {
     line-height: 1.5;
     /* GitHub system font stack */
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    color: var(--color-text);
+    background-color: var(--color-background);
 }
 
 body,
@@ -41,6 +47,19 @@ figure {
     margin-bottom: 1.5rem;
 }
 
+a {
+    color: var(--color-accent);
+    text-decoration: none;
+}
+
+a:visited {
+    color: var(--color-accent-dark);
+}
+
+a:hover,
+a:active {
+    text-decoration: underline;
+}
 
 img {
     max-width: 100%;
@@ -73,12 +92,35 @@ th {
 
 kbd {
     padding: calc(var(--base-spacing) / 4) var(--base-spacing);
-    border: 1px solid var(--grey-color);
+    border: 1px solid var(--color-grey);
     border-radius: 4px;
-    box-shadow: 0 1px var(--grey-color-dark);
+    box-shadow: 0 1px var(--color-grey-dark);
     /*font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";*/
     font-family: "Fira Mono", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
     text-transform: capitalize;
+}
+
+button {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    overflow: visible;
+    font: inherit;
+    line-height: normal;
+    border: 2px solid #000;
+    outline: 0;
+    padding: calc(var(--base-spacing) / 2) var(--base-spacing);
+    color: var(--color-text);
+    background-color: var(--color-background);
+}
+
+button:enabled:hover,
+button:enabled:active {
+    background-color: var(--color-accent-light);
+}
+
+button:enabled:focus {
+    outline: 2px solid var(--color-accent-light);
 }
 
 .wrapper {
@@ -102,7 +144,7 @@ kbd {
     display: flex;
     align-items: baseline;
     padding: calc(var(--base-spacing) / 2);
-    color: #fff;
+    color: var(--color-background);
     background-color: #333;
 }
 
@@ -133,15 +175,22 @@ kbd {
 }
 
 .modal-content {
+    position: relative;
     overflow: auto;
     padding: calc(var(--base-spacing) * 2);
     box-shadow: 0 0 10px #000;
-    background-color: #fff;
+    background-color: var(--color-background);
+}
+
+.close-modal {
+    position: absolute;
+    top: var(--base-spacing);
+    right: var(--base-spacing);
 }
 
 .modal-content h2 {
     margin-bottom: 0;
-    border-bottom: 1px solid var(--grey-color);
+    border-bottom: 1px solid var(--color-grey);
 }
 
 .shortcut-table-wrapper {
@@ -179,10 +228,9 @@ td .shortcut {
 
     /* Default plane for all views */
     position: relative;
-    z-index: 1;
 
     overflow: hidden;
-    border: 1px solid var(--grey-color);
+    border: 1px solid var(--color-grey);
 }
 
 /*
@@ -203,8 +251,8 @@ td .shortcut {
 
 .doc-view:focus,
 .doc-view.active {
-    border-color: var(--accent-color);
-    box-shadow: 0 0 2px 0 var(--accent-color);
+    border-color: var(--color-accent);
+    box-shadow: 0 0 2px 0 var(--color-accent);
 
     /*
     * Elevate the active view above all other views. This is used to make its
@@ -243,24 +291,19 @@ td .shortcut {
 .doc__page {
     float: left;
     width: var(--page-width);
-    /*height: calc(var(--page-width) / var(--page-aspect-ratio));*/
     height: var(--page-height);
 
-    border: var(--border-width) solid var(--grey-color);
+    border: var(--border-width) solid var(--color-grey);
     margin: calc(-1 * var(--border-width));
+    padding: var(--border-width);
 
     /* Make sure transparent slides appear on white background */
-    background-color: #fff;
+    background-color: var(--color-background);
 }
 
 .doc__page:not(.doc-info) {
     text-align: center;
 }
-
-/*.doc__page:not(.doc-info) {
-    display: flex;
-    align-items: center;
-}*/
 
 .doc__page > img {
     /* Maintain aspect-ratio while filling the container */
@@ -273,11 +316,16 @@ td .shortcut {
     font-style: italic;
 }
 
+/*.doc__page:hover > img {
+    filter: opacity(0.65);
+}*/
+
 .doc-info {
     padding: calc(var(--base-spacing) / 2);
+    color: var(--color-grey-dark);
 }
 
-.doc-info > h3 {
+.doc-title {
     margin-bottom: 0;
     font-weight: normal;
     font-size: 1rem;

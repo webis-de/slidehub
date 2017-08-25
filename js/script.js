@@ -128,7 +128,7 @@ function loadDocumentAsync() {
 
         loadDoc(mainContent, docData)
         const container = mainContent.lastElementChild
-        containerObserver.observe(container)
+        // containerObserver.observe(container)
         setDocumentWidth(container.querySelector(config.class.document))
         resolve()
     })
@@ -152,11 +152,17 @@ function createDocumentMarkup(docName, itemCount) {
         </div>`
     }
 
+    const anchorTarget = `${imgSrcRoot}/data/${docName}`
+
     return `<div class="${config.class.container.slice(1)}" id="${docName}">
         <div class="${config.class.document.slice(1)}">
             <div class="${config.class.item.slice(1)} doc-info">
-                <h3>${docName}</h3>
-                <span>${itemCount} pages</span>
+                <h2 class="doc-title">
+                    <a href="${anchorTarget}">${docName}</a>
+                </h2>
+                by <span class="doc-author">author</span>,
+                <span class="doc-pages-count">${itemCount}</span> pages,
+                2018
             </div>
             ${items}
         </div>
@@ -167,9 +173,9 @@ function setDocumentWidth(doc) {
     const documentOuterWidth =
         getFloatPropertyValue(doc, 'margin-left') +
         getFloatPropertyValue(doc, 'border-left-width') +
-        getFloatPropertyValue(doc, 'padding-left') +
+        // getFloatPropertyValue(doc, 'padding-left') +
         getComputedOuterChildrenWidth(doc) +
-        getFloatPropertyValue(doc, 'padding-right') +
+        // getFloatPropertyValue(doc, 'padding-right') +
         getFloatPropertyValue(doc, 'border-right-width') +
         getFloatPropertyValue(doc, 'margin-right')
     doc.style.setProperty('width', documentOuterWidth + 'px')
@@ -256,7 +262,7 @@ function activateDocumentWithFocus() {
 }
 
 function focusDocumentWithMouseMove() {
-    document.addEventListener('mousemove', function(event) {
+    document.body.addEventListener('mousemove', function(event) {
         const container = event.target.closest(config.class.container)
         if (container !== null) {
             activateContainer(container)
@@ -293,7 +299,7 @@ function enableModifier() {
 function enableMousePageNavigation() {
     enableModifier()
 
-    document.addEventListener('wheel', function(event) {
+        document.addEventListener('wheel', function(event) {
         // No special scrolling without modifier
         if (event[config.modifierKey] === false) {
             return
@@ -394,25 +400,79 @@ function activateContainer(container) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // MODAL WINDOW
+
+let focusedElementBeforeModal
+
+/*
+* Based on some ideas from “The Incredible Accessible Modal Window” by Greg Kraus
+* https://github.com/gdkraus/accessible-modal-dialog
+*/
 function enableModalButtons() {
-    const shortcutsButton = document.querySelector('.open-shortcuts-modal')
-    const shortcutsModal = document.querySelector('.modal--shortcuts')
-
-    shortcutsButton.addEventListener('click', function() {
-        shortcutsModal.classList.toggle('closed')
+    document.querySelectorAll('.open-modal').forEach(button => {
+        button.addEventListener('click', openModal)
     })
 
-    document.addEventListener('keydown', function(event) {
-        if (event.keyCode === 27) {
-            shortcutsModal.classList.add('closed')
-        }
+    document.querySelectorAll('.close-modal').forEach(button => {
+        button.addEventListener('click', closeModal)
     })
+}
 
-    shortcutsModal.addEventListener('click', function(event) {
-        if (event.target === shortcutsModal) {
-            shortcutsModal.classList.add('closed')
-        }
-    })
+function openModal() {
+    const targetClass = event.currentTarget.getAttribute('data-target-modal')
+    const modal = document.querySelector(`.${targetClass}`)
+
+    if (modal === null) {
+        return
+    }
+
+    // Save last focused element
+    focusedElementBeforeModal = document.activeElement
+
+    document.body.setAttribute('aria-hidden', 'true')
+    modal.setAttribute('aria-hidden', 'false')
+
+    modal.classList.remove('closed')
+
+    focusableElements(modal)[0].focus()
+
+    document.addEventListener('keydown', closeModalOnEscape)
+    modal.addEventListener('click', closeModalOnBackground)
+}
+
+function closeModal() {
+    const modal = event.target.closest('.modal')
+
+    if (modal === null) {
+        return
+    }
+
+    document.body.setAttribute('aria-hidden', 'false')
+    modal.setAttribute('aria-hidden', 'true')
+
+    modal.classList.add('closed')
+
+    document.removeEventListener('keydown', closeModalOnEscape)
+    modal.removeEventListener('click', closeModalOnBackground)
+
+    // Restore previously focused element
+    focusedElementBeforeModal.focus()
+}
+
+function closeModalOnBackground() {
+    if (event.target === event.currentTarget) {
+        closeModal()
+    }
+}
+
+function closeModalOnEscape() {
+    if (event.keyCode === 27) {
+        closeModal()
+    }
+}
+
+function focusableElements(ancestor = document) {
+    const elements = Array.from(ancestor.querySelectorAll('*'))
+    return elements.filter(el => el.tabIndex > -1 && el.offsetParent !== null)
 }
 
 

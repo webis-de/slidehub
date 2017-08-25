@@ -232,7 +232,7 @@
 
     <header class="toolbox">
         <h1 class="site-title">SlideHub</h1>
-        <button type="button" class="open-shortcuts-modal">Shortcuts</button>
+        <button class="open-modal" data-target-modal="modal--shortcuts" type="button">Shortcuts</button>
     </header>
 
     <div class="wrapper">
@@ -241,6 +241,8 @@
 
     <div class="modal modal--shortcuts closed">
         <div class="modal-content">
+            <button class="close-modal" type="button">Close</button>
+
             <h2>Shortcuts</h2>
 
             <div class="shortcut-table-wrapper">
