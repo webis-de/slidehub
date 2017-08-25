@@ -76,13 +76,16 @@ table {
     border-spacing: 0;
 }
 
-table, caption, tbody, tfoot, thead, tr, th, td {
+table, tbody, tfoot, thead, tr, th, td {
     margin: 0;
-    padding: calc(var(--base-spacing) / 2);
     border: 0;
     font-size: 100%;
     font: inherit;
     vertical-align: baseline;
+}
+
+th, td {
+    padding: calc(var(--base-spacing) / 2);
 }
 
 th {
@@ -124,7 +127,6 @@ button:enabled:focus {
 }
 
 .wrapper {
-    padding-right: var(--base-spacing);
     padding-left: var(--base-spacing);
 }
 
@@ -140,12 +142,17 @@ button:enabled:focus {
     top: 0;
     right: 0;
     left: 0;
+    height: calc(var(--base-spacing) * 4);
     z-index: var(--plane-toolbox);
     display: flex;
     align-items: baseline;
-    padding: calc(var(--base-spacing) / 2);
-    color: var(--color-background);
+    padding: calc(var(--base-spacing) / 2) calc(var(--base-spacing) * 2);
     background-color: #333;
+}
+
+.toolbox,
+.toolbox a {
+    color: var(--color-background);
 }
 
 .toolbox > *:not(:last-child) {
@@ -222,7 +229,8 @@ td .shortcut {
 
 
 .main-content {
-    margin: calc(var(--base-spacing) * 6) auto;
+    margin-top: calc(var(--base-spacing) * 4);
+    padding: var(--base-spacing);
 }
 
 .doc-view {
