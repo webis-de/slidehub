@@ -431,10 +431,16 @@ function openModal() {
 
     modal.classList.remove('closed')
 
-    focusableElements(modal)[0].focus()
+    getFocusableElements(modal)[0].focus()
 
-    document.addEventListener('keydown', closeModalOnEscape)
+    // Setup event listeners
+    modal.addEventListener('keydown', closeModalOnEscape)
+    modal.addEventListener('keydown', trapTabKey)
     modal.addEventListener('click', closeModalOnBackground)
+
+    document.addEventListener('focusin', function() {
+        getFocusableElements(modal)[0].focus()
+    })
 }
 
 function closeModal() {
@@ -449,8 +455,14 @@ function closeModal() {
 
     modal.classList.add('closed')
 
-    document.removeEventListener('keydown', closeModalOnEscape)
+    // Clean up event listeners
+    modal.removeEventListener('keydown', closeModalOnEscape)
+    modal.removeEventListener('keydown', trapTabKey)
     modal.removeEventListener('click', closeModalOnBackground)
+
+    document.removeEventListener('focusin', function() {
+        getFocusableElements(modal)[0].focus()
+    })
 
     // Restore previously focused element
     focusedElementBeforeModal.focus()
@@ -468,7 +480,36 @@ function closeModalOnEscape() {
     }
 }
 
-function focusableElements(ancestor = document) {
+/*
+* Make it impossible to focus an element outside the modal
+*/
+function trapTabKey() {
+    if (event.keyCode !== 9) {
+        return
+    }
+
+    const activeElement = document.activeElement
+    const focusable = getFocusableElements(event.currentTarget)
+
+    if (focusable.length < 2) {
+        event.preventDefault()
+        return
+    }
+
+    if (event.shiftKey) {
+        if (activeElement === focusable[0]) {
+            focusable[focusable.length - 1].focus()
+            event.preventDefault()
+        }
+    } else {
+        if (activeElement === focusable[focusable.length - 1]) {
+            focusable[0].focus()
+            event.preventDefault()
+        }
+    }
+}
+
+function getFocusableElements(ancestor = document) {
     const elements = Array.from(ancestor.querySelectorAll('*'))
     return elements.filter(el => el.tabIndex > -1 && el.offsetParent !== null)
 }
