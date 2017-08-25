@@ -128,7 +128,7 @@ function loadDocumentAsync() {
 
         loadDoc(mainContent, docData)
         const container = mainContent.lastElementChild
-        // containerObserver.observe(container)
+        containerObserver.observe(container)
         setDocumentWidth(container.querySelector(config.class.document))
         resolve()
     })
@@ -173,9 +173,7 @@ function setDocumentWidth(doc) {
     const documentOuterWidth =
         getFloatPropertyValue(doc, 'margin-left') +
         getFloatPropertyValue(doc, 'border-left-width') +
-        // getFloatPropertyValue(doc, 'padding-left') +
         getComputedOuterChildrenWidth(doc) +
-        // getFloatPropertyValue(doc, 'padding-right') +
         getFloatPropertyValue(doc, 'border-right-width') +
         getFloatPropertyValue(doc, 'margin-right')
     doc.style.setProperty('width', documentOuterWidth + 'px')
