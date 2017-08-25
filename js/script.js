@@ -437,10 +437,6 @@ function openModal() {
     modal.addEventListener('keydown', closeModalOnEscape)
     modal.addEventListener('keydown', trapTabKey)
     modal.addEventListener('click', closeModalOnBackground)
-
-    document.addEventListener('focusin', function() {
-        getFocusableElements(modal)[0].focus()
-    })
 }
 
 function closeModal() {
@@ -459,10 +455,6 @@ function closeModal() {
     modal.removeEventListener('keydown', closeModalOnEscape)
     modal.removeEventListener('keydown', trapTabKey)
     modal.removeEventListener('click', closeModalOnBackground)
-
-    document.removeEventListener('focusin', function() {
-        getFocusableElements(modal)[0].focus()
-    })
 
     // Restore previously focused element
     focusedElementBeforeModal.focus()
