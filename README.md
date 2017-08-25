@@ -1,24 +1,19 @@
-CODE-WEBIS-WEB-SLIDEHUB
-=======================
+# SlideHub
 
-SlideHub is a web-based overview of paged documents (i.e. slide decks of a presentation/talk/lecture/…). Its goal is to provide quick access to a database of documents.
+SlideHub ([demo](http://test.webis.de/slidehub)) is a web-based overview of paged documents (i.e. slide decks of a presentation/talk/lecture/…). Its goal is to provide quick access to a database of documents.
 
 Each document is converted to a set of graphics—one for each page. These graphics are arranged in a grid-like structure where each row represents a document. The cells of a row are the pages of that document.
 
 
 
-Features
---------
+## Features
 
-- Documents are listed row-wise with pages being displayed in a horizontal slider
-- Horizontal scrolling of slide decks via the mouse wheel
-- Vertical scrolling via dragging
-- Lazy-loading of slide images
+- Documents are listed row-wise with its pages displayed side-by-side in a horizontal slider
+- Page images are lazy-loaded
 
 
 
-Navigation
-----------
+## Navigation
 
 The application needs to be usable on mobile and desktop devices utilizing the present primary input techniques.
 
@@ -44,8 +39,7 @@ Additionally, <kbd title="tab key">⇥</kbd> and <kbd>Shift</kbd><kbd title="tab
 
 
 
-TODOs
------
+## TODOs
 
 - Title bar that is always displayed with some basic information
 - Organization of slides by, e.g., topic, year, etc.
@@ -63,8 +57,7 @@ TODOs
 
 
 
-Known Bugs
-----------
+## Known Bugs
 
 - Scalability: Many slide decks cause the initialization script to run very long (Dynamically loading documents [e.g. like infinite scrolling] is doable with `IntersectionObserver`)
 - ImageMagick occasionally creates transparent PNGs (For documents with a specific background color, this might have a drastic impact on perceivability)
@@ -78,15 +71,13 @@ Known Bugs
 
 
 
-Ideas
------
+## Ideas
 
 - When multiple interactions are possible, we need to keep track of which component has the *interaction focus*. For example, the document explorer should have the interaction focus by default (enabling arrow key navigation). If a filter component has focus, the keyboard navigation need not trigger (in order to allow usual keys to work in input fields)
 
 
 
-Generate graphics from PDF files
---------------------------------
+## Generate graphics from PDF files
 
 [ImageMagick](https://www.imagemagick.org) is capable of a wide variety of image manipulation tasks. The following examples use the typical way of invoking it via the command line.
 
