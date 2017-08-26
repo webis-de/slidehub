@@ -241,7 +241,7 @@ td .shortcut {
     --page-height: calc(var(--page-width) / var(--page-aspect-ratio));
     --border-width: 1px;
 
-    /* Default plane for all views */
+    width: 100%;
     position: relative;
 
     overflow: hidden;
