@@ -5,6 +5,12 @@
 */
 const config = {
     itemWidth: 300,
+
+    // How to position scrollable content
+    // true:  use CSS transforms
+    // false: use the views `scrollLeft`/`scrollTop` property
+    positionItemsWithTransform: true,
+
     minimalDocumentHeight: true,
     class: {
         main: '.main-content',
@@ -51,13 +57,13 @@ const controlKey = Object.freeze({
     homeKey: {
         trigger: function(event) {
             const container = getActiveContainer()
-            goToItem(container, 0)
+            setItemPos(container, 0)
         }
     },
     endKey: {
         trigger: function(event) {
             const container = getActiveContainer()
-            goToItem(container, getLastPage())
+            setItemPos(container, getLastPage())
         }
     },
     arrowLeft: {
@@ -198,16 +204,16 @@ function enableDocumentScrolling(container) {
         if (touched) {
             const currentX = event.targetTouches[0].clientX
             const offset = currentX - prevX
-
-            container.scrollLeft -= offset
+            const newItemX = getItemX(container) - offset
+            setItemX(container, newItemX)
             prevX = currentX
         }
     }, thirdParameter)
 
     container.addEventListener('touchend', function(event) {
         if (touched) {
-            const itemsBeforeScrollPos = container.scrollLeft / config.itemWidth
-            goToItem(container, Math.round(itemsBeforeScrollPos))
+            const newPos = getItemPos(container)
+            setItemPos(container, Math.round(newPos))
             touched = false
         }
     }, thirdParameter)
@@ -366,7 +372,7 @@ function moveByItems(direction, count = 1) {
         return
     }
 
-    const itemsBeforeScrollPos = container.scrollLeft / config.itemWidth
+    const itemsBeforeScrollPos = getItemPos(container)
     let nextPage = 0
     if (itemsBeforeScrollPos % 1 !== 0) {
         const roundOp = direction > 0 ? Math.ceil : Math.floor
@@ -375,13 +381,59 @@ function moveByItems(direction, count = 1) {
         nextPage = itemsBeforeScrollPos + direction * count
     }
 
-    goToItem(container, nextPage)
+    setItemPos(container, nextPage)
 }
 
-function goToItem(container, item) {
-    if (container !== null) {
-        container.scrollLeft = item * config.itemWidth
+function getItemPos(container) {
+    return getItemX(container) / config.itemWidth
+}
+
+function getItemX(container) {
+    if (config.positionItemsWithTransform) {
+        const doc = container.querySelector(config.class.document)
+        // Negate the value in order to match scrollbar position values
+        const itemPos = -1 * getTranslateX(doc)
+        return itemPos
     }
+
+    return container.scrollLeft
+}
+
+function setItemPos(container, itemPos) {
+    if (container === null) {
+        return
+    }
+
+    const doc = container.querySelector(config.class.document)
+    const maxPos = getOuterWidth(doc) - getOuterWidth(container)
+    let itemX = itemPos * config.itemWidth
+    if (itemX < 0) {
+        itemX = 0
+    } else if (itemX > maxPos) {
+        itemX = maxPos
+    }
+
+    setItemX(container, itemX)
+}
+
+function setItemX(container, itemX) {
+    const doc = container.querySelector(config.class.document)
+
+    if (config.positionItemsWithTransform) {
+        doc.style.setProperty('transform', `translateX(${-itemX}px)`)
+    } else {
+        container.scrollLeft = itemX
+    }
+}
+
+function getTranslateX(element) {
+    const matrix = getComputedStyle(element).getPropertyValue('transform')
+
+    if (matrix === 'none') {
+        return 0
+    }
+
+    return parseFloat(matrix.split(',')[4])
 }
 
 function goToPreviousContainer() {
