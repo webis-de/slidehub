@@ -237,7 +237,7 @@ td .shortcut {
 
 .doc-view {
     --page-aspect-ratio: 1.25;
-    --page-width: 300px;
+    --page-width: 200px;
     --page-height: calc(var(--page-width) / var(--page-aspect-ratio));
     --border-width: 1px;
 
@@ -246,6 +246,12 @@ td .shortcut {
 
     overflow: hidden;
     border: 1px solid var(--color-grey);
+}
+
+@media only screen and (min-width: 600px) {
+    .doc-view {
+        --page-width: 300px;
+    }
 }
 
 /*
