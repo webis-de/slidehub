@@ -195,13 +195,18 @@ function enableDocumentScrolling(container) {
         if (touched) {
             const currentX = event.targetTouches[0].clientX
             const offset = currentX - prevX
+
             container.scrollLeft -= offset
             prevX = currentX
         }
     }, thirdParameter)
 
     container.addEventListener('touchend', function(event) {
-        touched = false
+        if (touched) {
+            const itemsBeforeScrollPos = container.scrollLeft / config.itemWidth
+            goToItem(Math.round(itemsBeforeScrollPos))
+            touched = false
+        }
     }, thirdParameter)
 }
 
