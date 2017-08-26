@@ -130,6 +130,7 @@ function loadDocumentAsync() {
         const container = mainContent.lastElementChild
         containerObserver.observe(container)
         setDocumentWidth(container.querySelector(config.class.document))
+        enableDocumentScrolling(container)
         resolve()
     })
 }
@@ -177,6 +178,31 @@ function setDocumentWidth(doc) {
         getFloatPropertyValue(doc, 'border-right-width') +
         getFloatPropertyValue(doc, 'margin-right')
     doc.style.setProperty('width', documentOuterWidth + 'px')
+}
+
+function enableDocumentScrolling(container) {
+    let prevX
+    let touched = false
+
+    const thirdParameter = supportsPassive ? { passive: true }: false
+
+    container.addEventListener('touchstart', function(event) {
+        touched = true
+        prevX = event.targetTouches[0].clientX
+    }, thirdParameter)
+
+    container.addEventListener('touchmove', function(event) {
+        if (touched) {
+            const currentX = event.targetTouches[0].clientX
+            const offset = currentX - prevX
+            container.scrollLeft -= offset
+            prevX = currentX
+        }
+    }, thirdParameter)
+
+    container.addEventListener('touchend', function(event) {
+        touched = false
+    }, thirdParameter)
 }
 
 function onFirstDocumentLoaded() {
@@ -297,7 +323,7 @@ function enableModifier() {
 function enableMousePageNavigation() {
     enableModifier()
 
-        document.addEventListener('wheel', function(event) {
+    document.addEventListener('wheel', function(event) {
         // No special scrolling without modifier
         if (event[config.modifierKey] === false) {
             return
@@ -323,7 +349,7 @@ function enableMousePageNavigation() {
         }
 
         moveByItems(Math.sign(event.deltaY))
-    })
+    }, { passive: false })
 }
 
 function moveByItems(direction, count = 1) {
@@ -567,6 +593,19 @@ function setPageAspectRatio(container) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // MISC
+
+/*
+* https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md#feature-detection
+*/
+let supportsPassive = false
+try {
+    const opts = Object.defineProperty({}, 'passive', {
+        get: function() {
+          supportsPassive = true
+        }
+    });
+    window.addEventListener('test', null, opts)
+} catch (event) {}
 
 function getFloatPropertyValue(element, property) {
     const value = getComputedStyle(element).getPropertyValue(property)
