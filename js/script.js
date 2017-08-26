@@ -187,6 +187,7 @@ function enableDocumentScrolling(container) {
     const thirdParameter = supportsPassive ? { passive: true }: false
 
     container.addEventListener('touchstart', function(event) {
+        activateContainer(container)
         touched = true
         prevX = event.targetTouches[0].clientX
     }, thirdParameter)
