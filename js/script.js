@@ -50,12 +50,14 @@ const controlKeyName = Object.freeze({
 const controlKey = Object.freeze({
     homeKey: {
         trigger: function(event) {
-            goToItem(0)
+            const container = getActiveContainer()
+            goToItem(container, 0)
         }
     },
     endKey: {
         trigger: function(event) {
-            goToItem(getLastPage())
+            const container = getActiveContainer()
+            goToItem(container, getLastPage())
         }
     },
     arrowLeft: {
@@ -205,7 +207,7 @@ function enableDocumentScrolling(container) {
     container.addEventListener('touchend', function(event) {
         if (touched) {
             const itemsBeforeScrollPos = container.scrollLeft / config.itemWidth
-            goToItem(Math.round(itemsBeforeScrollPos))
+            goToItem(container, Math.round(itemsBeforeScrollPos))
             touched = false
         }
     }, thirdParameter)
@@ -373,11 +375,10 @@ function moveByItems(direction, count = 1) {
         nextPage = itemsBeforeScrollPos + direction * count
     }
 
-    goToItem(nextPage)
+    goToItem(container, nextPage)
 }
 
-function goToItem(item) {
-    const container = getActiveContainer()
+function goToItem(container, item) {
     if (container !== null) {
         container.scrollLeft = item * config.itemWidth
     }
