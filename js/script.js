@@ -311,7 +311,7 @@ function focusDocumentWithMouseMove() {
 function enableModifier() {
     const modifier = config.modifierKey.replace('Key', '')
     document.documentElement.setAttribute('data-modifier', modifier)
-    const modifierKBDElements = document.querySelectorAll('.shortcut__modifier')
+    const modifierKBDElements = Array.from(document.querySelectorAll('.shortcut__modifier'))
     modifierKBDElements.forEach(el => el.innerText = modifier)
     // kbdEl.innerText = modifier
 
@@ -471,7 +471,8 @@ function getActiveContainer() {
 }
 
 function activateContainer(container) {
-    document.querySelectorAll('.active').forEach(el => el.classList.remove('active'))
+    const activeContainers = Array.from(document.querySelectorAll('.active'))
+    activeContainers.forEach(el => el.classList.remove('active'))
     container.classList.add('active')
     // container.focus()
     // container.scrollIntoView(false)
@@ -491,11 +492,11 @@ let focusedElementBeforeModal
 * https://github.com/gdkraus/accessible-modal-dialog
 */
 function enableModalButtons() {
-    document.querySelectorAll('.open-modal').forEach(button => {
+    Array.from(document.querySelectorAll('.open-modal')).forEach(button => {
         button.addEventListener('click', openModal)
     })
 
-    document.querySelectorAll('.close-modal').forEach(button => {
+    Array.from(document.querySelectorAll('.close-modal')).forEach(button => {
         button.addEventListener('click', closeModal)
     })
 }
@@ -613,7 +614,8 @@ function initializeLazyLoader() {
 function containerHandler(entries, observer) {
     for (const entry of entries) {
         if (entry.isIntersecting) {
-            const containerImages = entry.target.querySelectorAll('img[data-src]')
+            const container = entry.target
+            const containerImages = Array.from(container.querySelectorAll('img[data-src]'))
             // For each image …
             containerImages.forEach(img => {
                 // … swap out the `data-src` attribute with the `src` attribute.
