@@ -9,12 +9,12 @@ const config = {
     // How to position scrollable content
     // true:  use CSS transforms
     // false: use the views `scrollLeft`/`scrollTop` property
-    positionItemsWithTransform: true,
+    moveViewItemsWithTransform: true,
 
     minimalDocumentHeight: true,
     class: {
         main: '.main-content',
-        container: '.doc-view',
+        view: '.doc-view',
         document: '.doc',
         item: '.doc__page'
     },
@@ -22,7 +22,7 @@ const config = {
 }
 
 let imgSrcRoot
-let containerObserver
+let viewObserver
 let visibleItems
 
 // Maps key codes to key names
@@ -56,46 +56,44 @@ const controlKeyName = Object.freeze({
 const controlKey = Object.freeze({
     homeKey: {
         trigger: function(event) {
-            const container = getActiveContainer()
-            setItemPos(container, 0)
+            const view = getActiveView()
+            setViewPos(view, 0)
         }
     },
     endKey: {
         trigger: function(event) {
-            const container = getActiveContainer()
-            setItemPos(container, getLastPage())
+            const view = getActiveView()
+            setViewPos(view, getLastItem())
         }
     },
     arrowLeft: {
         direction: -1,
         trigger: function(event) {
-            const count = event.ctrlKey ? 3 : 1
-            moveByItems(this.direction, count)
+            moveDocumentView(this.direction * (event.ctrlKey ? 3 : 1))
         }
     },
     arrowRight: {
         direction: 1,
         trigger: function(event) {
-            const count = event.ctrlKey ? 3 : 1
-            moveByItems(this.direction, count)
+            moveDocumentView(this.direction * (event.ctrlKey ? 3 : 1))
         }
     },
     arrowUp: {
         trigger: function(event) {
-            goToPreviousContainer()
+            goToPreviousView()
         }
     },
     arrowDown: {
         trigger: function(event) {
-            goToNextContainer()
+            goToNextView()
         }
     },
     tabKey: {
         trigger: function(event) {
             if (event.shiftKey) {
-                goToPreviousContainer()
+                goToPreviousView()
             } else {
-                goToNextContainer()
+                goToNextView()
             }
         }
     }
@@ -108,9 +106,10 @@ function initialize(srcRoot) {
     document.addEventListener('DOMContentLoaded', function() {
         enableModalButtons()
         enableKeyboardNavigation()
-        enableMousePageNavigation()
+        enableMouseItemNavigation()
         activateDocumentWithFocus()
         focusDocumentWithMouseMove()
+        enableItemLinking()
 
         loadDocumentAsync()
             .then(onFirstDocumentLoaded, onDocumentReject)
@@ -135,18 +134,18 @@ function loadDocumentAsync() {
         }
 
         loadDoc(mainContent, docData)
-        const container = mainContent.lastElementChild
-        containerObserver.observe(container)
-        setDocumentWidth(container.querySelector(config.class.document))
-        enableDocumentScrolling(container)
+        const view = mainContent.lastElementChild
+        viewObserver.observe(view)
+        setDocumentWidth(view.querySelector(config.class.document))
+        enableDocumentScrolling(view)
         resolve()
     })
 }
 
 function loadDoc(mainContent, docData) {
-    const containerTemplate = document.createElement('template')
-    containerTemplate.innerHTML = createDocumentMarkup(docData[0], docData[1])
-    mainContent.appendChild(containerTemplate.content)
+    const viewTemplate = document.createElement('template')
+    viewTemplate.innerHTML = createDocumentMarkup(docData[0], docData[1])
+    mainContent.appendChild(viewTemplate.content)
 }
 
 /*
@@ -156,16 +155,16 @@ function createDocumentMarkup(docName, itemCount) {
     let items = ''
     for (var i = 0; i < itemCount; i++) {
         const source = `${imgSrcRoot}/data/${docName}-${i}.png`
-        items += `<div class="${config.class.item.slice(1)}">
+        items += `<div class="${config.class.item.slice(1)}" data-page="${i + 1}">
             <img data-src="${source}" alt="page ${i + 1}">
         </div>`
     }
 
     const anchorTarget = `${imgSrcRoot}/data/${docName}`
 
-    return `<div class="${config.class.container.slice(1)}" id="${docName}">
+    return `<div class="${config.class.view.slice(1)}" id="${docName}" data-page-count="${itemCount + 1}" data-active-page="0">
         <div class="${config.class.document.slice(1)}">
-            <div class="${config.class.item.slice(1)} doc-info">
+            <div class="${config.class.item.slice(1)} doc-info" data-page="0">
                 <h2 class="doc-title">
                     <a href="${anchorTarget}">${docName}</a>
                 </h2>
@@ -188,40 +187,40 @@ function setDocumentWidth(doc) {
     doc.style.setProperty('width', documentOuterWidth + 'px')
 }
 
-function enableDocumentScrolling(container) {
+function enableDocumentScrolling(view) {
     let prevX
     let touched = false
 
     const thirdParameter = supportsPassive ? { passive: true }: false
 
-    container.addEventListener('touchstart', function(event) {
-        activateContainer(container)
+    view.addEventListener('touchstart', function(event) {
+        setActiveView(view)
         touched = true
         prevX = event.targetTouches[0].clientX
     }, thirdParameter)
 
-    container.addEventListener('touchmove', function(event) {
+    view.addEventListener('touchmove', function(event) {
         if (touched) {
             const currentX = event.targetTouches[0].clientX
             const offset = currentX - prevX
-            const newItemX = getItemX(container) - offset
-            setItemX(container, newItemX)
+            const newItemX = getViewPixelPos(view) - offset
+            setViewPixelPos(view, newItemX)
             prevX = currentX
         }
     }, thirdParameter)
 
-    container.addEventListener('touchend', function(event) {
+    view.addEventListener('touchend', function(event) {
         if (touched) {
-            const newPos = getItemPos(container)
-            setItemPos(container, Math.round(newPos))
+            const newPos = getViewPos(view)
+            setViewPos(view, Math.round(newPos))
             touched = false
         }
     }, thirdParameter)
 }
 
 function onFirstDocumentLoaded() {
-    const firstContainer = document.querySelector(config.class.container)
-    activateContainer(firstContainer)
+    const firstView = document.querySelector(config.class.view)
+    setActiveView(firstView)
 
     evaluateItemWidth()
     setFullyVisibleItems()
@@ -262,9 +261,9 @@ function getFullyVisibleItems() {
     const itemSample = document.querySelector(config.class.item)
     const itemOuterWidth = getOuterWidth(itemSample)
 
-    const containerSample = document.querySelector(config.class.container)
-    const containerWidth = getFloatPropertyValue(containerSample, 'width')
-    return Math.floor(containerWidth / itemOuterWidth)
+    const viewSample = document.querySelector(config.class.view)
+    const viewWidth = getFloatPropertyValue(viewSample, 'width')
+    return Math.floor(viewWidth / itemOuterWidth)
 }
 
 
@@ -292,20 +291,49 @@ function enableKeyboardNavigation() {
 
 function activateDocumentWithFocus() {
     document.addEventListener('focusin', function(event) {
-        const container = event.target.closest(config.class.container)
-        if (container !== null) {
-            activateContainer(container)
+        const view = event.target.closest(config.class.view)
+        if (view !== null) {
+            setActiveView(view)
         }
     })
 }
 
 function focusDocumentWithMouseMove() {
     document.body.addEventListener('mousemove', function(event) {
-        const container = event.target.closest(config.class.container)
-        if (container !== null) {
-            activateContainer(container)
+        const view = event.target.closest(config.class.view)
+        if (view !== null) {
+            setActiveView(view)
         }
     })
+}
+
+function enableItemLinking() {
+    document.addEventListener('keydown', function(event) {
+        if (event.keyCode !== 13) {
+            return
+        }
+
+        if (isFocusable(event.target)) {
+            return
+        }
+
+        const view = getActiveView()
+        if (view !== null) {
+            openItem(view, event.ctrlKey)
+        }
+    })
+}
+
+function openItem(view, ctrlKey) {
+    const item = getActiveItem(view)
+    const documentAnchor = view.querySelector(`${config.class.item} a`)
+    const documentLink = `${documentAnchor.href}#page=${item}`
+
+    if (ctrlKey) {
+        window.open(documentLink)
+    } else {
+        window.location.href = documentLink
+    }
 }
 
 function enableModifier() {
@@ -334,7 +362,7 @@ function enableModifier() {
     })
 }
 
-function enableMousePageNavigation() {
+function enableMouseItemNavigation() {
     enableModifier()
 
     document.addEventListener('wheel', function(event) {
@@ -348,8 +376,8 @@ function enableMousePageNavigation() {
             return
         }
 
-        const container = event.target.closest(config.class.container)
-        if (container === null) {
+        const view = event.target.closest(config.class.view)
+        if (view === null) {
             return
         }
 
@@ -357,72 +385,83 @@ function enableMousePageNavigation() {
         event.preventDefault()
 
         // Prevent unnecessary actions when there is nothing to scroll
-        const numItems = container.querySelector(config.class.document).childElementCount
+        const numItems = view.querySelector(config.class.document).childElementCount
         if (numItems <= visibleItems) {
             return
         }
 
-        moveByItems(Math.sign(event.deltaY))
+        moveDocumentView(Math.sign(event.deltaY))
     }, { passive: false })
 }
 
-function moveByItems(direction, count = 1) {
-    const container = getActiveContainer()
-    if (container === null) {
+function moveDocumentView(distance) {
+    const view = getActiveView()
+    if (view === null) {
         return
     }
 
-    const itemsBeforeScrollPos = getItemPos(container)
-    let nextPage = 0
+    const pageCount = getItemCount(view)
+    let targetItem = getActiveItem(view) + distance
+    if (targetItem < 0) {
+        targetItem = 0
+    } else if (targetItem >= pageCount) {
+        targetItem = pageCount - 1
+    }
+    setActiveItem(view, targetItem)
+
+    const itemsBeforeScrollPos = getViewPos(view)
+    let nextItem = 0
     if (itemsBeforeScrollPos % 1 !== 0) {
-        const roundOp = direction > 0 ? Math.ceil : Math.floor
-        nextPage = roundOp(itemsBeforeScrollPos) + direction * count
+        const roundOp = distance > 0 ? Math.ceil : Math.floor
+        nextItem = Math.round(itemsBeforeScrollPos) + distance
     } else {
-        nextPage = itemsBeforeScrollPos + direction * count
+        nextItem = itemsBeforeScrollPos + distance
     }
 
-    setItemPos(container, nextPage)
+    setViewPos(view, nextItem)
 }
 
-function getItemPos(container) {
-    return getItemX(container) / config.itemWidth
+function getViewPos(view) {
+    return getViewPixelPos(view) / config.itemWidth
 }
 
-function getItemX(container) {
-    if (config.positionItemsWithTransform) {
-        const doc = container.querySelector(config.class.document)
+function getViewPixelPos(view) {
+    if (config.moveViewItemsWithTransform) {
+        const doc = view.querySelector(config.class.document)
         // Negate the value in order to match scrollbar position values
         const itemPos = -1 * getTranslateX(doc)
         return itemPos
     }
 
-    return container.scrollLeft
+    return view.scrollLeft
 }
 
-function setItemPos(container, itemPos) {
-    if (container === null) {
+function setViewPos(view, itemPos) {
+    if (view === null) {
         return
     }
 
-    const doc = container.querySelector(config.class.document)
-    const maxPos = getOuterWidth(doc) - getOuterWidth(container)
+    const doc = view.querySelector(config.class.document)
+    const maxPos = getOuterWidth(doc) - getOuterWidth(view)
+    if (itemPos < 0) {
+        itemPos = 0
+    }
+
     let itemX = itemPos * config.itemWidth
-    if (itemX < 0) {
-        itemX = 0
-    } else if (itemX > maxPos) {
+    if (itemX > maxPos) {
         itemX = maxPos
     }
 
-    setItemX(container, itemX)
+    setViewPixelPos(view, itemX)
 }
 
-function setItemX(container, itemX) {
-    const doc = container.querySelector(config.class.document)
+function setViewPixelPos(view, itemX) {
+    const doc = view.querySelector(config.class.document)
 
-    if (config.positionItemsWithTransform) {
+    if (config.moveViewItemsWithTransform) {
         doc.style.setProperty('transform', `translateX(${-itemX}px)`)
     } else {
-        container.scrollLeft = itemX
+        view.scrollLeft = itemX
     }
 }
 
@@ -436,46 +475,58 @@ function getTranslateX(element) {
     return parseFloat(matrix.split(',')[4])
 }
 
-function goToPreviousContainer() {
-    const target = getActiveContainer().previousElementSibling
+function goToPreviousView() {
+    const target = getActiveView().previousElementSibling
     if (target !== null) {
-        activateContainer(target)
+        setActiveView(target)
     }
 }
 
-function goToNextContainer() {
-    const target = getActiveContainer().nextElementSibling
+function goToNextView() {
+    const target = getActiveView().nextElementSibling
     if (target !== null) {
-        activateContainer(target)
+        setActiveView(target)
     }
 }
 
-function getLastPage() {
-    const container = getActiveContainer()
-    return container.querySelectorAll(config.class.item).length - 1
+function getLastItem() {
+    const view = getActiveView()
+    return view.querySelectorAll(config.class.item).length - 1
 }
 
-function getActiveContainer() {
+function getActiveView() {
     // First check for an element holding the `active` class
     const activeElement = document.querySelector('.active')
     if (activeElement !== null) {
         return activeElement
     }
 
-    const containerClassName = config.class.container.slice(1)
-    if (document.activeElement.classList.contains(containerClassName)) {
+    const viewClassName = config.class.view.slice(1)
+    if (document.activeElement.classList.contains(viewClassName)) {
         return document.activeElement
     }
 
     return null
 }
 
-function activateContainer(container) {
-    const activeContainers = Array.from(document.querySelectorAll('.active'))
-    activeContainers.forEach(el => el.classList.remove('active'))
-    container.classList.add('active')
-    // container.focus()
-    // container.scrollIntoView(false)
+function setActiveView(view) {
+    const activeViews = Array.from(document.querySelectorAll('.active'))
+    activeViews.forEach(element => element.classList.remove('active'))
+    view.classList.add('active')
+    // view.focus()
+    // view.scrollIntoView(false)
+}
+
+function getItemCount(view) {
+    return parseInt(view.getAttribute('data-page-count'))
+}
+
+function getActiveItem(view) {
+    return parseInt(view.getAttribute('data-active-page'))
+}
+
+function setActiveItem(view, targetItem) {
+    view.setAttribute('data-active-page', targetItem)
 }
 
 
@@ -589,7 +640,11 @@ function trapTabKey() {
 
 function getFocusableElements(ancestor = document) {
     const elements = Array.from(ancestor.querySelectorAll('*'))
-    return elements.filter(el => el.tabIndex > -1 && el.offsetParent !== null)
+    return elements.filter(element => isFocusable(element))
+}
+
+function isFocusable(element) {
+    return element.tabIndex > -1 && element.offsetParent !== null
 }
 
 
@@ -600,7 +655,7 @@ function getFocusableElements(ancestor = document) {
 // LAZY LOADING PAGES
 
 /*
-* Observes document containers in order to load their page images only when
+* Observes document views in order to load their item images only when
 * they’re visible.
 */
 function initializeLazyLoader() {
@@ -608,16 +663,16 @@ function initializeLazyLoader() {
         rootMargin: `500px 0px`
     }
 
-    containerObserver = new IntersectionObserver(containerHandler, options)
+    viewObserver = new IntersectionObserver(viewObservationHandler, options)
 }
 
-function containerHandler(entries, observer) {
+function viewObservationHandler(entries, observer) {
     for (const entry of entries) {
         if (entry.isIntersecting) {
-            const container = entry.target
-            const containerImages = Array.from(container.querySelectorAll('img[data-src]'))
+            const view = entry.target
+            const images = Array.from(view.querySelectorAll('img[data-src]'))
             // For each image …
-            containerImages.forEach(img => {
+            images.forEach(img => {
                 // … swap out the `data-src` attribute with the `src` attribute.
                 // This will start loading the images.
                 if (img.hasAttribute('data-src')) {
@@ -626,7 +681,7 @@ function containerHandler(entries, observer) {
                 }
             })
 
-            containerImages[0].addEventListener('load', function() {
+            images[0].addEventListener('load', function() {
                 handleFirstItemImageLoaded(entry.target)
             })
 
@@ -636,16 +691,16 @@ function containerHandler(entries, observer) {
     }
 }
 
-function handleFirstItemImageLoaded(container) {
+function handleFirstItemImageLoaded(view) {
     if (config.minimalDocumentHeight) {
-        setPageAspectRatio(container)
+        setItemAspectRatio(view)
     }
 }
 
-function setPageAspectRatio(container) {
-    const imgSample = container.querySelector(`${config.class.item} > img`)
+function setItemAspectRatio(view) {
+    const imgSample = view.querySelector(`${config.class.item} > img`)
     const aspectRatio = imgSample.naturalWidth / imgSample.naturalHeight
-    container.style.setProperty('--page-aspect-ratio', aspectRatio)
+    view.style.setProperty('--page-aspect-ratio', aspectRatio)
 }
 
 
