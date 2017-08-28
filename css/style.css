@@ -139,6 +139,7 @@ button:enabled:focus {
 
 .toolbox {
     position: fixed;
+    will-change: transform;
     top: 0;
     right: 0;
     left: 0;
@@ -166,6 +167,7 @@ button:enabled:focus {
 
 .modal {
     position: fixed;
+    will-change: transform;
     z-index: var(--plane-modal);
     top: 0;
     right: 0; /* test */

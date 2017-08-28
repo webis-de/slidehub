@@ -195,7 +195,12 @@ function enableDocumentScrolling(view) {
 
     view.addEventListener('touchstart', function(event) {
         setActiveView(view)
+
+        if (config.moveViewItemsWithTransform) {
+            view.style.setProperty('will-change', 'transform')
+        }
         touched = true
+
         prevX = event.targetTouches[0].clientX
     }, thirdParameter)
 
@@ -213,6 +218,10 @@ function enableDocumentScrolling(view) {
         if (touched) {
             const newPos = getViewPos(view)
             setViewPos(view, Math.round(newPos))
+
+            if (config.moveViewItemsWithTransform) {
+                view.style.setProperty('will-change', 'auto')
+            }
             touched = false
         }
     }, thirdParameter)
