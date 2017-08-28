@@ -11,7 +11,7 @@
     --color-grey-dark: #666;
 
     /* Hierarchy of z-index values (i.e. planes) */
-    --plane-active-item: 200;
+    --plane-document: 200;
     --plane-toolbox: 300;
     --plane-modal: 400;
 }
@@ -272,19 +272,6 @@ td .shortcut {
     outline: 0;
 }
 
-.doc-view:focus,
-.doc-view.active {
-    border-color: var(--color-accent);
-    box-shadow: 0 0 2px 0 var(--color-accent);
-
-    /*
-    * Elevate the active view above all other views. This is used to make its
-    * border visible when negative margins are used to collapse the border
-    * widths.
-    */
-    z-index: var(--plane-active-item);
-}
-
 .doc {
     /* Clears floated .doc__page elements */
     display: flow-root;
@@ -343,10 +330,6 @@ td .shortcut {
     font-style: italic;
 }
 
-/*.doc__page:hover > img {
-    filter: opacity(0.65);
-}*/
-
 .doc-info {
     padding: calc(var(--base-spacing) / 2);
     color: var(--color-grey-dark);
@@ -356,4 +339,45 @@ td .shortcut {
     margin-bottom: 0;
     font-weight: normal;
     font-size: 1rem;
+}
+
+
+
+.doc-view:focus,
+.doc-view.active {
+    /*border-color: var(--color-accent);
+    box-shadow: 0 0 2px 0 var(--color-accent);*/
+
+    /*
+    * Elevate the active view above all other views. This is used to make its
+    * border visible when negative margins are used to collapse the border
+    * widths.
+    */
+    z-index: var(--plane-document);
+}
+
+.doc-view,
+.doc__page {
+    position: relative;
+}
+
+.doc-view:hover::before,
+.doc__page:hover::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: var(--color-accent);
+    opacity: 0.15;
+}
+
+.doc-view:hover::before {
+    z-index: calc(var(--plane-document) + 10);
+}
+
+.doc__page:hover::before {
+    z-index: calc(var(--plane-document) + 20);
 }
