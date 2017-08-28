@@ -199,6 +199,7 @@ function enableDocumentScrolling(view) {
         if (config.moveViewItemsWithTransform) {
             view.style.setProperty('will-change', 'transform')
         }
+        document.documentElement.setAttribute('data-touched', '')
         touched = true
 
         prevX = event.targetTouches[0].clientX
@@ -223,6 +224,7 @@ function enableDocumentScrolling(view) {
                 view.style.setProperty('will-change', 'auto')
             }
             touched = false
+            document.documentElement.removeAttribute('data-touched')
         }
     }, thirdParameter)
 }
@@ -334,9 +336,9 @@ function enableItemLinking() {
 }
 
 function openItem(view, ctrlKey) {
-    const item = getActiveItem(view)
     const documentAnchor = view.querySelector(`${config.class.item} a`)
-    const documentLink = `${documentAnchor.href}#page=${item}`
+    const itemIndex = getActiveItem(view)
+    const documentLink = `${documentAnchor.href}#page=${itemIndex}`
 
     if (ctrlKey) {
         window.open(documentLink)

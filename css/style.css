@@ -290,6 +290,10 @@ td .shortcut {
     display: flow-root;
 }
 
+:root:not([data-touched]) .doc {
+    transition: transform 0.1s ease-in-out;
+}
+
 .doc.select-disabled {
     /* as per: https://stackoverflow.com/a/4407335/2036825 */
     -webkit-touch-callout: none; /* iOS Safari */
