@@ -162,9 +162,9 @@ function createDocumentMarkup(docName, itemCount) {
 
     const anchorTarget = `${imgSrcRoot}/data/${docName}`
 
-    return `<div class="${config.class.view.slice(1)}" id="${docName}" data-page-count="${itemCount + 1}" data-active-page="0">
+    return `<div class="${config.class.view.slice(1)}" id="${docName}" data-page-count="${itemCount + 1}">
         <div class="${config.class.document.slice(1)}">
-            <div class="${config.class.item.slice(1)} doc-info" data-page="0">
+            <div class="${config.class.item.slice(1)} doc-info active" data-page="0">
                 <h2 class="doc-title">
                     <a href="${anchorTarget}">${docName}</a>
                 </h2>
@@ -312,9 +312,14 @@ function activateDocumentWithFocus() {
 function focusDocumentWithMouseMove() {
     document.body.addEventListener('mousemove', function(event) {
         const view = event.target.closest(config.class.view)
-        if (view !== null) {
-            setActiveView(view)
+        const item = event.target.closest(config.class.item)
+
+        if (view === null || item === null) {
+            return
         }
+
+        setActiveView(view)
+        setActiveItem(view, item)
     })
 }
 
@@ -337,7 +342,13 @@ function enableItemLinking() {
 
 function openItem(view, ctrlKey) {
     const documentAnchor = view.querySelector(`${config.class.item} a`)
-    const itemIndex = getActiveItem(view)
+
+    if (documentAnchor === null) {
+        return
+    }
+
+    const itemIndex = getActiveItem(view).getAttribute('data-page')
+    console.log(documentAnchor, itemIndex)
     const documentLink = `${documentAnchor.href}#page=${itemIndex}`
 
     if (ctrlKey) {
@@ -412,13 +423,14 @@ function moveDocumentView(distance) {
     }
 
     const pageCount = getItemCount(view)
-    let targetItem = getActiveItem(view) + distance
-    if (targetItem < 0) {
-        targetItem = 0
-    } else if (targetItem >= pageCount) {
-        targetItem = pageCount - 1
+    let targetIndex = getActiveItem(view).getAttribute('data-page') + distance
+    if (targetIndex < 0) {
+        targetIndex = 0
+    } else if (targetIndex >= pageCount) {
+        targetIndex = pageCount - 1
     }
-    setActiveItem(view, targetItem)
+    const targetItem = getItemByIndex(view, targetIndex)
+    setActiveItem(viewviewtargetItem)
 
     const itemsBeforeScrollPos = getViewPos(view)
     let nextItem = 0
@@ -521,8 +533,8 @@ function getActiveView() {
 }
 
 function setActiveView(view) {
-    const activeViews = Array.from(document.querySelectorAll('.active'))
-    activeViews.forEach(element => element.classList.remove('active'))
+    const views = document.querySelectorAll(`${config.class.view}.active`)
+    Array.from(views).forEach(element => element.classList.remove('active'))
     view.classList.add('active')
     // view.focus()
     // view.scrollIntoView(false)
@@ -533,11 +545,20 @@ function getItemCount(view) {
 }
 
 function getActiveItem(view) {
-    return parseInt(view.getAttribute('data-active-page'))
+    return view.querySelector(`${config.class.item}.active`)
 }
 
 function setActiveItem(view, targetItem) {
-    view.setAttribute('data-active-page', targetItem)
+    const activeItem = getActiveItem(view)
+    activeItem.classList.remove('active')
+    targetItem.classList.add('active')
+    // const targetIndex = targetItem.getAttribute('data-page')
+    // view.setAttribute('data-active-page', targetIndex)
+}
+
+function getItemByIndex(view, index) {
+    const doc = view.querySelector(config.class.document)
+    return doc.children[index]
 }
 
 
