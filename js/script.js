@@ -4,6 +4,7 @@
 * Configuration
 */
 const config = {
+    webRoot: '.',
     itemWidth: 300,
 
     // How to position scrollable content
@@ -12,22 +13,23 @@ const config = {
     moveViewItemsWithTransform: true,
 
     minimalDocumentHeight: true,
+
+    // HTML classes that are used in the application
     class: {
         main: '.main-content',
         view: '.doc-view',
-        document: '.doc',
+        doc:  '.doc',
         item: '.doc__page'
     },
+
     modifierKey: 'shiftKey'
 }
 
 const state = {
-    activeView: null
+    activeView: null,
+    viewObserver: null,
+    visibleItems: null
 }
-
-let imgSrcRoot
-let viewObserver
-let visibleItems
 
 // Maps key codes to key names
 const modifierKeyNames = Object.freeze({
@@ -101,8 +103,8 @@ const controlKey = Object.freeze({
     }
 })
 
-function initialize(srcRoot) {
-    imgSrcRoot = srcRoot
+function initialize(webRoot) {
+    config.webRoot = webRoot
     initializeLazyLoader()
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -168,8 +170,8 @@ function loadDocumentAsync() {
 
         loadDoc(mainContent, docData)
         const view = mainContent.lastElementChild
-        viewObserver.observe(view)
-        setDocumentWidth(view.querySelector(config.class.document))
+        state.viewObserver.observe(view)
+        setDocumentWidth(view.querySelector(config.class.doc))
         enableDocumentScrolling(view)
         resolve()
     })
@@ -185,18 +187,19 @@ function loadDoc(mainContent, docData) {
 * Creates the full markup of one document
 */
 function createDocumentMarkup(docName, itemCount) {
+    const assetPath = `${config.webRoot}/data`
     let items = ''
     for (var i = 0; i < itemCount; i++) {
-        const source = `${imgSrcRoot}/data/${docName}-${i}.png`
+        const source = `${assetPath}/${docName}-${i}.png`
         items += `<div class="${config.class.item.slice(1)}" data-page="${i + 1}">
             <img data-src="${source}" alt="page ${i + 1}">
         </div>`
     }
 
-    const anchorTarget = `${imgSrcRoot}/data/${docName}`
+    const anchorTarget = `${assetPath}/${docName}`
 
     return `<div class="${config.class.view.slice(1)}" id="${docName}" data-page-count="${itemCount + 1}">
-        <div class="${config.class.document.slice(1)}">
+        <div class="${config.class.doc.slice(1)}">
             <div class="${config.class.item.slice(1)} doc-info active" data-page="0">
                 <h2 class="doc-title">
                     <a href="${anchorTarget}">${docName}</a>
@@ -296,7 +299,7 @@ function evaluateItemWidth() {
 }
 
 function setFullyVisibleItems() {
-    visibleItems = getFullyVisibleItems()
+    state.visibleItems = getFullyVisibleItems()
 }
 
 function getFullyVisibleItems() {
@@ -388,7 +391,7 @@ function enableModifier() {
     document.addEventListener('keydown', function(event) {
         const modifier = modifierKeyNames[event.keyCode]
         if (modifier === config.modifierKey) {
-            const doc = state.activeView.querySelector(config.class.document)
+            const doc = state.activeView.querySelector(config.class.doc)
             doc.style.setProperty('cursor', 'ew-resize')
         }
     })
@@ -396,13 +399,13 @@ function enableModifier() {
     document.addEventListener('keyup', function(event) {
         const modifier = modifierKeyNames[event.keyCode]
         if (modifier === config.modifierKey) {
-            const doc = state.activeView.querySelector(config.class.document)
+            const doc = state.activeView.querySelector(config.class.doc)
             doc.style.setProperty('cursor', 'auto')
         }
     })
 
     window.addEventListener('blur', function(event) {
-        const doc = state.activeView.querySelector(config.class.document)
+        const doc = state.activeView.querySelector(config.class.doc)
         doc.style.setProperty('cursor', 'auto')
     })
 }
@@ -427,8 +430,8 @@ function handleWheelNavigation(event) {
     event.preventDefault()
 
     // Prevent unnecessary actions when there is nothing to scroll
-    const numItems = view.querySelector(config.class.document).childElementCount
-    if (numItems <= visibleItems) {
+    const numItems = view.querySelector(config.class.doc).childElementCount
+    if (numItems <= state.visibleItems) {
         return
     }
 
@@ -470,7 +473,7 @@ function getViewPos(view) {
 
 function getViewPixelPos(view) {
     if (config.moveViewItemsWithTransform) {
-        const doc = view.querySelector(config.class.document)
+        const doc = view.querySelector(config.class.doc)
         // Negate the value in order to match scrollbar position values
         const itemPos = -1 * getTranslateX(doc)
         return itemPos
@@ -484,7 +487,7 @@ function setViewPos(view, itemPos) {
         return
     }
 
-    const doc = view.querySelector(config.class.document)
+    const doc = view.querySelector(config.class.doc)
     const maxPos = getOuterWidth(doc) - getOuterWidth(view)
     if (itemPos < 0) {
         itemPos = 0
@@ -499,7 +502,7 @@ function setViewPos(view, itemPos) {
 }
 
 function setViewPixelPos(view, itemX) {
-    const doc = view.querySelector(config.class.document)
+    const doc = view.querySelector(config.class.doc)
 
     if (config.moveViewItemsWithTransform) {
         doc.style.setProperty('transform', `translateX(${-itemX}px)`)
@@ -533,7 +536,7 @@ function goToNextView() {
 }
 
 function getLastItem() {
-    const doc = state.activeView.querySelector(config.class.document)
+    const doc = state.activeView.querySelector(config.class.doc)
     return doc.childElementCount - 1
 }
 
@@ -563,7 +566,7 @@ function setActiveItem(view, targetItem) {
 }
 
 function getItemByIndex(view, index) {
-    const doc = view.querySelector(config.class.document)
+    const doc = view.querySelector(config.class.doc)
     return doc.children[index]
 }
 
@@ -702,7 +705,7 @@ function initializeLazyLoader() {
         rootMargin: `500px 0px`
     }
 
-    viewObserver = new IntersectionObserver(viewObservationHandler, options)
+    state.viewObserver = new IntersectionObserver(viewObservationHandler, options)
 }
 
 function viewObservationHandler(entries, observer) {
