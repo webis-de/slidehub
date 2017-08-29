@@ -104,14 +104,18 @@ kbd {
 }
 
 button {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
     overflow: visible;
     font: inherit;
-    line-height: normal;
-    border: 2px solid #000;
     outline: 0;
+    border: 0;
+    padding: 0;
+}
+
+button {
+    border: 2px solid #000;
     padding: calc(var(--base-spacing) / 2) var(--base-spacing);
     color: var(--color-text);
     background-color: var(--color-background);
@@ -146,7 +150,7 @@ button:enabled:focus {
     height: calc(var(--base-spacing) * 4);
     z-index: var(--plane-toolbox);
     display: flex;
-    align-items: baseline;
+    align-items: center;
     padding: calc(var(--base-spacing) / 2) calc(var(--base-spacing) * 2);
     background-color: #333;
 }
