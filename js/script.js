@@ -18,7 +18,11 @@ const config = {
         document: '.doc',
         item: '.doc__page'
     },
-    modifierKey: 'altKey'
+    modifierKey: 'shiftKey'
+}
+
+const state = {
+    activeView: null
 }
 
 let imgSrcRoot
@@ -56,14 +60,12 @@ const controlKeyName = Object.freeze({
 const controlKey = Object.freeze({
     homeKey: {
         trigger: function(event) {
-            const view = getActiveView()
-            setViewPos(view, 0)
+            setViewPos(state.activeView, 0)
         }
     },
     endKey: {
         trigger: function(event) {
-            const view = getActiveView()
-            setViewPos(view, getLastItem())
+            setViewPos(state.activeView, getLastItem())
         }
     },
     arrowLeft: {
@@ -104,16 +106,47 @@ function initialize(srcRoot) {
     initializeLazyLoader()
 
     document.addEventListener('DOMContentLoaded', function() {
-        enableModalButtons()
-        enableKeyboardNavigation()
-        enableMouseItemNavigation()
-        activateDocumentWithFocus()
-        focusDocumentWithMouseMove()
-        enableItemLinking()
-
         loadDocumentAsync()
             .then(onFirstDocumentLoaded, onDocumentReject)
             .catch(message => { console.error(message) })
+
+        enableModalButtons()
+        enableModifier()
+
+        document.addEventListener(
+            'wheel',
+            handleWheelNavigation,
+            // Permitted to call preventDefault
+            supportsPassive ? { passive: false } : false
+        )
+
+        document.addEventListener(
+            'keydown',
+            handleKeyboardInput,
+            // Permitted to call preventDefault
+            supportsPassive ? { passive: false } : false
+        )
+
+        document.addEventListener(
+            'keydown',
+            handleItemLinking,
+            // Permitted to call preventDefault
+            supportsPassive ? { passive: false } : false
+        )
+
+        document.addEventListener(
+            'focusin',
+            activateDocumentOnFocus,
+            // Not permitted to call preventDefault
+            supportsPassive ? { passive: true } : false
+        )
+
+        document.body.addEventListener(
+            'mousemove',
+            handleMouseMoveFocus,
+            // Not permitted to call preventDefault
+            supportsPassive ? { passive: true } : false
+        )
     })
 }
 
@@ -191,8 +224,6 @@ function enableDocumentScrolling(view) {
     let prevX
     let touched = false
 
-    const thirdParameter = supportsPassive ? { passive: true }: false
-
     view.addEventListener('touchstart', function(event) {
         setActiveView(view)
 
@@ -203,7 +234,7 @@ function enableDocumentScrolling(view) {
         touched = true
 
         prevX = event.targetTouches[0].clientX
-    }, thirdParameter)
+    }, supportsPassive ? { passive: true }: false)
 
     view.addEventListener('touchmove', function(event) {
         if (touched) {
@@ -213,7 +244,7 @@ function enableDocumentScrolling(view) {
             setViewPixelPos(view, newItemX)
             prevX = currentX
         }
-    }, thirdParameter)
+    }, supportsPassive ? { passive: true }: false)
 
     view.addEventListener('touchend', function(event) {
         if (touched) {
@@ -226,7 +257,7 @@ function enableDocumentScrolling(view) {
             touched = false
             document.documentElement.removeAttribute('data-touched')
         }
-    }, thirdParameter)
+    }, supportsPassive ? { passive: true }: false)
 }
 
 function onFirstDocumentLoaded() {
@@ -284,60 +315,51 @@ function getFullyVisibleItems() {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // NAVIGATION
 
-function enableKeyboardNavigation() {
-    document.addEventListener('keydown', function(event) {
-        // Get key name from key code
-        const keyName = controlKeyName[event.keyCode]
+function handleKeyboardInput(event) {
+    // Get key name from key code
+    const keyName = controlKeyName[event.keyCode]
 
-        // If the pressed key is no control key …
-        if (keyName === undefined) {
-            return
-        }
+    // If the pressed key is no control key …
+    if (keyName === undefined) {
+        return
+    }
 
-        event.preventDefault()
+    event.preventDefault()
 
-        controlKey[keyName].trigger(event)
-    })
+    controlKey[keyName].trigger(event)
 }
 
-function activateDocumentWithFocus() {
-    document.addEventListener('focusin', function(event) {
-        const view = event.target.closest(config.class.view)
-        if (view !== null) {
-            setActiveView(view)
-        }
-    })
-}
-
-function focusDocumentWithMouseMove() {
-    document.body.addEventListener('mousemove', function(event) {
-        const view = event.target.closest(config.class.view)
-        const item = event.target.closest(config.class.item)
-
-        if (view === null || item === null) {
-            return
-        }
-
+function activateDocumentOnFocus(event) {
+    const view = event.target.closest(config.class.view)
+    if (view !== null) {
         setActiveView(view)
-        setActiveItem(view, item)
-    })
+    }
 }
 
-function enableItemLinking() {
-    document.addEventListener('keydown', function(event) {
-        if (event.keyCode !== 13) {
-            return
-        }
+function handleMouseMoveFocus(event) {
+    const view = event.target.closest(config.class.view)
+    const item = event.target.closest(config.class.item)
 
-        if (isFocusable(event.target)) {
-            return
-        }
+    if (view === null || item === null) {
+        return
+    }
 
-        const view = getActiveView()
-        if (view !== null) {
-            openItem(view, event.ctrlKey)
-        }
-    })
+    setActiveView(view)
+    setActiveItem(view, item)
+}
+
+function handleItemLinking(event) {
+    if (event.keyCode !== 13) {
+        return
+    }
+
+    if (isFocusable(event.target)) {
+        return
+    }
+
+    if (state.activeView !== null) {
+        openItem(state.activeView, event.ctrlKey)
+    }
 }
 
 function openItem(view, ctrlKey) {
@@ -348,7 +370,6 @@ function openItem(view, ctrlKey) {
     }
 
     const itemIndex = getActiveItem(view).getAttribute('data-page')
-    console.log(documentAnchor, itemIndex)
     const documentLink = `${documentAnchor.href}#page=${itemIndex}`
 
     if (ctrlKey) {
@@ -362,75 +383,74 @@ function enableModifier() {
     const modifier = config.modifierKey.replace('Key', '')
     document.documentElement.setAttribute('data-modifier', modifier)
     const modifierKBDElements = Array.from(document.querySelectorAll('.shortcut__modifier'))
-    modifierKBDElements.forEach(el => el.innerText = modifier)
-    // kbdEl.innerText = modifier
+    modifierKBDElements.forEach(element => element.innerText = modifier)
 
     document.addEventListener('keydown', function(event) {
         const modifier = modifierKeyNames[event.keyCode]
         if (modifier === config.modifierKey) {
-            document.documentElement.classList.add('modifier-pressed')
+            const doc = state.activeView.querySelector(config.class.document)
+            doc.style.setProperty('cursor', 'ew-resize')
         }
     })
 
     document.addEventListener('keyup', function(event) {
         const modifier = modifierKeyNames[event.keyCode]
         if (modifier === config.modifierKey) {
-            document.documentElement.classList.remove('modifier-pressed')
+            const doc = state.activeView.querySelector(config.class.document)
+            doc.style.setProperty('cursor', 'auto')
         }
     })
 
     window.addEventListener('blur', function(event) {
-        document.documentElement.classList.remove('modifier-pressed')
+        const doc = state.activeView.querySelector(config.class.document)
+        doc.style.setProperty('cursor', 'auto')
     })
 }
 
-function enableMouseItemNavigation() {
-    enableModifier()
+function handleWheelNavigation(event) {
+    // No special scrolling without modifier
+    if (event[config.modifierKey] === false) {
+        return
+    }
 
-    document.addEventListener('wheel', function(event) {
-        // No special scrolling without modifier
-        if (event[config.modifierKey] === false) {
-            return
-        }
+    // No special scrolling when not scrolling vertically
+    if (event.deltaY === 0) {
+        return
+    }
 
-        // No special scrolling when not scrolling vertically
-        if (event.deltaY === 0) {
-            return
-        }
+    const view = event.target.closest(config.class.view)
+    if (view === null) {
+        return
+    }
 
-        const view = event.target.closest(config.class.view)
-        if (view === null) {
-            return
-        }
+    // Prevent vertical scrolling
+    event.preventDefault()
 
-        // Prevent vertical scrolling
-        event.preventDefault()
+    // Prevent unnecessary actions when there is nothing to scroll
+    const numItems = view.querySelector(config.class.document).childElementCount
+    if (numItems <= visibleItems) {
+        return
+    }
 
-        // Prevent unnecessary actions when there is nothing to scroll
-        const numItems = view.querySelector(config.class.document).childElementCount
-        if (numItems <= visibleItems) {
-            return
-        }
-
-        moveDocumentView(Math.sign(event.deltaY))
-    }, { passive: false })
+    moveDocumentView(Math.sign(event.deltaY))
 }
 
 function moveDocumentView(distance) {
-    const view = getActiveView()
+    const view = state.activeView
     if (view === null) {
         return
     }
 
     const pageCount = getItemCount(view)
-    let targetIndex = getActiveItem(view).getAttribute('data-page') + distance
+    const currentIndex = parseInt(getActiveItem(view).getAttribute('data-page'))
+    let targetIndex = currentIndex + distance
     if (targetIndex < 0) {
         targetIndex = 0
     } else if (targetIndex >= pageCount) {
         targetIndex = pageCount - 1
     }
     const targetItem = getItemByIndex(view, targetIndex)
-    setActiveItem(viewviewtargetItem)
+    setActiveItem(view, targetItem)
 
     const itemsBeforeScrollPos = getViewPos(view)
     let nextItem = 0
@@ -499,43 +519,29 @@ function getTranslateX(element) {
 }
 
 function goToPreviousView() {
-    const target = getActiveView().previousElementSibling
+    const target = state.activeView.previousElementSibling
     if (target !== null) {
         setActiveView(target)
     }
 }
 
 function goToNextView() {
-    const target = getActiveView().nextElementSibling
+    const target = state.activeView.nextElementSibling
     if (target !== null) {
         setActiveView(target)
     }
 }
 
 function getLastItem() {
-    const view = getActiveView()
-    return view.querySelectorAll(config.class.item).length - 1
-}
-
-function getActiveView() {
-    // First check for an element holding the `active` class
-    const activeElement = document.querySelector('.active')
-    if (activeElement !== null) {
-        return activeElement
-    }
-
-    const viewClassName = config.class.view.slice(1)
-    if (document.activeElement.classList.contains(viewClassName)) {
-        return document.activeElement
-    }
-
-    return null
+    const doc = state.activeView.querySelector(config.class.document)
+    return doc.childElementCount - 1
 }
 
 function setActiveView(view) {
     const views = document.querySelectorAll(`${config.class.view}.active`)
     Array.from(views).forEach(element => element.classList.remove('active'))
-    view.classList.add('active')
+    state.activeView = view
+    state.activeView.classList.add('active')
     // view.focus()
     // view.scrollIntoView(false)
 }
@@ -576,11 +582,12 @@ let focusedElementBeforeModal
 */
 function enableModalButtons() {
     Array.from(document.querySelectorAll('.open-modal')).forEach(button => {
-        button.addEventListener('click', event => openModal(event))
+        button.removeAttribute('disabled')
+        button.addEventListener('click', openModal)
     })
 
     Array.from(document.querySelectorAll('.close-modal')).forEach(button => {
-        button.addEventListener('click', event => closeModal(event))
+        button.addEventListener('click', closeModal)
     })
 }
 
