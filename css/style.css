@@ -121,6 +121,11 @@ button {
     background-color: var(--color-background);
 }
 
+button:disabled {
+    color: var(--color-grey-dark);
+    border-color: var(--color-grey-dark);
+}
+
 button:enabled:hover,
 button:enabled:active {
     background-color: var(--color-accent-light);
@@ -152,12 +157,12 @@ button:enabled:focus {
     display: flex;
     align-items: center;
     padding: calc(var(--base-spacing) / 2) calc(var(--base-spacing) * 2);
+    color: var(--color-background);
     background-color: #333;
 }
 
-.toolbox,
 .toolbox a {
-    color: var(--color-background);
+    color: currentColor;
 }
 
 .toolbox > *:not(:last-child) {
@@ -292,18 +297,6 @@ td .shortcut {
     -moz-user-select: none; /* Firefox */
     -ms-user-select: none; /* Internet Explorer/Edge */
     user-select: none; /* Non-prefixed version */
-}
-
-.modifier-pressed .doc {
-    cursor: ew-resize;
-}
-
-.doc.horizontal-dragging {
-    cursor: ew-resize;
-}
-
-.doc.vertical-dragging {
-    cursor: ns-resize;
 }
 
 .doc__page {
