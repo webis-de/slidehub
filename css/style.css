@@ -276,10 +276,6 @@ td .shortcut {
     margin-bottom: calc(-1 * var(--border-width));
 }
 
-.doc-view:focus {
-    outline: 0;
-}
-
 .doc {
     /* Clears floated .doc__page elements */
     display: flow-root;
@@ -303,7 +299,7 @@ td .shortcut {
 
     border: var(--border-width) solid var(--color-grey);
     margin: calc(-1 * var(--border-width));
-    padding: var(--border-width);
+    /*padding: var(--border-width);*/
 
     /* Make sure transparent slides appear on white background */
     background-color: var(--color-background);
@@ -336,6 +332,10 @@ td .shortcut {
 }
 
 
+
+.doc-view:focus {
+    outline: 0;
+}
 
 .doc-view:focus,
 .doc-view.active {

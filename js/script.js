@@ -61,34 +61,38 @@ const controlKeyName = Object.freeze({
 */
 const controlKey = Object.freeze({
     homeKey: {
-        trigger: function(event) {
-            setViewPos(state.activeView, 0)
+        direction: -1,
+        trigger: function() {
+            // setViewPos(state.activeView, 0)
+            moveItem(this.direction * getItemCount(state.activeView))
         }
     },
     endKey: {
-        trigger: function(event) {
-            setViewPos(state.activeView, getLastItem())
+        direction: 1,
+        trigger: function() {
+            // setViewPos(state.activeView, getLastItemIndex())
+            moveItem(this.direction * getItemCount(state.activeView))
         }
     },
     arrowLeft: {
         direction: -1,
         trigger: function(event) {
-            moveDocumentView(this.direction * (event.ctrlKey ? 3 : 1))
+            moveItem(this.direction * (event.ctrlKey ? 3 : 1))
         }
     },
     arrowRight: {
         direction: 1,
         trigger: function(event) {
-            moveDocumentView(this.direction * (event.ctrlKey ? 3 : 1))
+            moveItem(this.direction * (event.ctrlKey ? 3 : 1))
         }
     },
     arrowUp: {
-        trigger: function(event) {
+        trigger: function() {
             goToPreviousView()
         }
     },
     arrowDown: {
-        trigger: function(event) {
+        trigger: function() {
             goToNextView()
         }
     },
@@ -136,13 +140,6 @@ function initialize(webRoot) {
             supportsPassive ? { passive: false } : false
         )
 
-        document.addEventListener(
-            'focusin',
-            activateDocumentOnFocus,
-            // Not permitted to call preventDefault
-            supportsPassive ? { passive: true } : false
-        )
-
         /*document.body.addEventListener(
             'mousemove',
             handleMouseMoveFocus,
@@ -173,8 +170,8 @@ function loadDocumentAsync() {
         state.viewObserver.observe(view)
         setDocumentWidth(view.querySelector(config.class.doc))
         enableDocumentScrolling(view)
-        activateViewOnHover(view)
-        activateItemsOnHover(view)
+        // activateViewOnHover(view)
+        // activateItemsOnHover(view)
         resolve()
     })
 }
@@ -270,6 +267,20 @@ function enableDocumentScrolling(view) {
     }, supportsPassive ? { passive: true }: false)
 }
 
+function activateViewOnHover(view) {
+    view.addEventListener('mouseover', event => {
+        setActiveView(event.currentTarget)
+    })
+}
+
+function activateItemsOnHover(view) {
+    const items = Array.from(view.querySelectorAll(config.class.item))
+    items.forEach(item => item.addEventListener('mouseenter', event => {
+        const view = event.currentTarget.closest(config.class.view)
+        setActiveItem(view, event.currentTarget)
+    }))
+}
+
 function onFirstDocumentLoaded() {
     const firstView = document.querySelector(config.class.view)
     setActiveView(firstView)
@@ -339,15 +350,7 @@ function handleKeyboardInput(event) {
     controlKey[keyName].trigger(event)
 }
 
-function activateDocumentOnFocus(event) {
-    const view = event.target.closest(config.class.view)
-    if (view !== null) {
-        setActiveView(view)
-    }
-}
-
-function handleMouseMoveFocus(event) {
-    console.log('mousemove')
+/*function handleMouseMoveFocus(event) {
     const view = event.target.closest(config.class.view)
     const item = event.target.closest(config.class.item)
 
@@ -357,21 +360,7 @@ function handleMouseMoveFocus(event) {
 
     setActiveView(view)
     setActiveItem(view, item)
-}
-
-function activateViewOnHover(view) {
-    view.addEventListener('mouseenter', function(event) {
-        setActiveView(event.currentTarget)
-    })
-}
-
-function activateItemsOnHover(view) {
-    const items = Array.from(view.querySelectorAll(config.class.item))
-    items.forEach(item => item.addEventListener('mouseenter', function(event) {
-        const view = event.currentTarget.closest(config.class.view)
-        setActiveItem(view, event.currentTarget)
-    }))
-}
+}*/
 
 function handleItemLinking(event) {
     if (event.keyCode !== 13) {
@@ -457,36 +446,58 @@ function handleWheelNavigation(event) {
         return
     }
 
-    moveDocumentView(Math.sign(event.deltaY))
+    moveView(Math.sign(event.deltaY))
 }
 
-function moveDocumentView(distance) {
+function moveView(distance) {
     const view = state.activeView
     if (view === null) {
         return
     }
 
-    const pageCount = getItemCount(view)
-    const currentIndex = parseInt(getActiveItem(view).getAttribute('data-page'))
-    let targetIndex = currentIndex + distance
-    if (targetIndex < 0) {
-        targetIndex = 0
-    } else if (targetIndex >= pageCount) {
-        targetIndex = pageCount - 1
+    // Move items along with view
+    // moveItem(distance)
+
+    let currentViewPos = getViewPos(view)
+    if (isNotAligned(currentViewPos)) {
+        currentViewPos = Math.round(currentViewPos)
     }
+    setViewPos(view, currentViewPos + distance)
+}
+
+function isNotAligned(itemsBeforeView) {
+    return itemsBeforeView % 1 !== 0
+}
+
+function moveItem(distance) {
+    const view = state.activeView
+    const item = getActiveItem(view)
+    const currentIndex = parseInt(item.getAttribute('data-page'))
+    const lastIndex = getItemCount(view) - 1
+    const targetIndex = clamp(currentIndex + distance, 0, lastIndex)
     const targetItem = getItemByIndex(view, targetIndex)
     setActiveItem(view, targetItem)
 
-    const itemsBeforeScrollPos = getViewPos(view)
-    let nextItem = 0
-    if (itemsBeforeScrollPos % 1 !== 0) {
-        const roundOp = distance > 0 ? Math.ceil : Math.floor
-        nextItem = Math.round(itemsBeforeScrollPos) + distance
-    } else {
-        nextItem = itemsBeforeScrollPos + distance
+    // Move view if item would become partially hidden
+    const targetRect = targetItem.getBoundingClientRect()
+    const viewRect = view.getBoundingClientRect()
+    const marginLeft = getFloatPropertyValue(targetItem, 'margin-left')
+    const marginRight = getFloatPropertyValue(targetItem, 'margin-right')
+    const isFullyVisible = (
+        targetRect.left >= viewRect.left &&
+        (targetRect.right + marginLeft + marginRight) <= (viewRect.left + viewRect.width)
+    )
+    const actualDistance = targetIndex - currentIndex
+    if (isFullyVisible === false) {
+        moveView(actualDistance)
+        return
     }
 
-    setViewPos(view, nextItem)
+    // Move view if it’s not aligned
+    let currentViewPos = getViewPos(view)
+    if (isNotAligned(currentViewPos) && Math.sign(distance) < 0) {
+        setViewPos(view, Math.floor(currentViewPos))
+    }
 }
 
 function getViewPos(view) {
@@ -557,7 +568,7 @@ function goToNextView() {
     }
 }
 
-function getLastItem() {
+function getLastItemIndex() {
     const doc = state.activeView.querySelector(config.class.doc)
     return doc.childElementCount - 1
 }
@@ -583,8 +594,6 @@ function setActiveItem(view, targetItem) {
     const activeItem = getActiveItem(view)
     activeItem.classList.remove('active')
     targetItem.classList.add('active')
-    // const targetIndex = targetItem.getAttribute('data-page')
-    // view.setAttribute('data-active-page', targetIndex)
 }
 
 function getItemByIndex(view, index) {
@@ -773,6 +782,10 @@ function setItemAspectRatio(view) {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // MISC
+
+function clamp(value, min, max) {
+    return Math.max(min, Math.min(value, max));
+}
 
 /*
 * https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md#feature-detection
