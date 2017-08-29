@@ -57,24 +57,21 @@ Additionally, <kbd title="tab key">⇥</kbd> and <kbd>Shift</kbd><kbd title="tab
 
 
 
-## Known Bugs
+## Known Issues
 
 - Scalability: Many slide decks cause the initialization script to run very long (Dynamically loading documents [e.g. like infinite scrolling] is doable with `IntersectionObserver`)
 - ImageMagick occasionally creates transparent PNGs (For documents with a specific background color, this might have a drastic impact on perceivability)
 - documents `unit-en-radial-basis-functions.pdf`, `unit-de-conceptual-design3.pdf`, `unit-de-relational-design0.pdf` have no PNGs (e.g. all entries with only one page)
 - Holding the modifier key currently shows an `ew-resize` cursor on containers. That signifies a click-and-drag interaction instead of the intended scrolling interaction. However <kbd>Alt</kbd><kbd>Click-dragging</kbd> on Ubuntu is an OS-level feature that allows dragging a window. It cannot be disabled via JavaScript’s `event.preventDefault()`. Therefor, the `ew-resize` cursor is not appropriate.
-- `overflow: hidden;` on a document container hides the scrollbars as intended but disables scrolling which is not intended on mobile platforms. Possible solutions: Show scrollbars on desktop platforms *or* reimplement horizontal scrolling on mobile platforms (requires UA-sniffing)
-- Negative margins to collapse borders leads to last items showing a border that is one pixel off.
+- Modifiers are somewhat problematic:
+  - Holding <kbd>Alt</kbd> triggers the browser menu bar on some platforms.
+  - Holding <kbd>Ctrl</kbd> while scrolling usually adjusts the zoom level
+- <s>Negative margins to collapse borders leads to last items showing a border that is one pixel off.</s>
+- <s>`overflow: hidden;` on a document container hides the scrollbars as intended but disables scrolling which is not intended on mobile platforms. Possible solutions: Show scrollbars on desktop platforms *or* reimplement horizontal scrolling on mobile platforms (requires UA-sniffing)</s>
 - <s>Adding new documents after the initial scripts are already executed results in non-interactive documents since no event listener have been attached etc. (The initialization logic needs to re-evaluatable) → Adding/removing documents needs to trigger a reevaluation of all kinds of event listeners etc.</s>
 - <s>Lazy-loading doesn’t work reliably when `img` elements are nested in `div`’s (Needs further investigation)</s> (Fixed via af5b3017)
 - <s>The horizontal sliders do not align correctly with the slide matrix when scrolling to the end</s> (Fixed by the new slider logic)
 - <s>In Chrome, dragscrolling sometimes selects content despite the CSS rules preventing that, causing hickups</s> (Fixed via c238ea31)
-
-
-
-## Ideas
-
-- When multiple interactions are possible, we need to keep track of which component has the *interaction focus*. For example, the document explorer should have the interaction focus by default (enabling arrow key navigation). If a filter component has focus, the keyboard navigation need not trigger (in order to allow usual keys to work in input fields)
 
 
 
