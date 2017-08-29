@@ -135,17 +135,6 @@ button:enabled:focus {
     outline: 2px solid var(--color-accent-light);
 }
 
-.wrapper {
-    padding-left: var(--base-spacing);
-}
-
-@media only screen and (min-width: 1000px) {
-    .wrapper {
-        margin-right: calc(var(--base-spacing) * 2);
-        margin-left: calc(var(--base-spacing) * 2);
-    }
-}
-
 .toolbox {
     position: fixed;
     will-change: transform;
@@ -358,8 +347,8 @@ td .shortcut {
     position: relative;
 }
 
-.doc-view:hover::before,
-.doc__page:hover::before {
+.doc-view.active::before,
+.doc-view.active .doc__page.active::before {
     content: "";
     pointer-events: none;
     position: absolute;
@@ -369,12 +358,13 @@ td .shortcut {
     left: 0;
     background-color: var(--color-accent);
     opacity: 0.15;
+    transition: all 0.1s ease-in;
 }
 
-.doc-view:hover::before {
+.doc-view.active::before {
     z-index: calc(var(--plane-document) + 10);
 }
 
-.doc__page:hover::before {
+.doc__page.active::before {
     z-index: calc(var(--plane-document) + 20);
 }
