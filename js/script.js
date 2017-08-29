@@ -576,15 +576,15 @@ let focusedElementBeforeModal
 */
 function enableModalButtons() {
     Array.from(document.querySelectorAll('.open-modal')).forEach(button => {
-        button.addEventListener('click', openModal)
+        button.addEventListener('click', event => openModal(event))
     })
 
     Array.from(document.querySelectorAll('.close-modal')).forEach(button => {
-        button.addEventListener('click', closeModal)
+        button.addEventListener('click', event => closeModal(event))
     })
 }
 
-function openModal() {
+function openModal(event) {
     const targetClass = event.currentTarget.getAttribute('data-target-modal')
     const modal = document.querySelector(`.${targetClass}`)
 
@@ -608,7 +608,7 @@ function openModal() {
     modal.addEventListener('click', closeModalOnBackground)
 }
 
-function closeModal() {
+function closeModal(event) {
     const modal = event.target.closest('.modal')
 
     if (modal === null) {
@@ -629,22 +629,22 @@ function closeModal() {
     focusedElementBeforeModal.focus()
 }
 
-function closeModalOnBackground() {
+function closeModalOnBackground(event) {
     if (event.target === event.currentTarget) {
-        closeModal()
+        closeModal(event)
     }
 }
 
-function closeModalOnEscape() {
+function closeModalOnEscape(event) {
     if (event.keyCode === 27) {
-        closeModal()
+        closeModal(event)
     }
 }
 
 /*
 * Make it impossible to focus an element outside the modal
 */
-function trapTabKey() {
+function trapTabKey(event) {
     if (event.keyCode !== 9) {
         return
     }
