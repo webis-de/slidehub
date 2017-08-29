@@ -226,15 +226,18 @@ function setDocumentWidth(doc) {
 function enableDocumentScrolling(view) {
     let prevX
     let touched = false
+    let transitionValue
+    let doc
 
     view.addEventListener('touchstart', function(event) {
-        setActiveView(view)
-
         if (config.moveViewItemsWithTransform) {
             view.style.setProperty('will-change', 'transform')
         }
-        document.documentElement.setAttribute('data-touched', '')
+
         touched = true
+        doc = view.querySelector(config.class.doc)
+        transitionValue = getComputedStyle(doc).getPropertyValue('transition')
+        doc.style.setProperty('transition', 'none')
 
         prevX = event.targetTouches[0].clientX
     }, supportsPassive ? { passive: true }: false)
@@ -244,7 +247,8 @@ function enableDocumentScrolling(view) {
             const currentX = event.targetTouches[0].clientX
             const offset = currentX - prevX
             const newItemX = getViewPixelPos(view) - offset
-            setViewPixelPos(view, newItemX)
+            const disableTransition = true
+            setViewPixelPos(view, newItemX, disableTransition)
             prevX = currentX
         }
     }, supportsPassive ? { passive: true }: false)
@@ -257,8 +261,9 @@ function enableDocumentScrolling(view) {
             if (config.moveViewItemsWithTransform) {
                 view.style.setProperty('will-change', 'auto')
             }
+
             touched = false
-            document.documentElement.removeAttribute('data-touched')
+            doc.style.setProperty('transition', transitionValue)
         }
     }, supportsPassive ? { passive: true }: false)
 }
@@ -501,7 +506,7 @@ function setViewPos(view, itemPos) {
     setViewPixelPos(view, itemX)
 }
 
-function setViewPixelPos(view, itemX) {
+function setViewPixelPos(view, itemX, disableTransition = false) {
     const doc = view.querySelector(config.class.doc)
 
     if (config.moveViewItemsWithTransform) {

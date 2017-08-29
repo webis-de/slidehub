@@ -273,9 +273,7 @@ td .shortcut {
 .doc {
     /* Clears floated .doc__page elements */
     display: flow-root;
-}
 
-:root:not([data-touched]) .doc {
     transition: transform 0.1s ease-in-out;
 }
 
