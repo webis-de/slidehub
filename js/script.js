@@ -143,12 +143,12 @@ function initialize(webRoot) {
             supportsPassive ? { passive: true } : false
         )
 
-        document.body.addEventListener(
+        /*document.body.addEventListener(
             'mousemove',
             handleMouseMoveFocus,
             // Not permitted to call preventDefault
             supportsPassive ? { passive: true } : false
-        )
+        )*/
     })
 }
 
@@ -173,6 +173,8 @@ function loadDocumentAsync() {
         state.viewObserver.observe(view)
         setDocumentWidth(view.querySelector(config.class.doc))
         enableDocumentScrolling(view)
+        activateViewOnHover(view)
+        activateItemsOnHover(view)
         resolve()
     })
 }
@@ -345,6 +347,7 @@ function activateDocumentOnFocus(event) {
 }
 
 function handleMouseMoveFocus(event) {
+    console.log('mousemove')
     const view = event.target.closest(config.class.view)
     const item = event.target.closest(config.class.item)
 
@@ -354,6 +357,20 @@ function handleMouseMoveFocus(event) {
 
     setActiveView(view)
     setActiveItem(view, item)
+}
+
+function activateViewOnHover(view) {
+    view.addEventListener('mouseenter', function(event) {
+        setActiveView(event.currentTarget)
+    })
+}
+
+function activateItemsOnHover(view) {
+    const items = Array.from(view.querySelectorAll(config.class.item))
+    items.forEach(item => item.addEventListener('mouseenter', function(event) {
+        const view = event.currentTarget.closest(config.class.view)
+        setActiveItem(view, event.currentTarget)
+    }))
 }
 
 function handleItemLinking(event) {
