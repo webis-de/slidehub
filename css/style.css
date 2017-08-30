@@ -3,12 +3,12 @@
 
     --color-text: #000;
     --color-background: #fff;
-    --color-accent: #4070c5;
-    --color-accent-light: #8cb3f9;
-    --color-accent-dark: #2c56a0;
-    --color-grey: #d3d3d3;
-    --color-grey-light: #efefef;
-    --color-grey-dark: #666;
+    --color-accent: hsl(220, 50%, 50%);
+    --color-accent-light: hsl(220, 80%, 80%);
+    --color-accent-dark: hsl(220, 50%, 30%);
+    --color-grey: hsl(0, 0%, 80%);
+    --color-grey-light: hsl(0, 0%, 95%);
+    --color-grey-dark: hsl(0, 0%, 20%);
 
     /* Hierarchy of z-index values (i.e. planes) */
     --plane-document: 200;
@@ -156,12 +156,22 @@ button:enabled:focus {
     display: flex;
     align-items: center;
     padding: calc(var(--base-spacing) / 2) calc(var(--base-spacing) * 2);
-    color: var(--color-text);
-    background-color: var(--color-grey);
+    color: var(--color-background);
+    background-color: var(--color-grey-dark);
 }
 
 .toolbox a {
     color: currentColor;
+}
+
+.toolbox button:enabled {
+    color: currentColor;
+    background-color: var(--color-grey-dark);
+    border-color: var(--color-background);
+}
+
+.toolbox button:enabled:hover {
+    background-color: var(--color-accent);
 }
 
 .toolbox > *:not(:last-child) {
