@@ -14,7 +14,7 @@ const config = {
 
     minimalDocumentHeight: true,
 
-    // HTML classes that are used in the application
+    // HTML classes that are used by the CSS
     class: {
         main: '.main-content',
         view: '.doc-view',
@@ -22,7 +22,53 @@ const config = {
         item: '.doc__page'
     },
 
+    // Modifier key. Possible values: `ctrlKey`, `shiftKey`, `altKey`
     modifierKey: 'shiftKey'
+}
+
+
+
+/*
+* Features
+*/
+const features = {
+
+    wheelNavigation: {
+        enable: function() {
+            document.addEventListener('wheel', handleWheelNavigation, activeListener)
+        },
+        disable: function() {
+            document.removeEventListener('wheel', handleWheelNavigation, activeListener)
+        }
+    },
+
+    keyboardNavigation: {
+        enable: function() {
+            document.addEventListener('keydown', handleKeyboardInput, activeListener)
+        },
+        disable: function() {
+            document.removeEventListener('keydown', handleKeyboardInput, activeListener)
+        }
+    },
+
+    itemLinking: {
+        enable: function() {
+            document.addEventListener('keydown', handleItemLinking, passiveListener)
+        },
+        disable: function() {
+            document.removeEventListener('keydown', handleItemLinking, passiveListener)
+        }
+    },
+
+    activatingOnHover: {
+        enable: function() {
+            document.body.addEventListener('mousemove', activateOnHover, passiveListener)
+        },
+        disable: function() {
+            document.body.removeEventListener('mousemove', activateOnHover, passiveListener)
+        }
+    }
+
 }
 
 const state = {
@@ -119,33 +165,7 @@ function initialize(webRoot) {
         enableModalButtons()
         enableModifier()
 
-        document.addEventListener(
-            'wheel',
-            handleWheelNavigation,
-            // Permitted to call preventDefault
-            supportsPassive ? { passive: false } : false
-        )
-
-        document.addEventListener(
-            'keydown',
-            handleKeyboardInput,
-            // Permitted to call preventDefault
-            supportsPassive ? { passive: false } : false
-        )
-
-        document.addEventListener(
-            'keydown',
-            handleItemLinking,
-            // Not permitted to call preventDefault
-            supportsPassive ? { passive: true } : false
-        )
-
-        /*document.body.addEventListener(
-            'mousemove',
-            handleMouseMoveFocus,
-            // Not permitted to call preventDefault
-            supportsPassive ? { passive: true } : false
-        )*/
+        Object.values(features).forEach(feature => feature.enable())
     })
 }
 
@@ -354,7 +374,7 @@ function handleKeyboardInput(event) {
     controlKey[keyName].trigger(event)
 }
 
-/*function handleMouseMoveFocus(event) {
+function activateOnHover(event) {
     const view = event.target.closest(config.class.view)
     const item = event.target.closest(config.class.item)
 
@@ -364,7 +384,7 @@ function handleKeyboardInput(event) {
 
     setActiveView(view)
     setActiveItem(view, item)
-}*/
+}
 
 
 
@@ -812,6 +832,10 @@ try {
     });
     window.addEventListener('test', null, opts)
 } catch (event) {}
+
+const activeListener = supportsPassive ? { passive: false } : false
+const passiveListener = supportsPassive ? { passive: true } : false
+
 
 function getFloatPropertyValue(element, property) {
     const value = getComputedStyle(element).getPropertyValue(property)
