@@ -33,6 +33,15 @@ const config = {
 */
 const features = {
 
+  core: {
+    enable: function() {
+      enableModalButtons();
+    },
+    disable: function() {
+      console.error('Can’t disable core feature.');
+    }
+  },
+
   wheelNavigation: {
     enable: function() {
       enableModifier();
@@ -64,7 +73,7 @@ const features = {
 
   activatingOnHover: {
     enable: function() {
-      document.body.addEventListener('mousemove', activateOnHover, passiveListener);
+      // document.body.addEventListener('mousemove', activateOnHover, passiveListener);
     },
     disable: function() {
       document.body.removeEventListener('mousemove', activateOnHover, passiveListener);
@@ -164,7 +173,6 @@ function initialize(webRoot) {
       .then(onFirstDocumentLoaded, onDocumentReject)
       .catch(message => { console.error(message) });
 
-    enableModalButtons();
 
     Object.values(features).forEach(feature => feature.enable());
   });
@@ -425,7 +433,7 @@ function openItem(view, ctrlKey) {
 
 
 /*
-* Modifier.
+* Modifier keys.
 */
 function enableModifier() {
   const modifier = config.modifierKey.replace('Key', '');
@@ -467,7 +475,9 @@ function onModifierBlur() {
 
 
 
-
+/*
+* Mouse wheel item navigation
+*/
 function handleWheelNavigation(event) {
   // No special scrolling without modifier
   if (event[config.modifierKey] === false) {
@@ -506,9 +516,9 @@ function moveView(distance) {
   // moveItem(distance)
 
   let currentViewPos = getViewPos(view)
-  if (isNotAligned(currentViewPos)) {
-    currentViewPos = Math.round(currentViewPos)
-  }
+  // if (isNotAligned(currentViewPos)) {
+  //   currentViewPos = Math.round(currentViewPos)
+  // }
   setViewPos(view, currentViewPos + distance)
 }
 
@@ -541,10 +551,10 @@ function moveItem(distance) {
   }
 
   // Move view if it’s not aligned
-  let currentViewPos = getViewPos(view)
-  if (isNotAligned(currentViewPos) && Math.sign(distance) < 0) {
-    setViewPos(view, Math.floor(currentViewPos))
-  }
+  // let currentViewPos = getViewPos(view)
+  // if (isNotAligned(currentViewPos) && Math.sign(distance) < 0) {
+  //   setViewPos(view, Math.floor(currentViewPos))
+  // }
 }
 
 function getViewPos(view) {
@@ -568,15 +578,20 @@ function setViewPos(view, itemPos) {
   }
 
   const doc = view.querySelector(config.class.doc)
-  const maxPos = getOuterWidth(doc) - getOuterWidth(view)
-  if (itemPos < 0) {
-    itemPos = 0
-  }
+  const maxPos = getItemCount(view) - state.visibleItems
+  itemPos = clamp(itemPos, 0, maxPos)
+  // if (itemPos < 0) {
+  //   itemPos = 0
+  // }
+  // else if (itemPos > maxPos) {
+  //   itemPos = maxPos
+  // }
 
   let itemX = itemPos * config.itemWidth
-  if (itemX > maxPos) {
-    itemX = maxPos
-  }
+  // const maxX = getOuterWidth(doc) - getOuterWidth(view)
+  // if (itemX > maxX) {
+  //   itemX = maxX
+  // }
 
   setViewPixelPos(view, itemX)
 }
@@ -652,9 +667,9 @@ function getItemByIndex(view, index) {
 
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// MODAL WINDOW
-
+/*
+* Modal window
+*/
 let focusedElementBeforeModal
 
 /*
@@ -691,9 +706,9 @@ function openModal(event) {
   getFocusableElements(modal)[0].focus()
 
   // Setup event listeners
-  modal.addEventListener('keydown', closeModalOnEscape)
-  modal.addEventListener('keydown', trapTabKey)
-  modal.addEventListener('click', closeModalOnBackground)
+  modal.addEventListener('keydown', closeModalOnEscape, passiveListener)
+  modal.addEventListener('keydown', trapTabKey, activeListener)
+  modal.addEventListener('click', closeModalOnBackground, passiveListener)
 }
 
 function closeModal(event) {
@@ -709,9 +724,9 @@ function closeModal(event) {
   modal.classList.add('closed')
 
   // Clean up event listeners
-  modal.removeEventListener('keydown', closeModalOnEscape)
-  modal.removeEventListener('keydown', trapTabKey)
-  modal.removeEventListener('click', closeModalOnBackground)
+  modal.removeEventListener('keydown', closeModalOnEscape, passiveListener)
+  modal.removeEventListener('keydown', trapTabKey, activeListener)
+  modal.removeEventListener('click', closeModalOnBackground, passiveListener)
 
   // Restore previously focused element
   focusedElementBeforeModal.focus()
