@@ -39,7 +39,7 @@ Additionally, <kbd title="tab key">⇥</kbd> and <kbd>Shift</kbd><kbd title="tab
 
 
 
-## TODOs
+## To Do
 
 - Title bar that is always displayed with some basic information
 - Organization of slides by, e.g., topic, year, etc.
@@ -53,6 +53,7 @@ Additionally, <kbd title="tab key">⇥</kbd> and <kbd>Shift</kbd><kbd title="tab
 - Study the quality-size trade-off of slide PNGs
 - Store often-used properties globally (e.g. page width)
 - Implement horizontal scrolling for document containers
+- Evaluate whether to set `will-change: contents;` when moving pages
 - <s>Re-calculate page item sizes to avoid sub-pixel values</s>
 
 
