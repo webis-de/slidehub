@@ -35,9 +35,11 @@ const features = {
 
   wheelNavigation: {
     enable: function() {
+      enableModifier();
       document.addEventListener('wheel', handleWheelNavigation, activeListener);
     },
     disable: function() {
+      disableModifier();
       document.removeEventListener('wheel', handleWheelNavigation, activeListener);
     }
   },
@@ -91,7 +93,7 @@ const modifierKeyNames = Object.freeze({
 *
 * Removing an entry here disables its application-related interactions
 */
-const controlKeyName = Object.freeze({
+const controlKeyNames = Object.freeze({
   // 9: 'tabKey',
   35: 'endKey',
   36: 'homeKey',
@@ -163,7 +165,6 @@ function initialize(webRoot) {
       .catch(message => { console.error(message) });
 
     enableModalButtons();
-    enableModifier();
 
     Object.values(features).forEach(feature => feature.enable());
   });
@@ -362,16 +363,11 @@ function getFullyVisibleItems() {
 // NAVIGATION
 
 function handleKeyboardInput(event) {
-  // Get key name from key code
-  const keyName = controlKeyName[event.keyCode]
-
-  // If the pressed key is no control key …
-  if (keyName === undefined) {
-    return
+  if (event.keyCode in controlKeyNames) {
+    event.preventDefault()
+    const keyName = controlKeyNames[event.keyCode]
+    controlKey[keyName].trigger(event)
   }
-
-  event.preventDefault()
-  controlKey[keyName].trigger(event)
 }
 
 function activateOnHover(event) {
@@ -391,6 +387,8 @@ function activateOnHover(event) {
 
 
 /*
+* Item Linking.
+*
 * Open an items’ source document (e.g. a PDF page) by pressing <kbd>Return</kbd>.
 */
 function handleItemLinking(event) {
@@ -426,33 +424,49 @@ function openItem(view, ctrlKey) {
 
 
 
+/*
+* Modifier.
+*/
 function enableModifier() {
-  const modifier = config.modifierKey.replace('Key', '')
-  document.documentElement.setAttribute('data-modifier', modifier)
-  const modifierKBDElements = Array.from(document.querySelectorAll('.shortcut__modifier'))
-  modifierKBDElements.forEach(element => element.innerText = modifier)
+  const modifier = config.modifierKey.replace('Key', '');
+  const modifierElements = Array.from(document.querySelectorAll('.shortcut__modifier'));
+  modifierElements.forEach(element => element.innerText = modifier);
 
-  document.addEventListener('keydown', function(event) {
-    const modifier = modifierKeyNames[event.keyCode]
-    if (modifier === config.modifierKey) {
-      const doc = state.activeView.querySelector(config.class.doc)
-      doc.style.setProperty('cursor', 'ew-resize')
-    }
-  })
+  document.addEventListener('keydown', onModifierDown, passiveListener);
+  document.addEventListener('keyup', onModifierUp, passiveListener);
+  window.addEventListener('blur', onModifierBlur, passiveListener);
+}
 
-  document.addEventListener('keyup', function(event) {
-    const modifier = modifierKeyNames[event.keyCode]
-    if (modifier === config.modifierKey) {
-      const doc = state.activeView.querySelector(config.class.doc)
-      doc.style.setProperty('cursor', 'auto')
-    }
-  })
+function disableModifier() {
+  document.removeEventListener('keydown', onModifierDown, passiveListener);
+  document.removeEventListener('keyup', onModifierUp, passiveListener);
+  window.removeEventListener('blur', onModifierBlur, passiveListener);
+}
 
-  window.addEventListener('blur', function(event) {
+function onModifierDown(event) {
+  const modifierKey = modifierKeyNames[event.keyCode]
+  if (modifierKey === config.modifierKey) {
+    const doc = state.activeView.querySelector(config.class.doc)
+    doc.style.setProperty('cursor', 'ew-resize')
+  }
+}
+
+function onModifierUp(event) {
+  const modifierKey = modifierKeyNames[event.keyCode]
+  if (modifierKey === config.modifierKey) {
     const doc = state.activeView.querySelector(config.class.doc)
     doc.style.setProperty('cursor', 'auto')
-  })
+  }
 }
+
+function onModifierBlur() {
+  const doc = state.activeView.querySelector(config.class.doc)
+  doc.style.setProperty('cursor', 'auto')
+}
+
+
+
+
 
 function handleWheelNavigation(event) {
   // No special scrolling without modifier
