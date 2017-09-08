@@ -136,8 +136,8 @@ function initialize(webRoot) {
         document.addEventListener(
             'keydown',
             handleItemLinking,
-            // Permitted to call preventDefault
-            supportsPassive ? { passive: false } : false
+            // Not permitted to call preventDefault
+            supportsPassive ? { passive: true } : false
         )
 
         /*document.body.addEventListener(
@@ -195,13 +195,18 @@ function createDocumentMarkup(docName, itemCount) {
         </div>`
     }
 
-    const anchorTarget = `${assetPath}/${docName}`
+    const docSource = `${assetPath}/${docName}`
 
-    return `<div class="${config.class.view.slice(1)}" id="${docName}" data-page-count="${itemCount + 1}">
+    return `
+    <div
+        class="${config.class.view.slice(1)}"
+        id="${docName}"
+        data-doc-source="${docSource}"
+        data-page-count="${itemCount + 1}">
         <div class="${config.class.doc.slice(1)}">
             <div class="${config.class.item.slice(1)} doc-info active" data-page="0">
                 <h2 class="doc-title">
-                    <a href="${anchorTarget}">${docName}</a>
+                    <a href="${docSource}">${docName}</a>
                 </h2>
                 by <span class="doc-author">author</span>,
                 <span class="doc-pages-count">${itemCount}</span> pages,
@@ -346,7 +351,6 @@ function handleKeyboardInput(event) {
     }
 
     event.preventDefault()
-
     controlKey[keyName].trigger(event)
 }
 
@@ -362,11 +366,20 @@ function handleKeyboardInput(event) {
     setActiveItem(view, item)
 }*/
 
+
+
+
+
+/*
+* Open an items’ source document (e.g. a PDF page) by pressing <kbd>Return</kbd>.
+*/
 function handleItemLinking(event) {
     if (event.keyCode !== 13) {
         return
     }
 
+    // Focusable elements have a default behavior (e.g. activating a link)
+    // That behavior shall not be altered/extended.
     if (isFocusable(event.target)) {
         return
     }
@@ -377,21 +390,21 @@ function handleItemLinking(event) {
 }
 
 function openItem(view, ctrlKey) {
-    const documentAnchor = view.querySelector(`${config.class.item} a`)
-
-    if (documentAnchor === null) {
-        return
-    }
-
+    const docSource = view.getAttribute('data-doc-source')
     const itemIndex = getActiveItem(view).getAttribute('data-page')
-    const documentLink = `${documentAnchor.href}#page=${itemIndex}`
+    const fragment = itemIndex !== '0' ? `#page=${itemIndex}` : ''
+    const itemSource = docSource + fragment
 
     if (ctrlKey) {
-        window.open(documentLink)
+        window.open(itemSource)
     } else {
-        window.location.href = documentLink
+        window.location.href = itemSource
     }
 }
+
+
+
+
 
 function enableModifier() {
     const modifier = config.modifierKey.replace('Key', '')
