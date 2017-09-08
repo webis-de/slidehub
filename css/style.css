@@ -290,7 +290,7 @@ td .shortcut {
     /* Clears floated .doc__page elements */
     display: flow-root;
 
-    transition: transform 0.1s ease-in-out;
+    /*transition: transform 0.1s ease-in-out;*/
 }
 
 .doc.select-disabled {
@@ -309,6 +309,7 @@ td .shortcut {
 
     border: var(--border-width) solid var(--color-grey);
     margin: calc(-1 * var(--border-width));
+    margin-right: 0;
     /*padding: var(--border-width);*/
 
     /* Make sure transparent slides appear on white background */
