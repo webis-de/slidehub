@@ -9,6 +9,7 @@
     --color-grey: hsl(0, 0%, 80%);
     --color-grey-light: hsl(0, 0%, 95%);
     --color-grey-dark: hsl(0, 0%, 20%);
+    --color-text-disabled: hsl(0, 0%, 70%);
 
     /* Hierarchy of z-index values (i.e. planes) */
     --plane-document: 200;
@@ -115,15 +116,23 @@ button {
 }
 
 button {
-    border: 2px solid #000;
+    border: 2px solid var(--color-grey-dark);
     padding: calc(var(--base-spacing) / 4) var(--base-spacing);
     color: var(--color-text);
     background-color: var(--color-background);
 }
 
+input:disabled,
+button:disabled,
+select:disabled,
+optgroup:disabled,
+option:disabled,
+select[disabled] > option {
+    color: var(--color-text-disabled);
+}
+
 button:disabled {
-    color: var(--color-grey-dark);
-    border-color: var(--color-grey-dark);
+    border-color: var(--color-grey);
 }
 
 button:enabled:hover,
@@ -168,6 +177,15 @@ button:enabled:focus {
     color: currentColor;
     background-color: var(--color-grey-dark);
     border-color: var(--color-background);
+}
+
+.toolbox input:disabled,
+.toolbox button:disabled,
+.toolbox select:disabled,
+.toolbox optgroup:disabled,
+.toolbox option:disabled,
+.toolbox select[disabled] > option {
+    color: var(--color-text-disabled);
 }
 
 .toolbox button:enabled:hover {
@@ -310,7 +328,6 @@ td .shortcut {
     border: var(--border-width) solid var(--color-grey);
     margin: calc(-1 * var(--border-width));
     margin-right: 0;
-    /*padding: var(--border-width);*/
 
     /* Make sure transparent slides appear on white background */
     background-color: var(--color-background);
@@ -366,15 +383,6 @@ td .shortcut {
     position: relative;
 }
 
-/*
-* Avoid Edge 15 up-inheriting custom property values from pseudo elements.
-*/
-.doc-view.active .doc,
-.doc-view.active .doc__page.active {
-    background-color: inherit !important;
-    z-index: inherit !important;
-}
-
 .doc-view.active .doc::before,
 .doc-view.active .doc__page.active::before {
     content: "";
@@ -387,7 +395,7 @@ td .shortcut {
     background-color: hsl(220, 50%, 50%);
     /*background-color: var(--color-accent);*/
     opacity: 0.15;
-    transition: all 0.1s ease-in;
+    /*transition: all 0.1s ease-in;*/
 }
 
 .doc-view.active .doc::before {
