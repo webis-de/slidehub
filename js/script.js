@@ -175,7 +175,6 @@ function initialize(webRoot) {
       .then(onFirstDocumentLoaded, onDocumentReject)
       .catch(message => { console.error(message) });
 
-
     Object.values(features).forEach(feature => feature.enable());
   });
 };
@@ -373,7 +372,7 @@ function getFullyVisibleItems() {
 // NAVIGATION
 
 function handleKeyboardInput(event) {
-  if (controlKeyNames.hasOwnProperty(event.keyCode)) {
+  if (event.keyCode in controlKeyNames) {
     event.preventDefault()
     const keyName = controlKeyNames[event.keyCode]
     controlKey[keyName].trigger(event)
