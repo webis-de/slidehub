@@ -94,14 +94,30 @@ th {
     font-weight: bold;
 }
 
+kbd,
+.shortcut {
+    font-family: "Fira Mono", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+}
+
 kbd {
     padding: calc(var(--base-spacing) / 4) var(--base-spacing);
     border: 1px solid var(--color-grey);
     border-radius: 4px;
     box-shadow: 0 1px var(--color-grey-dark);
-    /*font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";*/
-    font-family: "Fira Mono", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
     text-transform: capitalize;
+}
+
+.shortcut {
+    display: flex;
+    align-items: baseline;
+}
+
+.shortcut + .shortcut {
+    margin-left: calc(var(--base-spacing) / 6);
+}
+
+.shortcut *:not(:first-child) {
+    margin-left: calc(var(--base-spacing) / 6);
 }
 
 fieldset {
@@ -319,18 +335,19 @@ button[aria-checked="false"]:disabled .state--false {
     margin-right: calc(var(--base-spacing) * 2);
 }
 
-.shortcut-group:not(:last-child) {
-    margin-bottom: calc(var(--base-spacing) / 2);
+.trigger-head {
+    text-align: right;
 }
 
-td .shortcut {
+.shortcut-group {
     display: flex;
     justify-content: flex-end;
 }
 
-.shortcut kbd + kbd {
-    margin-left: calc(var(--base-spacing) / 4);
+.shortcut-group:not(:last-child) {
+    margin-bottom: calc(var(--base-spacing) / 2);
 }
+
 
 
 
