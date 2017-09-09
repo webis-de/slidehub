@@ -366,7 +366,16 @@ td .shortcut {
     position: relative;
 }
 
-.doc-view.active::before,
+/*
+* Avoid Edge 15 up-inheriting custom property values from pseudo elements.
+*/
+.doc-view.active .doc,
+.doc-view.active .doc__page.active {
+    background-color: inherit !important;
+    z-index: inherit !important;
+}
+
+.doc-view.active .doc::before,
 .doc-view.active .doc__page.active::before {
     content: "";
     pointer-events: none;
@@ -375,15 +384,18 @@ td .shortcut {
     right: 0;
     bottom: 0;
     left: 0;
-    background-color: var(--color-accent);
+    background-color: hsl(220, 50%, 50%);
+    /*background-color: var(--color-accent);*/
     opacity: 0.15;
     transition: all 0.1s ease-in;
 }
 
-.doc-view.active::before {
-    z-index: calc(var(--plane-document) + 10);
+.doc-view.active .doc::before {
+    z-index: 20;
+    /*z-index: calc(var(--plane-document) + 10);*/
 }
 
-.doc__page.active::before {
-    z-index: calc(var(--plane-document) + 20);
+.doc-view.active .doc__page.active::before {
+    z-index: 30;
+    /*z-index: calc(var(--plane-document) + 20);*/
 }
