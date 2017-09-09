@@ -1,0 +1,492 @@
+:root {
+    --base-spacing: 12px;
+
+    --color-text: #000;
+    --color-background: #fff;
+    --color-accent: hsl(220, 50%, 50%);
+    --color-accent-light: hsl(220, 80%, 80%);
+    --color-accent-dark: hsl(220, 50%, 30%);
+    --color-grey: hsl(0, 0%, 80%);
+    --color-grey-light: hsl(0, 0%, 95%);
+    --color-grey-dark: hsl(0, 0%, 20%);
+    --color-text-disabled: hsl(0, 0%, 70%);
+
+    /* Hierarchy of z-index values (i.e. planes) */
+    --plane-document: 200;
+    --plane-toolbox: 300;
+    --plane-modal: 400;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    overflow-y: scroll;
+    font-size: 1em;
+    line-height: 1.5;
+    /* GitHub system font stack */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    color: var(--color-text);
+    background-color: var(--color-background);
+}
+
+body,
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+}
+
+/**
+ * Set `margin-bottom` to maintain vertycal rhythm
+ */
+h1, h2, h3, h4, h5, h6,
+p, blockquote, pre,
+ul, ol, dl,
+figure {
+    margin-bottom: 1.5rem;
+}
+
+a {
+    color: var(--color-accent);
+    text-decoration: none;
+}
+
+a:visited {
+    color: var(--color-accent-dark);
+}
+
+a:hover,
+a:active {
+    text-decoration: underline;
+}
+
+img {
+    max-width: 100%;
+    border: 0;
+}
+
+img,
+svg {
+    vertical-align: middle;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+table, tbody, tfoot, thead, tr, th, td {
+    margin: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+th, td {
+    padding: calc(var(--base-spacing) / 2);
+}
+
+th {
+    text-align: left;
+    font-weight: bold;
+}
+
+kbd,
+.shortcut {
+    font-family: "Fira Mono", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+}
+
+kbd {
+    padding: calc(var(--base-spacing) / 4) var(--base-spacing);
+    border: 1px solid var(--color-grey);
+    border-radius: 4px;
+    box-shadow: 0 1px var(--color-grey-dark);
+    text-transform: capitalize;
+}
+
+.shortcut {
+    display: flex;
+    align-items: baseline;
+}
+
+.shortcut + .shortcut {
+    margin-left: calc(var(--base-spacing) / 6);
+}
+
+.shortcut *:not(:first-child) {
+    margin-left: calc(var(--base-spacing) / 6);
+}
+
+fieldset {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    overflow: visible;
+    font: inherit;
+    outline: 0;
+    border: 0;
+    padding: 0;
+}
+
+fieldset {
+    padding: calc(var(--base-spacing) / 2);
+}
+
+button {
+    border: 2px solid var(--color-grey-dark);
+    padding: calc(var(--base-spacing) / 4) var(--base-spacing);
+    color: var(--color-text);
+    background-color: var(--color-background);
+}
+
+input:disabled,
+button:disabled,
+select:disabled,
+optgroup:disabled,
+option:disabled,
+select[disabled] > option {
+    color: var(--color-text-disabled);
+}
+
+button:disabled {
+    border-color: var(--color-grey);
+}
+
+button:enabled:hover,
+button:enabled:active {
+    background-color: var(--color-accent-light);
+}
+
+button:enabled:focus {
+    outline: 2px solid var(--color-accent-light);
+}
+
+.form-label {
+    display: block;
+}
+
+/*
+* Switch button
+*/
+.form-group--switch {
+    display: flex;
+    align-items: center;
+}
+
+.form-group--switch:not(:last-child) {
+    margin-bottom: calc(var(--base-spacing) / 2);
+    padding-bottom: calc(var(--base-spacing) / 2);
+    border-bottom: 1px solid var(--color-grey);
+}
+
+.form-group--switch .form-label {
+    flex: 1;
+    margin-right: var(--base-spacing);
+}
+
+button[aria-checked] {
+    display: flex;
+    padding: 2px;
+}
+
+button[aria-checked]:enabled:hover {
+    background-color: var(--color-accent-light);
+}
+
+button[aria-checked]:focus {
+    outline: 2px solid var(--color-accent-light);
+}
+
+button[aria-checked] .state {
+    padding: 2px 8px;
+}
+
+button[aria-checked="true"]:enabled .state--true,
+button[aria-checked="mixed"]:enabled .state--mixed,
+button[aria-checked="false"]:enabled .state--false {
+    color: #fff;
+    background-color: #000;
+}
+
+button[aria-checked="true"]:disabled .state--true,
+button[aria-checked="mixed"]:disabled .state--mixed,
+button[aria-checked="false"]:disabled .state--false {
+    color: #fff;
+    background-color: var(--color-grey);
+}
+
+
+
+.visually-hidden {
+    clip-path: inset(100%);
+    clip: rect(1px, 1px, 1px, 1px);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+}
+
+.toolbox {
+    position: fixed;
+    will-change: transform;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: calc(var(--base-spacing) * 4);
+    z-index: var(--plane-toolbox);
+    display: flex;
+    align-items: center;
+    padding: calc(var(--base-spacing) / 2) calc(var(--base-spacing) * 2);
+    color: var(--color-background);
+    background-color: var(--color-grey-dark);
+}
+
+.toolbox a {
+    color: currentColor;
+}
+
+.toolbox button:enabled {
+    color: currentColor;
+    background-color: var(--color-grey-dark);
+    border-color: var(--color-background);
+}
+
+.toolbox input:disabled,
+.toolbox button:disabled,
+.toolbox select:disabled,
+.toolbox optgroup:disabled,
+.toolbox option:disabled,
+.toolbox select[disabled] > option {
+    color: var(--color-text-disabled);
+}
+
+.toolbox button:enabled:hover {
+    background-color: var(--color-accent);
+}
+
+.toolbox > *:not(:last-child) {
+    margin-right: calc(var(--base-spacing) * 2);
+}
+
+.site-title {
+    margin-bottom: 0;
+    font-size: 1rem;
+}
+
+.modal {
+    position: fixed;
+    will-change: transform;
+    z-index: var(--plane-modal);
+    top: 0;
+    right: 0; /* test */
+    bottom: 0; /* test */
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.modal.closed {
+    display: none;
+}
+
+.modal-content {
+    position: relative;
+    overflow: auto;
+    padding: calc(var(--base-spacing) * 2);
+    box-shadow: 0 0 10px #000;
+    background-color: var(--color-background);
+}
+
+.close-modal {
+    position: absolute;
+    top: var(--base-spacing);
+    right: var(--base-spacing);
+}
+
+.modal-content h2 {
+    margin-bottom: 0;
+    border-bottom: 1px solid var(--color-grey);
+}
+
+.interaction__trigger {
+    min-width: 130px;
+}
+
+.shortcut-table-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.shortcut-table:not(:last-child) {
+    margin-right: calc(var(--base-spacing) * 2);
+}
+
+.trigger-head {
+    text-align: right;
+}
+
+.shortcut-group {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.shortcut-group:not(:last-child) {
+    margin-bottom: calc(var(--base-spacing) / 2);
+}
+
+
+
+
+.main-content {
+    margin-top: calc(var(--base-spacing) * 4);
+    padding: var(--base-spacing);
+}
+
+.doc-view {
+    --page-aspect-ratio: 1.25;
+    --page-width: 200px;
+    --page-height: calc(var(--page-width) / var(--page-aspect-ratio));
+    --border-width: 1px;
+
+    width: 100%;
+    position: relative;
+
+    overflow: hidden;
+    border: 1px solid var(--color-grey);
+}
+
+@media only screen and (min-width: 600px) {
+    .doc-view {
+        --page-width: 300px;
+    }
+}
+
+/*
+* Collapse vertical borders by applying a negative margin on one side.
+*
+* Details: Applying a border in general leads to stacking borders when elements
+* appear right next to each other. Since `doc-view` is stacked vertically by
+* default, removing the redundant border width can be done by applying a
+* negative in one of the two dimensions.
+*/
+.doc-view:not(:last-child) {
+    margin-bottom: calc(-1 * var(--border-width));
+}
+
+.doc {
+    /* Clears floated .doc__page elements */
+    display: flow-root;
+
+    /*transition: transform 0.1s ease-in-out;*/
+}
+
+.doc.select-disabled {
+    /* as per: https://stackoverflow.com/a/4407335/2036825 */
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version */
+}
+
+.doc__page {
+    float: left;
+    width: var(--page-width);
+    height: var(--page-height);
+
+    border: var(--border-width) solid var(--color-grey);
+    margin: calc(-1 * var(--border-width));
+    margin-right: 0;
+
+    /* Make sure transparent slides appear on white background */
+    background-color: var(--color-background);
+}
+
+.doc__page:not(.doc-info) {
+    text-align: center;
+}
+
+.doc__page > img {
+    /* Maintain aspect-ratio while filling the container */
+    object-fit: contain;
+
+    /* alt text styles  */
+    margin-right: auto;
+    margin-left: auto;
+    line-height: var(--page-height);
+    font-style: italic;
+}
+
+.doc-info {
+    padding: calc(var(--base-spacing) / 2);
+    color: var(--color-grey-dark);
+}
+
+.doc-title {
+    margin-bottom: 0;
+    font-weight: normal;
+    font-size: 1rem;
+}
+
+
+
+.doc-view:focus {
+    outline: 0;
+}
+
+.doc-view:focus,
+.doc-view.active {
+    /*border-color: var(--color-accent);
+    box-shadow: 0 0 2px 0 var(--color-accent);*/
+
+    /*
+    * Elevate the active view above all other views. This is used to make its
+    * border visible when negative margins are used to collapse the border
+    * widths.
+    */
+    z-index: var(--plane-document);
+}
+
+.doc-view,
+.doc__page {
+    position: relative;
+}
+
+.doc-view.active .doc::before,
+.doc-view.active .doc__page.active::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: hsl(220, 50%, 50%);
+    /*background-color: var(--color-accent);*/
+    opacity: 0.15;
+    /*transition: all 0.1s ease-in;*/
+}
+
+.doc-view.active .doc::before {
+    z-index: 20;
+    /*z-index: calc(var(--plane-document) + 10);*/
+}
+
+.doc-view.active .doc__page.active::before {
+    z-index: 30;
+    /*z-index: calc(var(--plane-document) + 20);*/
+}

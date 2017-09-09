@@ -6,6 +6,36 @@ Each document is converted to a set of graphics—one for each page. These graph
 
 
 
+## Development Setup
+
+**Install dependencies**:
+
+Installs development and production dependencies as configured in `package.json`.
+
+```
+npm install
+```
+
+**Start local development server**:
+
+Starts a local development server and generates bundled JavaScript/CSS files in memory.
+
+```
+webpack-dev-server
+```
+
+**Generate production bundles**:
+
+Generates bundled JavaScript/CSS files on disk. This is configured in `webpack.config.js`.
+
+```
+webpack
+```
+
+/!\ **Note**: The `-p` argument is currently not supported as webpack uses uglifiy for minifying JavaScript internally, however uglify does not work with ES6 syntax (e.g. it will throw parsing errors on arrow functions, etc.).
+
+
+
 ## Features
 
 - Documents are listed row-wise with its pages displayed side-by-side in a horizontal slider
@@ -54,6 +84,7 @@ Additionally, <kbd title="tab key">⇥</kbd> and <kbd>Shift</kbd><kbd title="tab
 - Store often-used properties globally (e.g. page width)
 - Implement horizontal scrolling for document containers
 - Evaluate whether to set `will-change: contents;` when moving pages
+- Recalculate view with `IntersectionObserver` when item is not fully visible anymore
 - <s>Re-calculate page item sizes to avoid sub-pixel values</s>
 
 

@@ -4,7 +4,7 @@
 * Configuration
 */
 const config = {
-  webRoot: '.',
+  webRoot: 'https://www.uni-weimar.de/medien/webis/tmp/slides',
   itemWidth: 300,
 
   // How to position scrollable content
@@ -166,8 +166,7 @@ const controlKey = Object.freeze({
   }
 });
 
-function initialize(webRoot) {
-  config.webRoot = webRoot;
+module.exports = function () {
   initializeLazyLoader();
 
   document.addEventListener('DOMContentLoaded', function() {
