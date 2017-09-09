@@ -235,6 +235,8 @@
         </h1>
 
         <button class="open-modal" data-target-modal="modal--shortcuts" type="button" disabled>Shortcuts</button>
+
+        <button class="open-modal" data-target-modal="modal--features" type="button" disabled>Features</button>
     </header>
 
     <main class="main-content"></main>
@@ -345,6 +347,56 @@
                     </tbody>
                 </table>
             </div>
+        </div>
+    </div>
+
+    <div class="modal modal--features closed" aria-hidden="true" aria-labelledby="features-title" role="dialog">
+        <div class="modal-content" role="document">
+            <button class="close-modal" type="button">Close</button>
+
+            <h2 id="features-title">Features</h2>
+
+            <fieldset>
+                <div class="form-group form-group--switch">
+                    <span class="form-label" id="feature-keyboard-navigation">
+                        Navigate pages with keyboard
+                    </span>
+                    <button type="button" role="switch" class="form-control switch" aria-checked="true" aria-labelledby="feature-keyboard-navigation" data-feature="keyboardNavigation">
+                        <span class="state state--true">on</span>
+                        <span class="state state--false">off</span>
+                    </button>
+                </div>
+
+                <div class="form-group form-group--switch">
+                    <span class="form-label" id="feature-wheel-navigation">
+                        Navigate pages with mouse wheel
+                    </span>
+                    <button type="button" role="switch" class="form-control switch" aria-checked="true" aria-labelledby="feature-wheel-navigation" data-feature="wheelNavigation">
+                        <span class="state state--true">on</span>
+                        <span class="state state--false">off</span>
+                    </button>
+                </div>
+
+                <div class="form-group form-group--switch">
+                    <span class="form-label" id="feature-item-linking">
+                        Link pages to PDF source
+                    </span>
+                    <button type="button" role="switch" class="form-control switch" aria-checked="true" aria-labelledby="feature-item-linking" data-feature="itemLinking">
+                        <span class="state state--true">on</span>
+                        <span class="state state--false">off</span>
+                    </button>
+                </div>
+
+                <div class="form-group form-group--switch">
+                    <span class="form-label" id="feature-activating-on-hover">
+                        Activate pages on hover
+                    </span>
+                    <button type="button" role="switch" class="form-control switch" aria-checked="true" aria-labelledby="feature-activating-on-hover" data-feature="activatingOnHover">
+                        <span class="state state--true">on</span>
+                        <span class="state state--false">off</span>
+                    </button>
+                </div>
+            </fieldset>
         </div>
     </div>
 

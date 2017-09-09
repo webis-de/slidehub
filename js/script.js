@@ -36,6 +36,7 @@ const features = {
   core: {
     enable: function() {
       enableModalButtons();
+      enableToggleButtons();
     },
     disable: function() {
       console.error('Can’t disable core feature.');
@@ -73,7 +74,7 @@ const features = {
 
   activatingOnHover: {
     enable: function() {
-      // document.body.addEventListener('mousemove', activateOnHover, passiveListener);
+      document.body.addEventListener('mousemove', activateOnHover, passiveListener);
     },
     disable: function() {
       document.body.removeEventListener('mousemove', activateOnHover, passiveListener);
@@ -823,6 +824,29 @@ function isInteractive(element) {
   return false;
 }
 
+
+
+
+
+/*
+* Toggle Buttons
+*/
+function enableToggleButtons() {
+  const switches = Array.from(document.querySelectorAll('.switch'));
+  switches.forEach(switchButton => {
+    switchButton.addEventListener('click', event => {
+      const button = event.currentTarget;
+      const isChecked = button.getAttribute('aria-checked') === 'true';
+      const feature = features[button.getAttribute('data-feature')];
+      if (isChecked) {
+        feature.disable();
+      } else {
+        feature.enable();
+      }
+      button.setAttribute('aria-checked', String(!isChecked))
+    });
+  });
+}
 
 
 

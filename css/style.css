@@ -104,6 +104,12 @@ kbd {
     text-transform: capitalize;
 }
 
+fieldset {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
 button {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -113,6 +119,10 @@ button {
     outline: 0;
     border: 0;
     padding: 0;
+}
+
+fieldset {
+    padding: calc(var(--base-spacing) / 2);
 }
 
 button {
@@ -143,6 +153,62 @@ button:enabled:active {
 button:enabled:focus {
     outline: 2px solid var(--color-accent-light);
 }
+
+.form-label {
+    display: block;
+}
+
+/*
+* Switch button
+*/
+.form-group--switch {
+    display: flex;
+    align-items: center;
+}
+
+.form-group--switch:not(:last-child) {
+    margin-bottom: calc(var(--base-spacing) / 2);
+    padding-bottom: calc(var(--base-spacing) / 2);
+    border-bottom: 1px solid var(--color-grey);
+}
+
+.form-group--switch .form-label {
+    flex: 1;
+    margin-right: var(--base-spacing);
+}
+
+button[aria-checked] {
+    display: flex;
+    padding: 2px;
+}
+
+button[aria-checked]:enabled:hover {
+    background-color: var(--color-accent-light);
+}
+
+button[aria-checked]:focus {
+    outline: 2px solid var(--color-accent-light);
+}
+
+button[aria-checked] .state {
+    padding: 2px 8px;
+}
+
+button[aria-checked="true"]:enabled .state--true,
+button[aria-checked="mixed"]:enabled .state--mixed,
+button[aria-checked="false"]:enabled .state--false {
+    color: #fff;
+    background-color: #000;
+}
+
+button[aria-checked="true"]:disabled .state--true,
+button[aria-checked="mixed"]:disabled .state--mixed,
+button[aria-checked="false"]:disabled .state--false {
+    color: #fff;
+    background-color: var(--color-grey);
+}
+
+
 
 .visually-hidden {
     clip-path: inset(100%);
