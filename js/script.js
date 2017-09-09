@@ -372,7 +372,7 @@ function getFullyVisibleItems() {
 // NAVIGATION
 
 function handleKeyboardInput(event) {
-  if (event.keyCode in controlKeyNames) {
+  if (controlKeyNames.hasOwnProperty(event.keyCode)) {
     event.preventDefault()
     const keyName = controlKeyNames[event.keyCode]
     controlKey[keyName].trigger(event)
@@ -407,17 +407,13 @@ function handleItemLinking(event) {
 
   // Focusable elements have a default behavior (e.g. activating a link)
   // That behavior shall not be altered/extended.
-  // if (isFocusable(event.target)) {
-  //   return
-  // }
+  if (isInteractive(event.target)) {
+    return
+  }
 
   if (state.activeView !== null) {
     openItem(state.activeView, event.ctrlKey)
   }
-}
-
-function isFocusable(element) {
-  return element.tabIndex > -1 && element.offsetParent !== null
 }
 
 function openItem(view, ctrlKey) {
@@ -794,6 +790,38 @@ function getFocusableElements(ancestor = document) {
   return Array.from(ancestor.querySelectorAll(focusableElementsSelector));
 }
 
+function isInteractive(element) {
+  const tag = element.tagName.toLowerCase();
+  let potentiallyInteractive = false;
+  switch (true) {
+    case ['a', 'area'].includes(tag):
+      if (element.hasAttribute('href') === false) {
+        return false;
+      }
+      potentiallyInteractive = true;
+      break;
+    case ['input', 'select', 'textarea', 'button'].includes(tag):
+      if (element.disabled) {
+        return false;
+      }
+      potentiallyInteractive = true;
+      break;
+    case ['iframe', 'object', 'embed'].includes(tag):
+      potentiallyInteractive = true;
+      break;
+    default:
+      if (element.getAttribute('contenteditable') === 'true') {
+        potentiallyInteractive = true;
+      }
+      break;
+  }
+
+  if (potentiallyInteractive && element.offsetParent !== null) {
+    return true;
+  }
+
+  return false;
+}
 
 
 
