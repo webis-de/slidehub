@@ -85,7 +85,8 @@ const features = {
 const state = {
   activeView: null,
   viewObserver: null,
-  visibleItems: null
+  visibleItems: null,
+  lastFocusedElement: null
 };
 
 // Maps key codes to key names
@@ -406,13 +407,17 @@ function handleItemLinking(event) {
 
   // Focusable elements have a default behavior (e.g. activating a link)
   // That behavior shall not be altered/extended.
-  if (isFocusable(event.target)) {
-    return
-  }
+  // if (isFocusable(event.target)) {
+  //   return
+  // }
 
   if (state.activeView !== null) {
     openItem(state.activeView, event.ctrlKey)
   }
+}
+
+function isFocusable(element) {
+  return element.tabIndex > -1 && element.offsetParent !== null
 }
 
 function openItem(view, ctrlKey) {
@@ -640,8 +645,7 @@ function setActiveView(view) {
   Array.from(views).forEach(element => element.classList.remove('active'))
   state.activeView = view
   state.activeView.classList.add('active')
-  // view.focus()
-  // view.scrollIntoView(false)
+  document.activeElement.blur()
 }
 
 function getItemCount(view) {
@@ -656,6 +660,7 @@ function setActiveItem(view, targetItem) {
   const activeItem = getActiveItem(view)
   activeItem.classList.remove('active')
   targetItem.classList.add('active')
+  document.activeElement.blur()
 }
 
 function getItemByIndex(view, index) {
@@ -669,11 +674,8 @@ function getItemByIndex(view, index) {
 
 /*
 * Modal window
-*/
-let focusedElementBeforeModal
-
-/*
-* Based on some ideas from “The Incredible Accessible Modal Window” by Greg Kraus
+*
+* Based on ideas from “The Incredible Accessible Modal Window” by Greg Kraus
 * https://github.com/gdkraus/accessible-modal-dialog
 */
 function enableModalButtons() {
@@ -696,7 +698,7 @@ function openModal(event) {
   }
 
   // Save last focused element
-  focusedElementBeforeModal = document.activeElement
+  state.lastFocusedElement = document.activeElement
 
   document.body.setAttribute('aria-hidden', 'true')
   modal.setAttribute('aria-hidden', 'false')
@@ -729,7 +731,7 @@ function closeModal(event) {
   modal.removeEventListener('click', closeModalOnBackground, passiveListener)
 
   // Restore previously focused element
-  focusedElementBeforeModal.focus()
+  state.lastFocusedElement.focus()
 }
 
 function closeModalOnBackground(event) {
@@ -754,32 +756,42 @@ function trapTabKey(event) {
 
   const activeElement = document.activeElement
   const focusable = getFocusableElements(event.currentTarget)
+  const tabbable = focusable.filter(element => element.tabIndex > -1);
 
-  if (focusable.length < 2) {
+  if (tabbable.length < 2) {
     event.preventDefault()
     return
   }
 
   if (event.shiftKey) {
-    if (activeElement === focusable[0]) {
-      focusable[focusable.length - 1].focus()
+    if (activeElement === tabbable[0]) {
+      tabbable[tabbable.length - 1].focus()
       event.preventDefault()
     }
   } else {
-    if (activeElement === focusable[focusable.length - 1]) {
-      focusable[0].focus()
+    if (activeElement === tabbable[tabbable.length - 1]) {
+      tabbable[0].focus()
       event.preventDefault()
     }
   }
 }
 
-function getFocusableElements(ancestor = document) {
-  const elements = Array.from(ancestor.querySelectorAll('*'))
-  return elements.filter(element => isFocusable(element))
-}
+const focusableElementsSelector = `
+  a[href],
+  area[href],
+  input:not([disabled]),
+  select:not([disabled]),
+  textarea:not([disabled]),
+  button:not([disabled]),
+  iframe,
+  object,
+  embed,
+  [tabindex],
+  [contenteditable=true]
+`;
 
-function isFocusable(element) {
-  return element.tabIndex > -1 && element.offsetParent !== null
+function getFocusableElements(ancestor = document) {
+  return Array.from(ancestor.querySelectorAll(focusableElementsSelector));
 }
 
 
