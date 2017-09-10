@@ -1,6 +1,8 @@
 {
   "name": "SlideHub",
   "main": "slidehub.js",
+  "repository": "https://github.com/webis-de/slidehub",
+  "license": "MIT",
   "devDependencies": {
     "css-loader": "^0.28.7",
     "extract-text-webpack-plugin": "^3.0.0",
