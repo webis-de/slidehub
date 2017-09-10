@@ -10,18 +10,10 @@ Each document is converted to a set of graphics—one for each page. These graph
 
 **Install dependencies**:
 
-Installs development and production dependencies as configured in `package.json`.
+Installs all required development dependencies as defined in `package.json`.
 
 ```
 npm install
-```
-
-**Start local development server**:
-
-Starts a local development server and generates bundled JavaScript/CSS files in memory.
-
-```
-webpack-dev-server
 ```
 
 **Generate production bundles**:
@@ -29,10 +21,22 @@ webpack-dev-server
 Generates bundled JavaScript/CSS files on disk. This is configured in `webpack.config.js`.
 
 ```
-webpack
+npm run build
 ```
 
-/!\ **Note**: The `-p` argument is currently not supported as webpack uses uglifiy for minifying JavaScript internally, however uglify does not work with ES6 syntax (e.g. it will throw parsing errors on arrow functions, etc.).
+This will run the `build` script as defined in `package.json`.
+
+/!\ **Note**: `webpack -p` currentl does not work as webpack internally uses uglifiy for minifying JavaScript which does not support ES6 syntax (e.g. it will throw parsing errors on arrow functions, etc.).
+
+**Start local development server**:
+
+Starts a local development server and generates bundled JavaScript/CSS files in memory.
+
+```
+npm start
+```
+
+This will run the `start` script as defined in `package.json`.
 
 
 
