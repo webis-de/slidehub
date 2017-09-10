@@ -16,17 +16,19 @@ Installs all required development dependencies as defined in `package.json`.
 npm install
 ```
 
-**Generate production bundles**:
+**Generate development/production bundles**:
 
-Generates bundled JavaScript/CSS files on disk. This is configured in `webpack.config.js`.
+The regular build script just bundles JavaScript files into one file that can be sourced from an HTML document. The same applies for CSS files. This can be configured in the `webpack.config.js` file.
 
 ```
 npm run build
 ```
 
-This will run the `build` script as defined in `package.json`.
+There is also a build script for production using the `webpack -p` command instead of just `webpack`. This build step includes minification of the JavaScript and CSS bundles.
 
-/!\ **Note**: `webpack -p` currentl does not work as webpack internally uses uglifiy for minifying JavaScript which does not support ES6 syntax (e.g. it will throw parsing errors on arrow functions, etc.).
+```
+npm run build-production
+```
 
 **Start local development server**:
 
