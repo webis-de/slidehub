@@ -44,72 +44,71 @@ This will run the `start` script as defined in `package.json`.
 
 ## Features
 
-- Documents are listed row-wise with its pages displayed side-by-side in a horizontal slider
-- Page images are lazy-loaded
+- Documents are listed row-wise with its pages displayed side-by-side in a horizontal container.
+- Page images are only loaded if they become visible (i.e. if they are about to enter the viewport).
+- The original PDF pages of a document are referenced from their SlideHub page. They can be opened by navigating to them and pressing <kbd>Return</kbd>.
 
 
 
 ## Navigation
 
-The application needs to be usable on mobile and desktop devices utilizing the present primary input techniques.
+The application needs to be usable on mobile and desktop devices utilizing the following primary input devices:
 
-- mouse input
-- touchpad input
-- keyboard input (lower priority)
+- Mouse
+- Touchpad
+- Keyboard
 
 The challenge is implementing a navigation pattern for a layout that is interactive in two dimensions. While a keyboard offers a variety of possibilities for doing so, a mouse is more limited. It’s safe to assume a mouse with a primary and secondary mouse button and a scrolling wheel with the ability to trigger a click as well. That said, browsers already leverage these buttons for navigation of a web page.
 
-The scrolling wheel moves the viewport across the vertical axis while the primary mouse button is used for all sorts of interaction on the page (e.g. opening links, clicking buttons, etc.). The secondary mouse button is mostly used for opening a context menu in order to invoke browser-specific features.
+The scrolling wheel moves the viewport across the vertical axis while the primary mouse button is used for all sorts of interaction on the page (e.g. opening links, clicking buttons, etc.). The secondary mouse button is mostly used for opening a context menu in order to invoke browser-specific features. These interactions vary across operating systems. While it’s easy to overwrite the default behavior in most cases, such a step needs to be justified.
 
 ### Current Concept
 
 #### Mouse
 
-Navigating through pages of documents on the horizontal axis is done by using the scrolling wheel with a configurable modifier. It’s advised to not use <kbd>Ctrl</kbd> since most user agents change the zoom level with <kbd>Ctrl</kbd><kbd>ScrollingWheel</kbd>.
+Navigating through pages of documents on the horizontal axis is done by using the scrolling wheel in addition to holding a modifier key. It’s advised to not use <kbd>Ctrl</kbd> since most user agents change the zoom level with <kbd>Ctrl</kbd><kbd>MouseWheel</kbd>. Also, the <kbd>Alt</kbd> key is problematic, as on some browsers (e.g. Firefox) pressing the <kbd>Alt</kbd> key reveals the browsers menu bar. This leaves only the <kbd>Shift</kbd> key as an option without immediate conflicts.
 
 #### Keyboard
 
-The arrow keys are used to navigate across documents and pages. Vertical navigation across documents is done with <kbd>↑</kbd> and <kbd>↓</kbd>. Horizontal navigation across pages is done with <kbd>←</kbd> and <kbd>→</kbd>.
+The arrow keys are used to navigate across documents and pages. Vertical navigation across documents is done with Arrow Up <kbd>↑</kbd> and Arrow Down <kbd>↓</kbd>. Horizontal navigation across pages is done with Arrow Left <kbd>←</kbd> and Arrow Right <kbd>→</kbd>.
 
-Additionally, <kbd title="tab key">⇥</kbd> and <kbd>Shift</kbd><kbd title="tab key">⇥</kbd> navigate across documents as well.
+One can also navigate in chunks of 3 by holding <kbd>Ctrl</kbd> while navigating pages of a document.
+
+Additionally, the <kbd>Home</kbd> or <kbd>Pos1</kbd> key jumps to the first page of a document, while the <kbd>End</kbd> key jumps to the last page.
 
 
 
 ## To Do
 
-- Title bar that is always displayed with some basic information
-- Organization of slides by, e.g., topic, year, etc.
-- Prepended "slide" that displays meta information such as year, venue
-- Linking to the actual PDF and its pages from each slide
-- Selection/highlighting of slides (already supported by Sly library)
-- Responsiveness (esp. touch devices)
-- Dragscrolling with ballistics
-- Dynamic determination of the number of slides per slide deck
-- Dynamic loading of slide decks based on our publications infrastructure
-- Study the quality-size trade-off of slide PNGs
-- Store often-used properties globally (e.g. page width)
-- Implement horizontal scrolling for document containers
-- Evaluate whether to set `will-change: contents;` when moving pages
-- Recalculate view with `IntersectionObserver` when item is not fully visible anymore
-- <s>Re-calculate page item sizes to avoid sub-pixel values</s>
+- *Interaction*: Marking/selecting pages in order to generate a new PDF (low priority)
+- *Interaction*: Drag-scrolling with ballistics
+- *Interaction*: Implement horizontal scrolling for document containers *→ Horizontal scrolling via touch devices is not great. Feels slow and unresponsive.*
+- *Internal Logic*: Recalculate view with `IntersectionObserver` when item is not fully visible anymore
+- *Internal Logic*: Dynamic determination of the number of slides per slide deck
+- *Performance*: Study the quality-size trade-off of slide PNGs
+- *Performance*: Evaluate whether to set `will-change: contents;` when moving pages
+- *Layout*: Evaluate usage of CSS Grid. Does grid allow overflowing grid cells?
+- *Layout*: Dynamic solution for toolbox on small screens
+- *PDF Linking*: Opening of PDF with a mouse/pointer device (currently, only via keyboard)
+
+**Server-related**:
+
+- Prepended page with meta information such as year, venue, author. *→ Needs server integration.*
+- Dynamic loading of documents based on our publications infrastructure. *→ Needs server integration.*
+- Organization of documents by, e.g., topic, year, etc. *→ Missing data. Will there be a metadata file for each document?*
+-
 
 
 
 ## Known Issues
 
-- Scalability: Many slide decks cause the initialization script to run very long (Dynamically loading documents [e.g. like infinite scrolling] is doable with `IntersectionObserver`)
+- Scalability: A large amount of documents cause the initialization to run very long *→ This needs thorough investigation. How can the documents be loaded in the background without blocking interactions with the page?*
 - ImageMagick occasionally creates transparent PNGs (For documents with a specific background color, this might have a drastic impact on perceivability)
 - documents `unit-en-radial-basis-functions.pdf`, `unit-de-conceptual-design3.pdf`, `unit-de-relational-design0.pdf` have no PNGs (e.g. all entries with only one page)
 - Holding the modifier key currently shows an `ew-resize` cursor on containers. That signifies a click-and-drag interaction instead of the intended scrolling interaction. However <kbd>Alt</kbd><kbd>Click-dragging</kbd> on Ubuntu is an OS-level feature that allows dragging a window. It cannot be disabled via JavaScript’s `event.preventDefault()`. Therefor, the `ew-resize` cursor is not appropriate.
-- Modifiers are somewhat problematic:
+- Some modifiers are problematic:
   - Holding <kbd>Alt</kbd> triggers the browser menu bar on some platforms.
   - Holding <kbd>Ctrl</kbd> while scrolling usually adjusts the zoom level
-- <s>Negative margins to collapse borders leads to last items showing a border that is one pixel off.</s>
-- <s>`overflow: hidden;` on a document container hides the scrollbars as intended but disables scrolling which is not intended on mobile platforms. Possible solutions: Show scrollbars on desktop platforms *or* reimplement horizontal scrolling on mobile platforms (requires UA-sniffing)</s>
-- <s>Adding new documents after the initial scripts are already executed results in non-interactive documents since no event listener have been attached etc. (The initialization logic needs to re-evaluatable) → Adding/removing documents needs to trigger a reevaluation of all kinds of event listeners etc.</s>
-- <s>Lazy-loading doesn’t work reliably when `img` elements are nested in `div`’s (Needs further investigation)</s> (Fixed via af5b3017)
-- <s>The horizontal sliders do not align correctly with the slide matrix when scrolling to the end</s> (Fixed by the new slider logic)
-- <s>In Chrome, dragscrolling sometimes selects content despite the CSS rules preventing that, causing hickups</s> (Fixed via c238ea31)
 
 
 
