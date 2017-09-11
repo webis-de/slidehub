@@ -4,17 +4,22 @@
 * Configuration
 */
 const config = {
+  // Location of the data directory containing PDF/PNG assets
   webRoot: 'https://www.uni-weimar.de/medien/webis/tmp/slides',
+
   itemWidth: 300,
 
   // How to position scrollable content
-  // true:  use CSS transforms
-  // false: use the views `scrollLeft`/`scrollTop` property
+  //   true:  Use CSS transforms
+  //   false: Use the views `scrollLeft`/`scrollTop` property
   moveViewItemsWithTransform: true,
 
-  minimalDocumentHeight: true,
+  // Preserve aspect ratio of document items
+  //   true:  Preserves aspect ratio
+  //   false: Uses a default aspect ratio of 5:4
+  preserveAspectRatio: true,
 
-  // HTML classes that are used by the CSS
+  // HTML classes that can be used in CSS selectors
   class: {
     main: '.main-content',
     view: '.doc-view',
@@ -22,7 +27,7 @@ const config = {
     item: '.doc__page'
   },
 
-  // Modifier key. Possible values: `ctrlKey`, `shiftKey`, `altKey`
+  // Modifier key. Possible values: ctrlKey, shiftKey, altKey
   modifierKey: 'shiftKey'
 };
 
@@ -182,49 +187,49 @@ module.exports = function () {
 
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// LOADING DOCUMENTS
+/*
+* Document Loading
+*/
 
 function loadDocumentAsync() {
   return new Promise((resolve, reject) => {
-    const mainContent = document.querySelector(config.class.main)
-    const docData = documentsData[0]
+    const mainContent = document.querySelector(config.class.main);
+    const data = documentsData[0];
 
-    if (docData === undefined) {
-      reject('No more documents to load.')
+    if (data === undefined) {
+      reject('No more documents to load.');
     }
 
-    loadDoc(mainContent, docData)
-    const view = mainContent.lastElementChild
-    state.viewObserver.observe(view)
-    setDocumentWidth(view.querySelector(config.class.doc))
-    enableDocumentScrolling(view)
-    // activateViewOnHover(view)
-    // activateItemsOnHover(view)
-    resolve()
-  })
+    mainContent.appendChild(createDocument(data));
+    const view = mainContent.lastElementChild;
+    state.viewObserver.observe(view);
+    setDocumentWidth(view.querySelector(config.class.doc));
+    enableDocumentScrolling(view);
+    resolve();
+  });
 }
 
-function loadDoc(mainContent, docData) {
-  const viewTemplate = document.createElement('template')
-  viewTemplate.innerHTML = createDocumentMarkup(docData[0], docData[1])
-  mainContent.appendChild(viewTemplate.content)
+function createDocument(data) {
+  const viewTemplate = document.createElement('template');
+  viewTemplate.innerHTML = createDocumentMarkup(data[0], data[1]);
+  return viewTemplate.content;
 }
 
 /*
-* Creates the full markup of one document
+* Creates the full markup for one document
 */
 function createDocumentMarkup(docName, itemCount) {
-  const assetPath = `${config.webRoot}/data`
-  let items = ''
+  const assetPath = `${config.webRoot}/data`;
+
+  let items = '';
   for (var i = 0; i < itemCount; i++) {
-    const source = `${assetPath}/${docName}-${i}.png`
+    const source = `${assetPath}/${docName}-${i}.png`;
     items += `<div class="${config.class.item.slice(1)}" data-page="${i + 1}">
       <img data-src="${source}" alt="page ${i + 1}">
-    </div>`
+    </div>`;
   }
 
-  const docSource = `${assetPath}/${docName}`
+  const docSource = `${assetPath}/${docName}`;
 
   return `
   <div
@@ -243,7 +248,7 @@ function createDocumentMarkup(docName, itemCount) {
       </div>
       ${items}
     </div>
-  </div>`
+  </div>`;
 }
 
 function setDocumentWidth(doc) {
@@ -252,115 +257,97 @@ function setDocumentWidth(doc) {
     getFloatPropertyValue(doc, 'border-left-width') +
     getComputedOuterChildrenWidth(doc) +
     getFloatPropertyValue(doc, 'border-right-width') +
-    getFloatPropertyValue(doc, 'margin-right')
-  doc.style.setProperty('width', documentOuterWidth + 'px')
+    getFloatPropertyValue(doc, 'margin-right');
+
+  doc.style.setProperty('width', documentOuterWidth + 'px');
 }
 
 function enableDocumentScrolling(view) {
-  let prevX
-  let touched = false
-  let transitionValue
-  let doc
+  let prevX;
+  let touched = false;
+  let transitionValue;
+  let doc;
 
   view.addEventListener('touchstart', function(event) {
     if (config.moveViewItemsWithTransform) {
-      view.style.setProperty('will-change', 'transform')
+      view.style.setProperty('will-change', 'transform');
     }
 
-    touched = true
-    doc = view.querySelector(config.class.doc)
-    transitionValue = getComputedStyle(doc).getPropertyValue('transition')
-    doc.style.setProperty('transition', 'none')
+    touched = true;
+    doc = view.querySelector(config.class.doc);
+    transitionValue = getComputedStyle(doc).getPropertyValue('transition');
+    doc.style.setProperty('transition', 'none');
 
-    prevX = event.targetTouches[0].clientX
-  }, supportsPassive ? { passive: true }: false)
+    prevX = event.targetTouches[0].clientX;
+  }, supportsPassive ? { passive: true } : false);
 
   view.addEventListener('touchmove', function(event) {
     if (touched) {
-      const currentX = event.targetTouches[0].clientX
-      const offset = currentX - prevX
-      const newItemX = getViewPixelPos(view) - offset
-      const disableTransition = true
-      setViewPixelPos(view, newItemX, disableTransition)
-      prevX = currentX
+      const currentX = event.targetTouches[0].clientX;
+      const offset = currentX - prevX;
+      const newItemX = getViewPixelPos(view) - offset;
+      const disableTransition = true;
+      setViewPixelPos(view, newItemX, disableTransition);
+      prevX = currentX;
     }
-  }, supportsPassive ? { passive: true }: false)
+  }, supportsPassive ? { passive: true } : false);
 
   view.addEventListener('touchend', function(event) {
     if (touched) {
-      const newPos = getViewPos(view)
-      setViewPos(view, Math.round(newPos))
+      const newPos = getViewPos(view);
+      setViewPos(view, Math.round(newPos));
 
       if (config.moveViewItemsWithTransform) {
-        view.style.setProperty('will-change', 'auto')
+        view.style.setProperty('will-change', 'auto');
       }
 
       touched = false
       doc.style.setProperty('transition', transitionValue)
     }
-  }, supportsPassive ? { passive: true }: false)
-}
-
-function activateViewOnHover(view) {
-  view.addEventListener('mouseover', event => {
-    setActiveView(event.currentTarget)
-  })
-}
-
-function activateItemsOnHover(view) {
-  const items = Array.from(view.querySelectorAll(config.class.item))
-  items.forEach(item => item.addEventListener('mouseenter', event => {
-    const view = event.currentTarget.closest(config.class.view)
-    setActiveItem(view, event.currentTarget)
-  }))
+  }, supportsPassive ? { passive: true } : false);
 }
 
 function onFirstDocumentLoaded() {
-  const firstView = document.querySelector(config.class.view)
-  setActiveView(firstView)
+  const firstView = document.querySelector(config.class.view);
+  setActiveView(firstView);
 
-  evaluateItemWidth()
-  setFullyVisibleItems()
-  onDocumentLoaded()
+  evaluateItemWidth();
+  state.visibleItems = getFullyVisibleItems();
+  onDocumentLoaded();
 }
 
 function onDocumentLoaded() {
-  documentsData.shift() // Delete first element
-  console.info('Document loaded. Remaining:', documentsData.length)
+  documentsData.shift(); // Delete first element
+  console.info('Document loaded. Remaining:', documentsData.length);
   loadDocumentAsync()
     .then(onDocumentLoaded, onDocumentReject)
-    .catch(message => { console.log(message) })
+    .catch(message => { console.log(message) });
 }
 
 function onDocumentReject(message) {
-  console.info(message)
+  console.info(message);
 }
 
 function evaluateItemWidth() {
-  const itemSample = document.querySelector(config.class.item)
-  const itemOuterWidth = getOuterWidth(itemSample)
-  // const itemOuterWidth = Math.ceil(getOuterWidth(itemSample))
+  const itemSample = document.querySelector(config.class.item);
+  const itemOuterWidth = getOuterWidth(itemSample);
 
   if (itemOuterWidth !== config.itemWidth) {
     console.info(
       'Pre-configured page width does not match actual page width.',
       'Updating configuration.'
-    )
-    config.itemWidth = itemOuterWidth
+    );
+    config.itemWidth = itemOuterWidth;
   }
 }
 
-function setFullyVisibleItems() {
-  state.visibleItems = getFullyVisibleItems()
-}
-
 function getFullyVisibleItems() {
-  const itemSample = document.querySelector(config.class.item)
-  const itemOuterWidth = getOuterWidth(itemSample)
+  const itemSample = document.querySelector(config.class.item);
+  const itemOuterWidth = getOuterWidth(itemSample);
 
-  const viewSample = document.querySelector(config.class.view)
-  const viewWidth = getFloatPropertyValue(viewSample, 'width')
-  return Math.floor(viewWidth / itemOuterWidth)
+  const viewSample = document.querySelector(config.class.view);
+  const viewWidth = getFloatPropertyValue(viewSample, 'width');
+  return Math.floor(viewWidth / itemOuterWidth);
 }
 
 
@@ -889,7 +876,7 @@ function viewObservationHandler(entries, observer) {
 }
 
 function handleFirstItemImageLoaded(view) {
-  if (config.minimalDocumentHeight) {
+  if (config.preserveAspectRatio) {
     setItemAspectRatio(view)
   }
 }
