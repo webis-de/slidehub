@@ -200,19 +200,15 @@ function loadDocumentAsync() {
       reject('No more documents to load.');
     }
 
-    mainContent.appendChild(createDocument(data));
+    // mainContent.appendChild(createDocument(data));
+    const documentMarkup = createDocumentMarkup(data[0], data[1]);
+    mainContent.insertAdjacentHTML('beforeend', documentMarkup);
     const view = mainContent.lastElementChild;
     state.viewObserver.observe(view);
     setDocumentWidth(view.querySelector(config.class.doc));
     enableDocumentScrolling(view);
     resolve();
   });
-}
-
-function createDocument(data) {
-  const viewTemplate = document.createElement('template');
-  viewTemplate.innerHTML = createDocumentMarkup(data[0], data[1]);
-  return viewTemplate.content;
 }
 
 /*
