@@ -5,7 +5,7 @@
 */
 const config = {
   // Location of the data directory containing PDF/PNG assets
-  webRoot: 'https://www.uni-weimar.de/medien/webis/tmp/slides',
+  assetPath: 'https://www.uni-weimar.de/medien/webis/tmp/slides/data',
 
   itemWidth: 300,
 
@@ -175,9 +175,27 @@ module.exports = function () {
   initializeLazyLoader();
 
   document.addEventListener('DOMContentLoaded', function() {
-    loadDocumentAsync()
-      .then(onFirstDocumentLoaded, onDocumentReject)
-      .catch(message => { console.error(message) });
+
+    const documentObserver = new IntersectionObserver(
+      documentObserverHandler,
+      { threshold: 1 }
+    );
+
+    loadDocuments()
+      .then(() => {
+        // onFirstDocumentLoaded
+        const firstView = document.querySelector(config.class.view);
+        setActiveView(firstView);
+        evaluateItemWidth();
+        state.visibleItems = getFullyVisibleItems();
+
+        const container = document.querySelector(config.class.main);
+        documentObserver.observe(container.lastElementChild);
+      });
+
+    // loadDocumentAsync()
+    //   .then(onFirstDocumentLoaded, onDocumentRejectOld)
+    //   .catch(message => console.error(message));
 
     Object.values(features).forEach(feature => feature.enable());
   });
@@ -191,60 +209,101 @@ module.exports = function () {
 * Document Loading
 */
 
-function loadDocumentAsync() {
-  return new Promise((resolve, reject) => {
-    const mainContent = document.querySelector(config.class.main);
-    const data = documentsData[0];
-
-    if (data === undefined) {
-      reject('No more documents to load.');
+function documentObserverHandler(entries, observer) {
+  for (const entry of entries) {
+    if (entry.isIntersecting === false) {
+      continue;
     }
 
-    // mainContent.appendChild(createDocument(data));
-    const documentMarkup = createDocumentMarkup(data[0], data[1]);
-    mainContent.insertAdjacentHTML('beforeend', documentMarkup);
-    const view = mainContent.lastElementChild;
-    state.viewObserver.observe(view);
-    setDocumentWidth(view.querySelector(config.class.doc));
-    enableDocumentScrolling(view);
-    resolve();
-  });
+    observer.unobserve(entry.target);
+
+    // add loading indicator
+
+    loadDocuments()
+      .then(() => {
+        // remove loading indicator
+        const container = document.querySelector(config.class.main);
+        observer.observe(container.lastElementChild);
+      })
+      .catch(message => {
+        console.info(message);
+
+        if ('disconnect' in IntersectionObserver.prototype) {
+          observer.disconnect();
+        } else {
+          console.error('IntersectionObserver.disconnect not available.');
+        }
+      });
+  }
 }
 
-/*
-* Creates the full markup for one document
-*/
-function createDocumentMarkup(docName, itemCount) {
-  const assetPath = `${config.webRoot}/data`;
+function loadDocuments() {
+  const batchSize = 10;
+  const container = document.querySelector(config.class.main);
 
-  let items = '';
-  for (var i = 0; i < itemCount; i++) {
-    const source = `${assetPath}/${docName}-${i}.png`;
-    items += `<div class="${config.class.item.slice(1)}" data-page="${i + 1}">
-      <img data-src="${source}" alt="page ${i + 1}">
-    </div>`;
+  if (documentsData.length === 0) {
+    return Promise.reject('No documents left to load.');
   }
 
-  const docSource = `${assetPath}/${docName}`;
+  return loadDocumentBatch(batchSize)
+    .then(docs => {
+      console.info('Loaded document batch.');
+      docs.forEach(doc => onDocumentLoaded(container, doc));
+    });
+}
 
-  return `
-  <div
-    class="${config.class.view.slice(1)}"
-    id="${docName}"
-    data-doc-source="${docSource}"
-    data-page-count="${itemCount + 1}">
-    <div class="${config.class.doc.slice(1)}">
-      <div class="${config.class.item.slice(1)} doc-info active" data-page="0">
-        <h2 class="doc-title">
-          <a href="${docSource}">${docName}</a>
-        </h2>
-        by <span class="doc-author">author</span>,
-        <span class="doc-pages-count">${itemCount}</span> pages,
-        2018
+function loadDocumentBatch(batchSize) {
+  const documents = [];
+
+  for (let i = 0; i < batchSize && documentsData.length > 0; i++) {
+    const data = documentsData.shift();
+    documents.push(createDocument(data[0], data[1]));
+  }
+
+  return Promise.all(documents);
+}
+
+function onDocumentLoaded(container, doc) {
+  container.insertAdjacentHTML('beforeend', doc);
+  const view = container.lastElementChild;
+  state.viewObserver.observe(view);
+  setDocumentWidth(view.querySelector(config.class.doc));
+  enableDocumentScrolling(view);
+}
+
+function createDocument(docName, itemCount) {
+  return new Promise((resolve, reject) => {
+    let items = '';
+    for (var i = 0; i < itemCount; i++) {
+      const source = `${config.assetPath}/${docName}-${i}.png`;
+      items += `<div class="${config.class.item.slice(1)}" data-page="${i + 1}">
+        <img data-src="${source}" alt="page ${i + 1}">
+      </div>`;
+    }
+
+    const docSource = `${config.assetPath}/${docName}`;
+
+    const docMarkup = `
+    <div
+      class="${config.class.view.slice(1)}"
+      id="${docName}"
+      data-doc-source="${docSource}"
+      data-page-count="${itemCount + 1}">
+      <div class="${config.class.doc.slice(1)}">
+        <div class="${config.class.item.slice(1)} doc-info active" data-page="0">
+          <h2 class="doc-title">
+            <a href="${docSource}">${docName}</a>
+          </h2>
+          by <span class="doc-author">author</span>,
+          <span class="doc-pages-count">${itemCount}</span> pages,
+          2018
+        </div>
+        ${items}
       </div>
-      ${items}
-    </div>
-  </div>`;
+    </div>`;
+
+    resolve(docMarkup);
+  });
 }
 
 function setDocumentWidth(doc) {
@@ -303,27 +362,6 @@ function enableDocumentScrolling(view) {
   }, supportsPassive ? { passive: true } : false);
 }
 
-function onFirstDocumentLoaded() {
-  const firstView = document.querySelector(config.class.view);
-  setActiveView(firstView);
-
-  evaluateItemWidth();
-  state.visibleItems = getFullyVisibleItems();
-  onDocumentLoaded();
-}
-
-function onDocumentLoaded() {
-  documentsData.shift(); // Delete first element
-  console.info('Document loaded. Remaining:', documentsData.length);
-  loadDocumentAsync()
-    .then(onDocumentLoaded, onDocumentReject)
-    .catch(message => { console.log(message) });
-}
-
-function onDocumentReject(message) {
-  console.info(message);
-}
-
 function evaluateItemWidth() {
   const itemSample = document.querySelector(config.class.item);
   const itemOuterWidth = getOuterWidth(itemSample);
@@ -345,6 +383,93 @@ function getFullyVisibleItems() {
   const viewWidth = getFloatPropertyValue(viewSample, 'width');
   return Math.floor(viewWidth / itemOuterWidth);
 }
+
+/*function loadDocumentAsync() {
+  return new Promise((resolve, reject) => {
+    const mainContent = document.querySelector(config.class.main);
+
+    if (documentsData.length === 0) {
+      reject('No more documents to load.');
+    }
+
+    const data = documentsData[0];
+    loadDocument(data)
+      .then(doc => {
+        mainContent.insertAdjacentHTML('beforeend', doc);
+        const view = mainContent.lastElementChild;
+        state.viewObserver.observe(view);
+        setDocumentWidth(view.querySelector(config.class.doc));
+        enableDocumentScrolling(view);
+        resolve();
+      })
+      .catch(message => console.error(message));
+  });
+}
+
+function createDocumentOld(data) {
+  return new Promise((resolve, reject) => {
+    if (data === undefined) {
+      reject('No document data was provided.');
+    }
+
+    const documentMarkup = createDocumentMarkup(data[0], data[1]);
+    resolve(documentMarkup);
+  });
+}
+
+function createDocumentMarkup(docName, itemCount) {
+  let items = '';
+  for (var i = 0; i < itemCount; i++) {
+    const source = `${config.assetPath}/${docName}-${i}.png`;
+    items += `<div class="${config.class.item.slice(1)}" data-page="${i + 1}">
+      <img data-src="${source}" alt="page ${i + 1}">
+    </div>`;
+  }
+
+  const docSource = `${config.assetPath}/${docName}`;
+
+  const docMarkup = `
+  <div
+    class="${config.class.view.slice(1)}"
+    id="${docName}"
+    data-doc-source="${docSource}"
+    data-page-count="${itemCount + 1}">
+    <div class="${config.class.doc.slice(1)}">
+      <div class="${config.class.item.slice(1)} doc-info active" data-page="0">
+        <h2 class="doc-title">
+          <a href="${docSource}">${docName}</a>
+        </h2>
+        by <span class="doc-author">author</span>,
+        <span class="doc-pages-count">${itemCount}</span> pages,
+        2018
+      </div>
+      ${items}
+    </div>
+  </div>`;
+
+  return docMarkup;
+}*/
+
+/*function onFirstDocumentLoaded() {
+  const firstView = document.querySelector(config.class.view);
+  setActiveView(firstView);
+
+  evaluateItemWidth();
+  state.visibleItems = getFullyVisibleItems();
+  onDocumentLoadedOld();
+}
+
+function onDocumentLoadedOld() {
+  documentsData.shift(); // Delete first element
+  console.info('Document loaded. Remaining:', documentsData.length);
+  loadDocumentAsync()
+    .then(onDocumentLoadedOld, onDocumentRejectOld)
+    .catch(message => console.error(message));
+}
+
+function onDocumentRejectOld(message) {
+  console.info(message);
+}*/
 
 
 
