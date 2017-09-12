@@ -93,6 +93,7 @@ Additionally, the <kbd>Home</kbd> or <kbd>Pos1</kbd> key jumps to the first page
 
 ## To Do
 
+- *Layout*: Indicate that pages are still loading
 - *Interaction*: Marking/selecting pages in order to generate a new PDF (low priority)
 - *Interaction*: Touch scrolling with ballistics
 - *Interaction*: Implement horizontal scrolling for document containers *→ Horizontal scrolling via touch devices is not great. Feels slow and unresponsive.*
@@ -111,7 +112,6 @@ Additionally, the <kbd>Home</kbd> or <kbd>Pos1</kbd> key jumps to the first page
 - Prepended page with meta information such as year, venue, author. *→ Needs server integration.*
 - Dynamic loading of documents based on our publications infrastructure. *→ Needs server integration.*
 - Organization of documents by, e.g., topic, year, etc. *→ Missing data. Will there be a metadata file for each document?*
--
 
 
 
