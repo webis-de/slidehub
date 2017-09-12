@@ -78,13 +78,28 @@ Additionally, the <kbd>Home</kbd> or <kbd>Pos1</kbd> key jumps to the first page
 
 
 
+## Browser Support
+
+| IE | Edge | Firefox | Chrome | Safari | Opera |
+|---:|-----:|--------:|-------:|-------:|------:|
+| —  | 15   | 31      | 49     | 9.1    | 36    |
+
+**Features**:
+
+- [CSS custom properties](https://caniuse.com/#feat=css-variables)
+- [Promises](https://caniuse.com/#feat=promises)
+
+
+
 ## To Do
 
 - *Interaction*: Marking/selecting pages in order to generate a new PDF (low priority)
-- *Interaction*: Drag-scrolling with ballistics
+- *Interaction*: Touch scrolling with ballistics
 - *Interaction*: Implement horizontal scrolling for document containers *→ Horizontal scrolling via touch devices is not great. Feels slow and unresponsive.*
+- *Interaction*: On document keyboard navigation, scroll active out-of-sight documents into view.
 - *Internal Logic*: Recalculate view with `IntersectionObserver` when item is not fully visible anymore
 - *Internal Logic*: Dynamic determination of the number of slides per slide deck
+- *Internal Logic*: Create a `setItemPos` function
 - *Performance*: Study the quality-size trade-off of slide PNGs
 - *Performance*: Evaluate whether to set `will-change: contents;` when moving pages
 - *Layout*: Evaluate usage of CSS Grid. Does grid allow overflowing grid cells?
@@ -102,13 +117,17 @@ Additionally, the <kbd>Home</kbd> or <kbd>Pos1</kbd> key jumps to the first page
 
 ## Known Issues
 
+- *Interaction*: Active state is not transferred on scrolling.
+- *Interaction*: Horizontal page navigation via the wheelNavigation feature is too fast with desktop touchpads as the wheel event is fired too quickly. Likely the only possible solution is somehow throttling the event if it’s fired multiple times in a short timespan. However mouse-based scroll wheels should always fire the event for each turn of the scrolling wheel.
+- *Interaction*: Horizontal page navigation state via the `ew-resize` cursor is not transferred in all cases (e.g. when holding shift and scrolling up/down).
+- *Interaction*: The `touchstart` event triggers a `mousemove` event which is used to highlight active documents/pages, however this highlighting is not relevant when doing any kind of touch-based interactions. Such interactions happen directly on the element (i.e. the user points to the location *where* the interaction takes place) instead of indirectly via keyboard shortcuts.
 - Scalability: A large amount of documents cause the initialization to run very long *→ This needs thorough investigation. How can the documents be loaded in the background without blocking interactions with the page?*
-- ImageMagick occasionally creates transparent PNGs (For documents with a specific background color, this might have a drastic impact on perceivability)
-- documents `unit-en-radial-basis-functions.pdf`, `unit-de-conceptual-design3.pdf`, `unit-de-relational-design0.pdf` have no PNGs (e.g. all entries with only one page)
 - Holding the modifier key currently shows an `ew-resize` cursor on containers. That signifies a click-and-drag interaction instead of the intended scrolling interaction. However <kbd>Alt</kbd><kbd>Click-dragging</kbd> on Ubuntu is an OS-level feature that allows dragging a window. It cannot be disabled via JavaScript’s `event.preventDefault()`. Therefor, the `ew-resize` cursor is not appropriate.
 - Some modifiers are problematic:
   - Holding <kbd>Alt</kbd> triggers the browser menu bar on some platforms.
   - Holding <kbd>Ctrl</kbd> while scrolling usually adjusts the zoom level
+- documents `unit-en-radial-basis-functions.pdf`, `unit-de-conceptual-design3.pdf`, `unit-de-relational-design0.pdf` have no PNGs (e.g. all entries with only one page)
+- ImageMagick occasionally creates transparent PNGs (For documents with a specific background color, this might have a drastic impact on perceivability)
 
 
 
@@ -130,7 +149,7 @@ sudo apt-get install imagemagick
 convert -density 72 -quality 90 slides.pdf slides.pdf.png
 ```
 
-The input file is a PDF with a certain amount of pages. Therefor, this command produces as many graphics as there are pages in the document. Without specifyingh further arguments, an index suffic will be added to the file name (e.g. `slides-0.png`, etc.).
+The input file is a PDF with a certain amount of pages. Therefor, this command produces as many graphics as there are pages in the document. Without specifying further arguments, an index suffic will be added to the file name (e.g. `slides-0.png`, etc.).
 
 **Converting multiple files**:
 
@@ -158,4 +177,31 @@ The following command shrinks all files with the `png` extension to a width of 6
 
 ```
 mogrify -resize '600x>' *.png
+```
+
+The same argument can also specified when converting from PDF.
+
+#### Troubleshooting
+
+One might run out of memory while converting some large PDFs. If this is the case, an error like the one below is printed.
+
+```
+convert-im6.q16: DistributedPixelCache '127.0.0.1' @ error/distribute-cache.c/ConnectPixelCacheServer/244.
+convert-im6.q16: cache resources exhausted `/tmp/magick-30849GyqwEjT6yu7947' @ error/cache.c/OpenPixelCache/3945.
+convert-im6.q16: DistributedPixelCache '127.0.0.1' @ error/distribute-cache.c/ConnectPixelCacheServer/244.
+convert-im6.q16: cache resources exhausted `/tmp/magick-30849GyqwEjT6yu7947' @ error/cache.c/OpenPixelCache/3945.
+```
+
+I tried specifying `-limit memory 2GiB` as an additional argument for `convert` or `mogrify` without any effect. However I was able to work around this issue by changing the default limit in `/etc/ImageMagick/policy.xml`.
+
+I replaced the line …
+
+```
+<policy domain="resource" name="memory" value="256MiB"/>
+```
+
+… with …
+
+```
+<policy domain="resource" name="memory" value="2GiB"/>
 ```
