@@ -92,7 +92,8 @@ const state = {
   activeView: null,
   viewObserver: null,
   visibleItems: null,
-  lastFocusedElement: null
+  lastFocusedElement: null,
+  touched: false
 };
 
 // Maps key codes to key names
@@ -272,31 +273,34 @@ function createDocument(docName, itemCount) {
     let items = '';
     for (var i = 0; i < itemCount; i++) {
       const source = `${config.assetPath}/${docName}-${i}.png`;
-      items += `<div class="${config.class.item.slice(1)}" data-page="${i + 1}">
-        <img data-src="${source}" alt="page ${i + 1}">
-      </div>`;
+      items += `
+        <div class="${config.class.item.slice(1)}" data-page="${i + 1}">
+          <img data-src="${source}" alt="page ${i + 1}">
+        </div>
+      `;
     }
 
     const docSource = `${config.assetPath}/${docName}`;
 
     const docMarkup = `
-    <div
-      class="${config.class.view.slice(1)}"
-      id="${docName}"
-      data-doc-source="${docSource}"
-      data-page-count="${itemCount + 1}">
-      <div class="${config.class.doc.slice(1)}">
-        <div class="${config.class.item.slice(1)} doc-info active" data-page="0">
-          <h2 class="doc-title">
-            <a href="${docSource}">${docName}</a>
-          </h2>
-          by <span class="doc-author">author</span>,
-          <span class="doc-pages-count">${itemCount}</span> pages,
-          2018
+      <div
+        class="${config.class.view.slice(1)}"
+        id="${docName}"
+        data-doc-source="${docSource}"
+        data-page-count="${itemCount + 1}">
+        <div class="${config.class.doc.slice(1)}">
+          <div class="${config.class.item.slice(1)} doc-info active" data-page="0">
+            <h2 class="doc-title">
+              <a href="${docSource}">${docName}</a>
+            </h2>
+            by <span class="doc-author">author</span>,
+            <span class="doc-pages-count">${itemCount}</span> pages,
+            2018
+          </div>
+          ${items}
         </div>
-        ${items}
       </div>
-    </div>`;
+    `;
 
     resolve(docMarkup);
   });
@@ -314,8 +318,7 @@ function setDocumentWidth(doc) {
 }
 
 function enableDocumentScrolling(view) {
-  let prevX;
-  let touched = false;
+  let prevX, prevY;
   let transitionValue;
   let doc;
 
@@ -324,7 +327,7 @@ function enableDocumentScrolling(view) {
       view.style.setProperty('will-change', 'transform');
     }
 
-    touched = true;
+    state.touched = true;
     doc = view.querySelector(config.class.doc);
     transitionValue = getComputedStyle(doc).getPropertyValue('transition');
     doc.style.setProperty('transition', 'none');
@@ -333,18 +336,28 @@ function enableDocumentScrolling(view) {
   }, supportsPassive ? { passive: true } : false);
 
   view.addEventListener('touchmove', function(event) {
-    if (touched) {
-      const currentX = event.targetTouches[0].clientX;
-      const offset = currentX - prevX;
-      const newItemX = getViewPixelPos(view) - offset;
+    if (state.touched) {
+      const touch = event.targetTouches[0];
+      const offsetX = touch.clientX - prevX;
+      const offsetY = touch.clientY - prevY;
+
+      // Determine vertical/horizontal scrolling ratio
+      const directionRatio = Math.abs(offsetX / offsetY);
+      if (directionRatio < 1) {
+        return;
+      }
+
+      activateOnHover(event);
+      const newItemX = getViewPixelPos(view) - offsetX;
       const disableTransition = true;
       setViewPixelPos(view, newItemX, disableTransition);
-      prevX = currentX;
+      prevX = touch.clientX;
+      prevY = touch.clientY;
     }
   }, supportsPassive ? { passive: true } : false);
 
   view.addEventListener('touchend', function(event) {
-    if (touched) {
+    if (state.touched) {
       const newPos = getViewPos(view);
       setViewPos(view, Math.round(newPos));
 
@@ -352,7 +365,7 @@ function enableDocumentScrolling(view) {
         view.style.setProperty('will-change', 'auto');
       }
 
-      touched = false
+      state.touched = false
       doc.style.setProperty('transition', transitionValue)
     }
   }, supportsPassive ? { passive: true } : false);
