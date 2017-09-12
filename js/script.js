@@ -79,10 +79,10 @@ const features = {
 
   activatingOnHover: {
     enable: function() {
-      document.body.addEventListener('mousemove', activateOnHover, passiveListener);
+      document.addEventListener('mousemove', activateOnHover, passiveListener);
     },
     disable: function() {
-      document.body.removeEventListener('mousemove', activateOnHover, passiveListener);
+      document.removeEventListener('mousemove', activateOnHover, passiveListener);
     }
   }
 
@@ -192,10 +192,6 @@ module.exports = function () {
         const container = document.querySelector(config.class.main);
         documentObserver.observe(container.lastElementChild);
       });
-
-    // loadDocumentAsync()
-    //   .then(onFirstDocumentLoaded, onDocumentRejectOld)
-    //   .catch(message => console.error(message));
 
     Object.values(features).forEach(feature => feature.enable());
   });
@@ -383,93 +379,6 @@ function getFullyVisibleItems() {
   const viewWidth = getFloatPropertyValue(viewSample, 'width');
   return Math.floor(viewWidth / itemOuterWidth);
 }
-
-/*function loadDocumentAsync() {
-  return new Promise((resolve, reject) => {
-    const mainContent = document.querySelector(config.class.main);
-
-    if (documentsData.length === 0) {
-      reject('No more documents to load.');
-    }
-
-    const data = documentsData[0];
-    loadDocument(data)
-      .then(doc => {
-        mainContent.insertAdjacentHTML('beforeend', doc);
-        const view = mainContent.lastElementChild;
-        state.viewObserver.observe(view);
-        setDocumentWidth(view.querySelector(config.class.doc));
-        enableDocumentScrolling(view);
-        resolve();
-      })
-      .catch(message => console.error(message));
-  });
-}
-
-function createDocumentOld(data) {
-  return new Promise((resolve, reject) => {
-    if (data === undefined) {
-      reject('No document data was provided.');
-    }
-
-    const documentMarkup = createDocumentMarkup(data[0], data[1]);
-    resolve(documentMarkup);
-  });
-}
-
-function createDocumentMarkup(docName, itemCount) {
-  let items = '';
-  for (var i = 0; i < itemCount; i++) {
-    const source = `${config.assetPath}/${docName}-${i}.png`;
-    items += `<div class="${config.class.item.slice(1)}" data-page="${i + 1}">
-      <img data-src="${source}" alt="page ${i + 1}">
-    </div>`;
-  }
-
-  const docSource = `${config.assetPath}/${docName}`;
-
-  const docMarkup = `
-  <div
-    class="${config.class.view.slice(1)}"
-    id="${docName}"
-    data-doc-source="${docSource}"
-    data-page-count="${itemCount + 1}">
-    <div class="${config.class.doc.slice(1)}">
-      <div class="${config.class.item.slice(1)} doc-info active" data-page="0">
-        <h2 class="doc-title">
-          <a href="${docSource}">${docName}</a>
-        </h2>
-        by <span class="doc-author">author</span>,
-        <span class="doc-pages-count">${itemCount}</span> pages,
-        2018
-      </div>
-      ${items}
-    </div>
-  </div>`;
-
-  return docMarkup;
-}*/
-
-/*function onFirstDocumentLoaded() {
-  const firstView = document.querySelector(config.class.view);
-  setActiveView(firstView);
-
-  evaluateItemWidth();
-  state.visibleItems = getFullyVisibleItems();
-  onDocumentLoadedOld();
-}
-
-function onDocumentLoadedOld() {
-  documentsData.shift(); // Delete first element
-  console.info('Document loaded. Remaining:', documentsData.length);
-  loadDocumentAsync()
-    .then(onDocumentLoadedOld, onDocumentRejectOld)
-    .catch(message => console.error(message));
-}
-
-function onDocumentRejectOld(message) {
-  console.info(message);
-}*/
 
 
 
