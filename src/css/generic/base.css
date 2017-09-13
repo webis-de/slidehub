@@ -1,0 +1,79 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body,
+h1, h2, h3, h4, h5, h6,
+p,
+blockquote,
+pre,
+ul, ol, dl, dd,
+figure {
+    margin: 0;
+    padding: 0;
+}
+
+details,
+summary,
+main {
+    display: block;
+}
+
+/**
+ * Set `margin-bottom` to maintain vertycal rhythm
+ */
+h1, h2, h3, h4, h5, h6,
+p,
+blockquote,
+pre,
+ul, ol, dl,
+figure {
+    margin-bottom: 1.5rem;
+}
+
+abbr[title] {
+    border-bottom: 1px dotted;
+}
+
+img {
+    max-width: 100%;
+    border: 0;
+}
+
+img,
+svg {
+    vertical-align: middle;
+}
+
+figure > img {
+    display: block;
+}
+
+figure > * {
+    margin-bottom: 0;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+table, tbody, tfoot, thead, tr, th, td {
+    margin: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+.visually-hidden {
+    clip-path: inset(100%);
+    clip: rect(1px, 1px, 1px, 1px);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+}

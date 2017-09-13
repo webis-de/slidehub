@@ -1,0 +1,34 @@
+:root {
+    /*
+    * Used to create uniform visual space. Smaller/bigger values should be
+    * created using `calc`:
+    *
+    * padding: calc( var(--base-spacing) / 2 );
+    */
+    --base-spacing: 12px;
+
+    /*
+    * Hierarchy of z-index values (i.e. planes). To elevate elements within
+    * these planes, add arbitrary values small than 100 via `calc`:
+    *
+    * z-index: calc( var(--plane-document) + 10 );
+    */
+    --plane-document: 200;
+    --plane-toolbox: 300;
+    --plane-modal: 400;
+
+    /*
+    * Colors
+    */
+    --color-text: #222;
+    --color-text-disabled: hsl(0, 0%, 70%);
+    --color-background: #fff;
+
+    --color-accent-light: hsl(220, 80%, 80%);
+    --color-accent:       hsl(220, 50%, 50%);
+    --color-accent-dark:  hsl(220, 50%, 30%);
+
+    --color-grey-light: hsl(0, 0%, 80%);
+    --color-grey:       hsl(0, 0%, 50%);
+    --color-grey-dark:  hsl(0, 0%, 20%);
+}

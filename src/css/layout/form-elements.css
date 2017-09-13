@@ -1,0 +1,171 @@
+/*
+* Resets
+*/
+fieldset {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+legend {
+    padding: 0;
+    border: 0;
+}
+
+button,
+input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    overflow: visible;
+    font: inherit;
+    border: 0;
+    padding: 0;
+}
+
+
+
+/*
+* Basic Styling
+*/
+input,
+button {
+    color: var(--color-text);
+}
+
+input:disabled,
+button:disabled {
+    color: var(--color-text-disabled);
+}
+
+input[type="email"],
+input[type="number"],
+input[type="password"],
+input[type="search"],
+input[type="text"],
+input[type="url"],
+button:disabled {
+    border-color: var(--color-grey);
+}
+
+input[type="submit"],
+button {
+    background-color: var(--color-background);
+}
+
+
+
+/*
+* Fieldset
+*/
+fieldset {
+    padding: calc(var(--base-spacing) / 2);
+}
+
+
+
+/*
+* Button
+*/
+input[type="submit"],
+button {
+    border: 2px solid var(--color-grey-dark);
+    padding: calc(var(--base-spacing) / 4) var(--base-spacing);
+}
+
+input[type="submit"]:enabled:hover,
+input[type="submit"]:enabled:active,
+button:enabled:hover,
+button:enabled:active {
+    background-color: var(--color-accent-light);
+}
+
+input[type="submit"]:enabled:focus,
+button:enabled:focus {
+    outline: 2px solid var(--color-accent-light);
+}
+
+
+
+/*
+* Switch button
+*/
+.form-group--switch {
+    display: flex;
+    align-items: center;
+}
+
+.form-group--switch:not(:last-child) {
+    margin-bottom: calc(var(--base-spacing) / 2);
+    padding-bottom: calc(var(--base-spacing) / 2);
+    border-bottom: 1px solid var(--color-grey);
+}
+
+.form-group--switch .form-label {
+    flex: 1;
+    margin-right: var(--base-spacing);
+}
+
+button[aria-checked] {
+    display: flex;
+    color: #fff;
+    background-color: var(--color-grey-dark);
+
+    --size: calc(2.5 * var(--base-spacing));
+    --offset: 2px;
+    position: relative;
+    width: calc(2 * var(--size) + 2 * var(--offset));
+    height: calc(var(--size) + 2 * var(--offset));
+    padding: var(--offset);
+    border: 0;
+    border-radius: calc(var(--size) + var(--offset));
+}
+
+button[aria-checked="true"]:enabled:hover {
+    background-color: var(--color-grey-dark);
+}
+
+button[aria-checked="false"]:enabled:hover {
+    background-color: var(--color-accent);
+}
+
+button[aria-checked] .state {
+    position: absolute;
+    top: var(--offset);
+    width: var(--size);
+    height: var(--size);
+    line-height: var(--size);
+    border-radius: calc(var(--size) / 2);
+}
+
+button[aria-checked] .state--true {
+    left: var(--offset);
+}
+
+button[aria-checked] .state--false {
+    right: var(--offset);
+}
+
+button[aria-checked="true"]:enabled {
+    background-color: var(--color-accent);
+}
+
+button[aria-checked="true"]:enabled .state--true {
+    color: var(--color-text);
+    background-color: var(--color-accent-light);
+}
+
+button[aria-checked="false"]:enabled .state--false {
+    background-color: var(--color-grey);
+}
+
+button[aria-checked]:disabled {
+    color: var(--color-grey-light);
+    background-color: var(--color-grey);
+}
+
+button[aria-checked="true"]:disabled .state--true,
+button[aria-checked="false"]:disabled .state--false {
+    color: var(--color-grey);
+    background-color: var(--color-grey-light);
+}
