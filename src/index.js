@@ -1,5 +1,5 @@
-require('./css/style.css');
-require('./js/intersection-observer.js');
-const initialize = require('./js/script.js');
+import './css/style.css';
+import './js/intersection-observer.js';
+import initialize from './js/script.js';
 
 initialize();
