@@ -508,6 +508,8 @@ function onModifierBlur() {
 /*
 * Mouse wheel item navigation
 */
+// let combinedDelta = 0;
+
 function handleWheelNavigation(event) {
   const scrollingVertically = Math.abs(event.deltaX / event.deltaY) < 1;
   const delta = scrollingVertically ? event.deltaY : event.deltaX;
@@ -515,6 +517,12 @@ function handleWheelNavigation(event) {
   // When scrolling vertically, only trigger navigation when modifier is pressed
   if (scrollingVertically && event[config.modifierKey] === false) {
     return
+  }
+
+  if (!scrollingVertically) {
+    // combinedDelta += delta
+    // console.log(combinedDelta)
+    console.log('handle horizontal wheel scrolling properly')
   }
 
   const view = event.target.closest(config.class.view)

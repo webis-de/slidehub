@@ -1,7 +1,9 @@
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
-  entry: './index.js',
+  entry: {
+    app: './src/index.js'
+  },
   module: {
     rules: [
       {
@@ -15,9 +17,11 @@ module.exports = {
     ]
   },
   plugins: [
-    new ExtractTextPlugin('slidehub.css')
+    new ExtractTextPlugin({
+      filename: '[name].bundle.css'
+    })
   ],
   output: {
-    filename: 'slidehub.js'
+    filename: '[name].bundle.js'
   }
 };
