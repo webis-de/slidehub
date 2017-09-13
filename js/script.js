@@ -509,13 +509,11 @@ function onModifierBlur() {
 * Mouse wheel item navigation
 */
 function handleWheelNavigation(event) {
-  // No special scrolling without modifier
-  if (event[config.modifierKey] === false) {
-    return
-  }
+  const scrollingVertically = Math.abs(event.deltaX / event.deltaY) < 1;
+  const delta = scrollingVertically ? event.deltaY : event.deltaX;
 
-  // No special scrolling when not scrolling vertically
-  if (event.deltaY === 0) {
+  // When scrolling vertically, only trigger navigation when modifier is pressed
+  if (scrollingVertically && event[config.modifierKey] === false) {
     return
   }
 
@@ -533,7 +531,7 @@ function handleWheelNavigation(event) {
     return
   }
 
-  moveView(Math.sign(event.deltaY))
+  moveView(Math.sign(delta))
 }
 
 function moveView(distance) {
