@@ -39,16 +39,18 @@ const config = {
 const features = {
 
   core: {
+    enabled: true,
     enable: function() {
       enableModalButtons();
       enableToggleButtons();
     },
     disable: function() {
-      console.error('Can’t disable core feature.');
+      console.info('Not very effective. (Can’t disable core feature.)');
     }
   },
 
   wheelNavigation: {
+    enabled: true,
     enable: function() {
       enableModifier();
       document.addEventListener('wheel', handleWheelNavigation, activeListener);
@@ -60,6 +62,7 @@ const features = {
   },
 
   keyboardNavigation: {
+    enabled: true,
     enable: function() {
       document.addEventListener('keydown', handleKeyboardInput, activeListener);
     },
@@ -69,6 +72,7 @@ const features = {
   },
 
   itemLinking: {
+    enabled: true,
     enable: function() {
       document.addEventListener('keydown', handleItemLinking, passiveListener);
     },
@@ -78,6 +82,7 @@ const features = {
   },
 
   activatingOnHover: {
+    enabled: false,
     enable: function() {
       document.addEventListener('mousemove', activateOnHover, passiveListener);
     },
@@ -194,7 +199,11 @@ module.exports = function () {
         documentObserver.observe(container.lastElementChild);
       });
 
-    Object.values(features).forEach(feature => feature.enable());
+    Object.values(features).forEach(feature => {
+      if (feature.enabled) {
+        feature.enable();
+      }
+    })
   });
 };
 
@@ -866,20 +875,46 @@ function isInteractive(element) {
 * Toggle Buttons
 */
 function enableToggleButtons() {
-  const switches = Array.from(document.querySelectorAll('.switch'));
-  switches.forEach(switchButton => {
-    switchButton.addEventListener('click', event => {
-      const button = event.currentTarget;
-      const isChecked = button.getAttribute('aria-checked') === 'true';
-      const feature = features[button.getAttribute('data-feature')];
-      if (isChecked) {
-        feature.disable();
-      } else {
-        feature.enable();
-      }
-      button.setAttribute('aria-checked', String(!isChecked))
-    });
+  const toggleButtons = document.querySelectorAll('[aria-pressed], [aria-checked]');
+  Array.from(toggleButtons).forEach(button => {
+    const featureName = button.getAttribute('data-feature');
+    const stateAttr = button.hasAttribute('aria-pressed') ? 'aria-pressed' : 'aria-checked';
+    if (features[featureName].enabled) {
+      button.setAttribute(stateAttr, 'true');
+    } else {
+      button.setAttribute(stateAttr, 'false');
+    }
+
+    button.addEventListener('click', event => toggle(event.currentTarget));
   });
+}
+
+function toggle(button) {
+  const stateAttr = button.hasAttribute('aria-pressed') ? 'aria-pressed' : 'aria-checked';
+  const isPressed = button.getAttribute(stateAttr) === 'true';
+  button.setAttribute(stateAttr, String(!isPressed));
+
+  triggerButtonAction(button, stateAttr);
+}
+
+function triggerButtonAction(button, stateAttr) {
+  switch (true) {
+    case button.hasAttribute('data-feature'):
+      const featureName = button.getAttribute('data-feature');
+      const feature = features[featureName];
+      if (button.getAttribute(stateAttr) === 'true') {
+        feature.enable();
+        console.info(`Enabled ${featureName}.`);
+      } else {
+        feature.disable();
+        console.info(`Disabled ${featureName}.`);
+      }
+      break;
+
+    default:
+      console.warn('No action is associated with the control', button);
+      break;
+  }
 }
 
 
