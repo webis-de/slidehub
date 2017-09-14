@@ -225,16 +225,21 @@
             <a href="#">SlideHub</a>
         </h1>
 
-        <button class="open-modal" data-target-modal="modal--shortcuts" type="button" disabled>Shortcuts</button>
+        <button data-target-modal="modal--shortcuts" disabled>Shortcuts</button>
 
-        <button class="open-modal" data-target-modal="modal--features" type="button" disabled>Features</button>
+        <button data-target-modal="modal--features" disabled>Features</button>
     </header>
 
     <main class="main-content"></main>
 
     <div class="modal modal--shortcuts closed" aria-hidden="true" aria-labelledby="shortcuts-title" role="dialog">
         <div class="modal-content" role="document">
-            <button class="close-modal" type="button">Close</button>
+            <button class="modal__close button--close" aria-label="Close">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" role="img" aria-labelledby="close-svg-title">
+                    <title id="close-svg-title">An x symbol representing a closing action</title>
+                    <path d="m4,0l8,8 8,-8 4,4 -8,8 8,8 -4,4 -8,-8 -8,8 -4,-4 8,-8 -8,-8 Z" fill="#000"/>
+                </svg>
+            </button>
 
             <h2 id="shortcuts-title">Shortcuts</h2>
 
@@ -310,7 +315,12 @@
 
     <div class="modal modal--features closed" aria-hidden="true" aria-labelledby="features-title" role="dialog">
         <div class="modal-content" role="document">
-            <button class="close-modal" type="button">Close</button>
+            <button class="modal__close button--close" aria-label="Close">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" role="img" aria-labelledby="close-svg-title">
+                    <title id="close-svg-title">An x symbol representing a closing action</title>
+                    <path d="m4,0l8,8 8,-8 4,4 -8,8 8,8 -4,4 -8,-8 -8,8 -4,-4 8,-8 -8,-8 Z" fill="#000"/>
+                </svg>
+            </button>
 
             <h2 id="features-title">Features</h2>
 
@@ -320,7 +330,7 @@
                     <span class="form-label" id="feature-keyboard-navigation">
                         Navigate pages with keyboard
                     </span>
-                    <button type="button" role="switch" class="form-control switch" aria-checked="false" aria-labelledby="feature-keyboard-navigation" data-feature="keyboardNavigation">
+                    <button role="switch" aria-checked="false" aria-labelledby="feature-keyboard-navigation" data-feature="keyboardNavigation">
                         <span class="state state--true" aria-label="on"></span>
                         <span class="state state--false" aria-label="off"></span>
                     </button>
@@ -330,7 +340,7 @@
                     <span class="form-label" id="feature-wheel-navigation">
                         Navigate pages with mouse wheel
                     </span>
-                    <button type="button" role="switch" class="form-control switch" aria-checked="false" aria-labelledby="feature-wheel-navigation" data-feature="wheelNavigation">
+                    <button role="switch" aria-checked="false" aria-labelledby="feature-wheel-navigation" data-feature="wheelNavigation">
                         <span class="state state--true" aria-label="on"></span>
                         <span class="state state--false" aria-label="off"></span>
                     </button>
@@ -340,7 +350,7 @@
                     <span class="form-label" id="feature-item-linking">
                         Link pages to PDF source
                     </span>
-                    <button type="button" role="switch" class="form-control switch" aria-checked="false" aria-labelledby="feature-item-linking" data-feature="itemLinking">
+                    <button role="switch" aria-checked="false" aria-labelledby="feature-item-linking" data-feature="itemLinking">
                         <span class="state state--true" aria-label="on"></span>
                         <span class="state state--false" aria-label="off"></span>
                     </button>
@@ -350,7 +360,7 @@
                     <span class="form-label" id="feature-activating-on-hover">
                         Activate pages on hover
                     </span>
-                    <button type="button" role="switch" class="form-control switch" aria-checked="false" aria-labelledby="feature-activating-on-hover" data-feature="activatingOnHover">
+                    <button role="switch" aria-checked="false" aria-labelledby="feature-activating-on-hover" data-feature="activatingOnHover">
                         <span class="state state--true" aria-label="on"></span>
                         <span class="state state--false" aria-label="off"></span>
                     </button>

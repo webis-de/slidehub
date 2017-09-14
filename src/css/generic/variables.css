@@ -23,6 +23,7 @@
     --c-text: #222;
     --c-text-disabled: hsl(0, 0%, 70%);
     --c-background: #fff;
+    --c-focus: hsl(40, 80%, 50%);
 
     --c-accent-light: hsl(220, 80%, 80%);
     --c-accent:       hsl(220, 50%, 50%);

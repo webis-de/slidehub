@@ -48,12 +48,18 @@ figure {
     margin-bottom: 1.5rem;
 }
 
+:focus {
+    outline-color: var(--c-focus);
+}
+
 a {
+    color: cornflowerblue;
     color: var(--c-accent);
     text-decoration: none;
 }
 
 a:visited {
+    color: royalblue;
     color: var(--c-accent-dark);
 }
 

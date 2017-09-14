@@ -135,3 +135,7 @@
     z-index: 30;
     /*z-index: calc(var(--plane-document) + 20);*/
 }
+
+[data-src]::after {
+    content: " loading ...";
+}

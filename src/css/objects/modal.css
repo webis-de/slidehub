@@ -26,10 +26,10 @@
     background-color: var(--c-background);
 }
 
-.close-modal {
+.modal__close {
     position: absolute;
-    top: var(--spacing);
-    right: var(--spacing);
+    top: calc(var(--spacing) / 2);
+    right: calc(var(--spacing) / 2);
 }
 
 .modal-content h2 {

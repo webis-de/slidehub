@@ -722,12 +722,12 @@ function getItemByIndex(view, index) {
 * https://github.com/gdkraus/accessible-modal-dialog
 */
 function enableModalButtons() {
-  Array.from(document.querySelectorAll('.open-modal')).forEach(button => {
+  Array.from(document.querySelectorAll('button[data-target-modal]')).forEach(button => {
     button.removeAttribute('disabled')
     button.addEventListener('click', openModal)
   })
 
-  Array.from(document.querySelectorAll('.close-modal')).forEach(button => {
+  Array.from(document.querySelectorAll('.modal__close')).forEach(button => {
     button.addEventListener('click', closeModal)
   })
 }
@@ -922,8 +922,9 @@ function triggerButtonAction(button, stateAttr) {
 
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// LAZY LOADING PAGES
+/*
+* Lazy-loading page images
+*/
 
 /*
 * Observes document views in order to load their item images only when
@@ -932,54 +933,53 @@ function triggerButtonAction(button, stateAttr) {
 function initializeLazyLoader() {
   const options = {
     rootMargin: `500px 0px`
-  }
+  };
 
-  state.viewObserver = new IntersectionObserver(viewObservationHandler, options)
+  state.viewObserver = new IntersectionObserver(viewObservationHandler, options);
 }
 
 function viewObservationHandler(entries, observer) {
   for (const entry of entries) {
     if (entry.isIntersecting) {
-      const view = entry.target
-      const images = Array.from(view.querySelectorAll('img[data-src]'))
+      const view = entry.target;
+      const images = Array.from(view.querySelectorAll('img[data-src]'));
       // For each image …
       images.forEach(img => {
         // … swap out the `data-src` attribute with the `src` attribute.
         // This will start loading the images.
         if (img.hasAttribute('data-src')) {
-          img.setAttribute('src', img.getAttribute('data-src'))
-          img.removeAttribute('data-src')
+          img.setAttribute('src', img.getAttribute('data-src'));
+          img.removeAttribute('data-src');
         }
       })
 
-      images[0].addEventListener('load', function() {
-        handleFirstItemImageLoaded(entry.target)
-      })
+      images[0].addEventListener('load', () => handleFirstItemImageLoaded(entry.target));
 
       // Unobserve the current target because no further action is required
-      observer.unobserve(entry.target)
+      observer.unobserve(entry.target);
     }
   }
 }
 
 function handleFirstItemImageLoaded(view) {
   if (config.preserveAspectRatio) {
-    setItemAspectRatio(view)
+    setItemAspectRatio(view);
   }
 }
 
 function setItemAspectRatio(view) {
-  const imgSample = view.querySelector(`${config.class.item} > img`)
-  const aspectRatio = imgSample.naturalWidth / imgSample.naturalHeight
-  view.style.setProperty('--page-aspect-ratio', aspectRatio)
+  const imgSample = view.querySelector(`${config.class.item} > img`);
+  const aspectRatio = imgSample.naturalWidth / imgSample.naturalHeight;
+  view.style.setProperty('--page-aspect-ratio', aspectRatio);
 }
 
 
 
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// MISC
+/*
+* MISC
+*/
 
 function clamp(value, min, max) {
   return Math.max(min, Math.min(value, max));
@@ -988,28 +988,28 @@ function clamp(value, min, max) {
 /*
 * https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md#feature-detection
 */
-let supportsPassive = false
+let supportsPassive = false;
 try {
   const opts = Object.defineProperty({}, 'passive', {
     get: function() {
-      supportsPassive = true
+      supportsPassive = true;
     }
   });
-  window.addEventListener('test', null, opts)
+  window.addEventListener('test', null, opts);
 } catch (event) {}
 
-const activeListener = supportsPassive ? { passive: false } : false
-const passiveListener = supportsPassive ? { passive: true } : false
+const activeListener = supportsPassive ? { passive: false } : false;
+const passiveListener = supportsPassive ? { passive: true } : false;
 
 
 function getFloatPropertyValue(element, property) {
-  const value = getComputedStyle(element).getPropertyValue(property)
+  const value = getComputedStyle(element).getPropertyValue(property);
 
   if (value === '') {
-    return 0
+    return 0;
   }
 
-  return parseFloat(value)
+  return parseFloat(value);
 }
 
 /*
@@ -1017,13 +1017,13 @@ function getFloatPropertyValue(element, property) {
 * horizontal dimension property values (i.e. margin-left, width, margin-right)
 */
 function getComputedOuterChildrenWidth(element) {
-  let outerWidth = 0
+  let outerWidth = 0;
 
   Array.from(element.children).forEach(child => {
-    outerWidth += getOuterWidth(child)
+    outerWidth += getOuterWidth(child);
   })
 
-  return outerWidth
+  return outerWidth;
 }
 
 /*
@@ -1032,9 +1032,9 @@ function getComputedOuterChildrenWidth(element) {
 * This is assumes the the `box-sizing` box model.
 */
 function getOuterWidth(element) {
-  const width = getFloatPropertyValue(element, 'width')
-  const marginLeft = getFloatPropertyValue(element, 'margin-left')
-  const marginRight = getFloatPropertyValue(element, 'margin-right')
+  const width = getFloatPropertyValue(element, 'width');
+  const marginLeft = getFloatPropertyValue(element, 'margin-left');
+  const marginRight = getFloatPropertyValue(element, 'margin-right');
 
-  return marginLeft + width + marginRight
+  return marginLeft + width + marginRight;
 }
