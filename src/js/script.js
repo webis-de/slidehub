@@ -476,8 +476,11 @@ function openItem(view, ctrlKey) {
 */
 function enableModifier() {
   const modifier = config.modifierKey.replace('Key', '');
-  const modifierElements = Array.from(document.querySelectorAll('.shortcut__modifier'));
-  modifierElements.forEach(element => element.innerText = modifier);
+  const modifierElements = Array.from(document.querySelectorAll('[aria-label="Modifier"]'));
+  modifierElements.forEach(element => {
+    element.innerText = modifier;
+    element.setAttribute('aria-label', modifier);
+  });
 
   document.addEventListener('keydown', onModifierDown, passiveListener);
   document.addEventListener('keyup', onModifierUp, passiveListener);

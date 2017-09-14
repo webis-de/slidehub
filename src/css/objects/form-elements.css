@@ -30,12 +30,12 @@ input {
 */
 input,
 button {
-    color: var(--color-text);
+    color: var(--c-text);
 }
 
 input:disabled,
 button:disabled {
-    color: var(--color-text-disabled);
+    color: var(--c-text-disabled);
 }
 
 input[type="email"],
@@ -45,12 +45,13 @@ input[type="search"],
 input[type="text"],
 input[type="url"],
 button:disabled {
-    border-color: var(--color-grey);
+    background-color: var(--c-grey);
 }
 
 input[type="submit"],
 button {
-    background-color: var(--color-background);
+    color: #fff;
+    background-color: var(--c-accent);
 }
 
 
@@ -59,7 +60,7 @@ button {
 * Fieldset
 */
 fieldset {
-    padding: calc(var(--base-spacing) / 2);
+    padding: calc(var(--spacing) * 2);
 }
 
 
@@ -69,20 +70,20 @@ fieldset {
 */
 input[type="submit"],
 button {
-    border: 2px solid var(--color-grey-dark);
-    padding: calc(var(--base-spacing) / 4) var(--base-spacing);
+    /*border: 2px solid var(--c-grey-dark);*/
+    padding: calc(var(--spacing) / 4) var(--spacing);
 }
 
 input[type="submit"]:enabled:hover,
 input[type="submit"]:enabled:active,
 button:enabled:hover,
 button:enabled:active {
-    background-color: var(--color-accent-light);
+    background-color: var(--c-accent-dark);
 }
 
 input[type="submit"]:enabled:focus,
 button:enabled:focus {
-    outline: 2px solid var(--color-accent-light);
+    outline: 2px solid var(--c-accent-light);
 }
 
 
@@ -96,23 +97,23 @@ button:enabled:focus {
 }
 
 .form-group--switch:not(:last-child) {
-    margin-bottom: calc(var(--base-spacing) / 2);
-    padding-bottom: calc(var(--base-spacing) / 2);
-    border-bottom: 1px solid var(--color-grey);
+    margin-bottom: calc(var(--spacing) / 2);
+    padding-bottom: calc(var(--spacing) / 2);
+    border-bottom: 1px solid var(--c-grey-light);
 }
 
 .form-group--switch .form-label {
     flex: 1;
-    margin-right: var(--base-spacing);
+    margin-right: calc(4 * var(--spacing));
 }
 
 button[aria-checked] {
     display: flex;
     color: #fff;
-    background-color: var(--color-grey-dark);
+    background-color: var(--c-grey-dark);
 
-    --size: calc(2.5 * var(--base-spacing));
-    --offset: 2px;
+    --size: calc(2 * var(--spacing));
+    --offset: 4px;
     position: relative;
     width: calc(2 * var(--size) + 2 * var(--offset));
     height: calc(var(--size) + 2 * var(--offset));
@@ -121,12 +122,24 @@ button[aria-checked] {
     border-radius: calc(var(--size) + var(--offset));
 }
 
+button[aria-checked]:disabled {
+    background-color: var(--c-grey);
+}
+
+button[aria-checked="true"]:enabled {
+    background-color: var(--c-accent);
+}
+
+button[aria-checked="false"]:enabled {
+    background-color: var(--c-grey);
+}
+
 button[aria-checked="true"]:enabled:hover {
-    background-color: var(--color-grey-dark);
+    background-color: var(--c-grey);
 }
 
 button[aria-checked="false"]:enabled:hover {
-    background-color: var(--color-accent);
+    background-color: var(--c-accent);
 }
 
 button[aria-checked] .state {
@@ -135,6 +148,7 @@ button[aria-checked] .state {
     width: var(--size);
     height: var(--size);
     line-height: var(--size);
+    color: var(--c-text);
     border-radius: calc(var(--size) / 2);
 }
 
@@ -146,26 +160,12 @@ button[aria-checked] .state--false {
     right: var(--offset);
 }
 
-button[aria-checked="true"]:enabled {
-    background-color: var(--color-accent);
-}
-
-button[aria-checked="true"]:enabled .state--true {
-    color: var(--color-text);
-    background-color: var(--color-accent-light);
-}
-
+button[aria-checked="true"]:enabled .state--true,
 button[aria-checked="false"]:enabled .state--false {
-    background-color: var(--color-grey);
-}
-
-button[aria-checked]:disabled {
-    color: var(--color-grey-light);
-    background-color: var(--color-grey);
+    background-color: #fff;
 }
 
 button[aria-checked="true"]:disabled .state--true,
 button[aria-checked="false"]:disabled .state--false {
-    color: var(--color-grey);
-    background-color: var(--color-grey-light);
+    background-color: var(--c-grey-light);
 }

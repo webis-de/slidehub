@@ -3,9 +3,9 @@
     * Used to create uniform visual space. Smaller/bigger values should be
     * created using `calc`:
     *
-    * padding: calc( var(--base-spacing) / 2 );
+    * padding: calc( var(--spacing) / 2 );
     */
-    --base-spacing: 12px;
+    --spacing: 12px;
 
     /*
     * Hierarchy of z-index values (i.e. planes). To elevate elements within
@@ -20,15 +20,15 @@
     /*
     * Colors
     */
-    --color-text: #222;
-    --color-text-disabled: hsl(0, 0%, 70%);
-    --color-background: #fff;
+    --c-text: #222;
+    --c-text-disabled: hsl(0, 0%, 70%);
+    --c-background: #fff;
 
-    --color-accent-light: hsl(220, 80%, 80%);
-    --color-accent:       hsl(220, 50%, 50%);
-    --color-accent-dark:  hsl(220, 50%, 30%);
+    --c-accent-light: hsl(220, 80%, 80%);
+    --c-accent:       hsl(220, 50%, 50%);
+    --c-accent-dark:  hsl(220, 50%, 40%);
 
-    --color-grey-light: hsl(0, 0%, 80%);
-    --color-grey:       hsl(0, 0%, 50%);
-    --color-grey-dark:  hsl(0, 0%, 20%);
+    --c-grey-light: hsl(0, 0%, 80%);
+    --c-grey:       hsl(0, 0%, 50%);
+    --c-grey-dark:  hsl(0, 0%, 20%);
 }

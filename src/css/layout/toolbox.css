@@ -1,0 +1,30 @@
+.toolbox {
+    --c-text: #fff;
+    --c-background: #222;
+
+    position: fixed;
+    will-change: transform;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: calc(var(--spacing) * 4);
+    z-index: var(--plane-toolbox);
+    display: flex;
+    align-items: center;
+    padding: calc(var(--spacing) / 2) calc(var(--spacing) * 2);
+    color: var(--c-text);
+    background-color: var(--c-background);
+}
+
+.toolbox a {
+    color: currentColor;
+}
+
+.toolbox > *:not(:last-child) {
+    margin-right: calc(var(--spacing) * 2);
+}
+
+.site-title {
+    margin-bottom: 0;
+    font-size: 1rem;
+}
