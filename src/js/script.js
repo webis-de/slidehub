@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 /*
 * Configuration
@@ -203,7 +203,7 @@ module.exports = function () {
       if (feature.enabled) {
         feature.enable();
       }
-    })
+    });
   });
 };
 
@@ -374,8 +374,8 @@ function enableDocumentScrolling(view) {
         view.style.setProperty('will-change', 'auto');
       }
 
-      state.touched = false
-      doc.style.setProperty('transition', transitionValue)
+      state.touched = false;
+      doc.style.setProperty('transition', transitionValue);
     }
   }, supportsPassive ? { passive: true } : false);
 }
@@ -411,22 +411,22 @@ function getFullyVisibleItems() {
 
 function handleKeyboardInput(event) {
   if (event.keyCode in controlKeyNames) {
-    event.preventDefault()
-    const keyName = controlKeyNames[event.keyCode]
-    controlKey[keyName].trigger(event)
+    event.preventDefault();
+    const keyName = controlKeyNames[event.keyCode];
+    controlKey[keyName].trigger(event);
   }
 }
 
 function activateOnHover(event) {
-  const view = event.target.closest(config.class.view)
-  const item = event.target.closest(config.class.item)
+  const view = event.target.closest(config.class.view);
+  const item = event.target.closest(config.class.item);
 
   if (view === null || item === null) {
-    return
+    return;
   }
 
-  setActiveView(view)
-  setActiveItem(view, item)
+  setActiveView(view);
+  setActiveItem(view, item);
 }
 
 
@@ -440,30 +440,30 @@ function activateOnHover(event) {
 */
 function handleItemLinking(event) {
   if (event.keyCode !== 13) {
-    return
+    return;
   }
 
   // Focusable elements have a default behavior (e.g. activating a link)
   // That behavior shall not be altered/extended.
   if (isInteractive(event.target)) {
-    return
+    return;
   }
 
   if (state.activeView !== null) {
-    openItem(state.activeView, event.ctrlKey)
+    openItem(state.activeView, event.ctrlKey);
   }
 }
 
 function openItem(view, ctrlKey) {
-  const docSource = view.getAttribute('data-doc-source')
-  const itemIndex = getActiveItem(view).getAttribute('data-page')
-  const fragment = itemIndex !== '0' ? `#page=${itemIndex}` : ''
-  const itemSource = docSource + fragment
+  const docSource = view.getAttribute('data-doc-source');
+  const itemIndex = getActiveItem(view).getAttribute('data-page');
+  const fragment = itemIndex !== '0' ? `#page=${itemIndex}` : '';
+  const itemSource = docSource + fragment;
 
   if (ctrlKey) {
-    window.open(itemSource)
+    window.open(itemSource);
   } else {
-    window.location.href = itemSource
+    window.location.href = itemSource;
   }
 }
 
@@ -494,24 +494,24 @@ function disableModifier() {
 }
 
 function onModifierDown(event) {
-  const modifierKey = modifierKeyNames[event.keyCode]
+  const modifierKey = modifierKeyNames[event.keyCode];
   if (modifierKey === config.modifierKey) {
-    const doc = state.activeView.querySelector(config.class.doc)
-    doc.style.setProperty('cursor', 'ew-resize')
+    const doc = state.activeView.querySelector(config.class.doc);
+    doc.style.setProperty('cursor', 'ew-resize');
   }
 }
 
 function onModifierUp(event) {
-  const modifierKey = modifierKeyNames[event.keyCode]
+  const modifierKey = modifierKeyNames[event.keyCode];
   if (modifierKey === config.modifierKey) {
-    const doc = state.activeView.querySelector(config.class.doc)
-    doc.style.setProperty('cursor', 'auto')
+    const doc = state.activeView.querySelector(config.class.doc);
+    doc.style.setProperty('cursor', 'auto');
   }
 }
 
 function onModifierBlur() {
-  const doc = state.activeView.querySelector(config.class.doc)
-  doc.style.setProperty('cursor', 'auto')
+  const doc = state.activeView.querySelector(config.class.doc);
+  doc.style.setProperty('cursor', 'auto');
 }
 
 
@@ -528,74 +528,74 @@ function handleWheelNavigation(event) {
 
   // When scrolling vertically, only trigger navigation when modifier is pressed
   if (scrollingVertically && event[config.modifierKey] === false) {
-    return
+    return;
   }
 
   if (!scrollingVertically) {
     // combinedDelta += delta
     // console.log(combinedDelta)
-    console.log('handle horizontal wheel scrolling properly')
+    console.log('handle horizontal wheel scrolling properly');
   }
 
-  const view = event.target.closest(config.class.view)
+  const view = event.target.closest(config.class.view);
   if (view === null) {
-    return
+    return;
   }
 
   // Prevent vertical scrolling
-  event.preventDefault()
+  event.preventDefault();
 
   // Prevent unnecessary actions when there is nothing to scroll
-  const numItems = view.querySelector(config.class.doc).childElementCount
+  const numItems = view.querySelector(config.class.doc).childElementCount;
   if (numItems <= state.visibleItems) {
-    return
+    return;
   }
 
-  moveView(Math.sign(delta))
+  moveView(Math.sign(delta));
 }
 
 function moveView(distance) {
-  const view = state.activeView
+  const view = state.activeView;
   if (view === null) {
-    return
+    return;
   }
 
   // Move items along with view
   // moveItem(distance)
 
-  let currentViewPos = getViewPos(view)
+  let currentViewPos = getViewPos(view);
   // if (isNotAligned(currentViewPos)) {
-  //   currentViewPos = Math.round(currentViewPos)
+  //   currentViewPos = Math.round(currentViewPos);
   // }
-  setViewPos(view, currentViewPos + distance)
+  setViewPos(view, currentViewPos + distance);
 }
 
 function isNotAligned(itemsBeforeView) {
-  return itemsBeforeView % 1 !== 0
+  return itemsBeforeView % 1 !== 0;
 }
 
 function moveItem(distance) {
-  const view = state.activeView
-  const item = getActiveItem(view)
-  const currentIndex = parseInt(item.getAttribute('data-page'))
-  const lastIndex = getItemCount(view) - 1
-  const targetIndex = clamp(currentIndex + distance, 0, lastIndex)
-  const targetItem = getItemByIndex(view, targetIndex)
-  setActiveItem(view, targetItem)
+  const view = state.activeView;
+  const item = getActiveItem(view);
+  const currentIndex = parseInt(item.getAttribute('data-page'));
+  const lastIndex = getItemCount(view) - 1;
+  const targetIndex = clamp(currentIndex + distance, 0, lastIndex);
+  const targetItem = getItemByIndex(view, targetIndex);
+  setActiveItem(view, targetItem);
 
   // Move view if item would become partially hidden
-  const targetRect = targetItem.getBoundingClientRect()
-  const viewRect = view.getBoundingClientRect()
-  const marginLeft = getFloatPropertyValue(targetItem, 'margin-left')
-  const marginRight = getFloatPropertyValue(targetItem, 'margin-right')
+  const targetRect = targetItem.getBoundingClientRect();
+  const viewRect = view.getBoundingClientRect();
+  const marginLeft = getFloatPropertyValue(targetItem, 'margin-left');
+  const marginRight = getFloatPropertyValue(targetItem, 'margin-right');
   const isFullyVisible = (
     targetRect.left >= viewRect.left &&
     (targetRect.right + marginLeft + marginRight) <= (viewRect.left + viewRect.width)
-  )
-  const actualDistance = targetIndex - currentIndex
+  );
+  const actualDistance = targetIndex - currentIndex;
   if (isFullyVisible === false) {
-    moveView(actualDistance)
-    return
+    moveView(actualDistance);
+    return;
   }
 
   // Move view if it’s not aligned
@@ -606,109 +606,109 @@ function moveItem(distance) {
 }
 
 function getViewPos(view) {
-  return getViewPixelPos(view) / config.itemWidth
+  return getViewPixelPos(view) / config.itemWidth;
 }
 
 function getViewPixelPos(view) {
   if (config.moveViewItemsWithTransform) {
-    const doc = view.querySelector(config.class.doc)
+    const doc = view.querySelector(config.class.doc);
     // Negate the value in order to match scrollbar position values
-    const itemPos = -1 * getTranslateX(doc)
-    return itemPos
+    const itemPos = -1 * getTranslateX(doc);
+    return itemPos;
   }
 
-  return view.scrollLeft
+  return view.scrollLeft;
 }
 
 function setViewPos(view, itemPos) {
   if (view === null) {
-    return
+    return;
   }
 
-  const doc = view.querySelector(config.class.doc)
-  const maxPos = getItemCount(view) - state.visibleItems
-  itemPos = clamp(itemPos, 0, maxPos)
+  const doc = view.querySelector(config.class.doc);
+  const maxPos = getItemCount(view) - state.visibleItems;
+  itemPos = clamp(itemPos, 0, maxPos);
   // if (itemPos < 0) {
-  //   itemPos = 0
+  //   itemPos = 0;
   // }
   // else if (itemPos > maxPos) {
-  //   itemPos = maxPos
+  //   itemPos = maxPos;
   // }
 
-  let itemX = itemPos * config.itemWidth
+  let itemX = itemPos * config.itemWidth;
   // const maxX = getOuterWidth(doc) - getOuterWidth(view)
   // if (itemX > maxX) {
-  //   itemX = maxX
+  //   itemX = maxX;
   // }
 
-  setViewPixelPos(view, itemX)
+  setViewPixelPos(view, itemX);
 }
 
 function setViewPixelPos(view, itemX, disableTransition = false) {
-  const doc = view.querySelector(config.class.doc)
+  const doc = view.querySelector(config.class.doc);
 
   if (config.moveViewItemsWithTransform) {
-    doc.style.setProperty('transform', `translateX(${-itemX}px)`)
+    doc.style.setProperty('transform', `translateX(${-itemX}px)`);
   } else {
-    view.scrollLeft = itemX
+    view.scrollLeft = itemX;
   }
 }
 
 function getTranslateX(element) {
-  const matrix = getComputedStyle(element).getPropertyValue('transform')
+  const matrix = getComputedStyle(element).getPropertyValue('transform');
 
   if (matrix === 'none') {
-    return 0
+    return 0;
   }
 
-  return parseFloat(matrix.split(',')[4])
+  return parseFloat(matrix.split(',')[4]);
 }
 
 function goToPreviousView() {
-  const target = state.activeView.previousElementSibling
+  const target = state.activeView.previousElementSibling;
   if (target !== null) {
-    setActiveView(target)
+    setActiveView(target);
   }
 }
 
 function goToNextView() {
-  const target = state.activeView.nextElementSibling
+  const target = state.activeView.nextElementSibling;
   if (target !== null) {
-    setActiveView(target)
+    setActiveView(target);
   }
 }
 
 function getLastItemIndex() {
-  const doc = state.activeView.querySelector(config.class.doc)
-  return doc.childElementCount - 1
+  const doc = state.activeView.querySelector(config.class.doc);
+  return doc.childElementCount - 1;
 }
 
 function setActiveView(view) {
-  const views = document.querySelectorAll(`${config.class.view}.active`)
-  Array.from(views).forEach(element => element.classList.remove('active'))
-  state.activeView = view
-  state.activeView.classList.add('active')
-  document.activeElement.blur()
+  const views = document.querySelectorAll(`${config.class.view}.active`);
+  Array.from(views).forEach(element => element.classList.remove('active'));
+  state.activeView = view;
+  state.activeView.classList.add('active');
+  document.activeElement.blur();
 }
 
 function getItemCount(view) {
-  return parseInt(view.getAttribute('data-page-count'))
+  return parseInt(view.getAttribute('data-page-count'));
 }
 
 function getActiveItem(view) {
-  return view.querySelector(`${config.class.item}.active`)
+  return view.querySelector(`${config.class.item}.active`);
 }
 
 function setActiveItem(view, targetItem) {
-  const activeItem = getActiveItem(view)
-  activeItem.classList.remove('active')
-  targetItem.classList.add('active')
-  document.activeElement.blur()
+  const activeItem = getActiveItem(view);
+  activeItem.classList.remove('active');
+  targetItem.classList.add('active');
+  document.activeElement.blur();
 }
 
 function getItemByIndex(view, index) {
-  const doc = view.querySelector(config.class.doc)
-  return doc.children[index]
+  const doc = view.querySelector(config.class.doc);
+  return doc.children[index];
 }
 
 
@@ -723,69 +723,69 @@ function getItemByIndex(view, index) {
 */
 function enableModalButtons() {
   Array.from(document.querySelectorAll('button[data-target-modal]')).forEach(button => {
-    button.removeAttribute('disabled')
-    button.addEventListener('click', openModal)
-  })
+    button.removeAttribute('disabled');
+    button.addEventListener('click', openModal);
+  });
 
   Array.from(document.querySelectorAll('.modal__close')).forEach(button => {
-    button.addEventListener('click', closeModal)
-  })
+    button.addEventListener('click', closeModal);
+  });
 }
 
 function openModal(event) {
-  const targetClass = event.currentTarget.getAttribute('data-target-modal')
-  const modal = document.querySelector(`.${targetClass}`)
+  const targetClass = event.currentTarget.getAttribute('data-target-modal');
+  const modal = document.querySelector(`.${targetClass}`);
 
   if (modal === null) {
-    return
+    return;
   }
 
   // Save last focused element
-  state.lastFocusedElement = document.activeElement
+  state.lastFocusedElement = document.activeElement;
 
-  document.body.setAttribute('aria-hidden', 'true')
-  modal.setAttribute('aria-hidden', 'false')
+  document.body.setAttribute('aria-hidden', 'true');
+  modal.setAttribute('aria-hidden', 'false');
 
-  modal.classList.remove('closed')
+  modal.classList.remove('closed');
 
-  getFocusableElements(modal)[0].focus()
+  getFocusableElements(modal)[0].focus();
 
   // Setup event listeners
-  modal.addEventListener('keydown', closeModalOnEscape, passiveListener)
-  modal.addEventListener('keydown', trapTabKey, activeListener)
-  modal.addEventListener('click', closeModalOnBackground, passiveListener)
+  modal.addEventListener('keydown', closeModalOnEscape, passiveListener);
+  modal.addEventListener('keydown', trapTabKey, activeListener);
+  modal.addEventListener('click', closeModalOnBackground, passiveListener);
 }
 
 function closeModal(event) {
-  const modal = event.target.closest('.modal')
+  const modal = event.target.closest('.modal');
 
   if (modal === null) {
-    return
+    return;
   }
 
-  document.body.setAttribute('aria-hidden', 'false')
-  modal.setAttribute('aria-hidden', 'true')
+  document.body.setAttribute('aria-hidden', 'false');
+  modal.setAttribute('aria-hidden', 'true');
 
-  modal.classList.add('closed')
+  modal.classList.add('closed');
 
   // Clean up event listeners
-  modal.removeEventListener('keydown', closeModalOnEscape, passiveListener)
-  modal.removeEventListener('keydown', trapTabKey, activeListener)
-  modal.removeEventListener('click', closeModalOnBackground, passiveListener)
+  modal.removeEventListener('keydown', closeModalOnEscape, passiveListener);
+  modal.removeEventListener('keydown', trapTabKey, activeListener);
+  modal.removeEventListener('click', closeModalOnBackground, passiveListener);
 
   // Restore previously focused element
-  state.lastFocusedElement.focus()
+  state.lastFocusedElement.focus();
 }
 
 function closeModalOnBackground(event) {
   if (event.target === event.currentTarget) {
-    closeModal(event)
+    closeModal(event);
   }
 }
 
 function closeModalOnEscape(event) {
   if (event.keyCode === 27) {
-    closeModal(event)
+    closeModal(event);
   }
 }
 
@@ -794,44 +794,32 @@ function closeModalOnEscape(event) {
 */
 function trapTabKey(event) {
   if (event.keyCode !== 9) {
-    return
+    return;
   }
 
-  const activeElement = document.activeElement
-  const focusable = getFocusableElements(event.currentTarget)
+  const activeElement = document.activeElement;
+  const focusable = getFocusableElements(event.currentTarget);
   const tabbable = focusable.filter(element => element.tabIndex > -1);
 
   if (tabbable.length < 2) {
-    event.preventDefault()
-    return
+    event.preventDefault();
+    return;
   }
 
   if (event.shiftKey) {
     if (activeElement === tabbable[0]) {
-      tabbable[tabbable.length - 1].focus()
-      event.preventDefault()
+      tabbable[tabbable.length - 1].focus();
+      event.preventDefault();
     }
   } else {
     if (activeElement === tabbable[tabbable.length - 1]) {
-      tabbable[0].focus()
-      event.preventDefault()
+      tabbable[0].focus();
+      event.preventDefault();
     }
   }
 }
 
-const focusableElementsSelector = `
-  a[href],
-  area[href],
-  input:not([disabled]),
-  select:not([disabled]),
-  textarea:not([disabled]),
-  button:not([disabled]),
-  iframe,
-  object,
-  embed,
-  [tabindex],
-  [contenteditable=true]
-`;
+const focusableElementsSelector = 'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex], [contenteditable=true]';
 
 function getFocusableElements(ancestor = document) {
   return Array.from(ancestor.querySelectorAll(focusableElementsSelector));
@@ -951,7 +939,7 @@ function viewObservationHandler(entries, observer) {
           img.setAttribute('src', img.getAttribute('data-src'));
           img.removeAttribute('data-src');
         }
-      })
+      });
 
       images[0].addEventListener('load', () => handleFirstItemImageLoaded(entry.target));
 
@@ -1021,7 +1009,7 @@ function getComputedOuterChildrenWidth(element) {
 
   Array.from(element.children).forEach(child => {
     outerWidth += getOuterWidth(child);
-  })
+  });
 
   return outerWidth;
 }
