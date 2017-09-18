@@ -23,7 +23,7 @@ const config = {
   class: {
     main: '.main-content',
     view: '.doc-view',
-    doc:  '.doc',
+    doc: '.doc',
     item: '.doc__page'
   },
 
@@ -31,13 +31,10 @@ const config = {
   modifierKey: 'shiftKey'
 };
 
-
-
 /*
 * Features
 */
 const features = {
-
   core: {
     enabled: true,
     enable: function() {
@@ -90,7 +87,6 @@ const features = {
       document.removeEventListener('mousemove', activateOnHover, passiveListener);
     }
   }
-
 };
 
 const state = {
@@ -177,27 +173,22 @@ const controlKey = Object.freeze({
   }
 });
 
-module.exports = function () {
+module.exports = function() {
   initializeLazyLoader();
 
   document.addEventListener('DOMContentLoaded', function() {
+    const documentObserver = new IntersectionObserver(documentObserverHandler, { threshold: 1 });
 
-    const documentObserver = new IntersectionObserver(
-      documentObserverHandler,
-      { threshold: 1 }
-    );
+    loadDocuments().then(() => {
+      // onFirstDocumentLoaded
+      const firstView = document.querySelector(config.class.view);
+      setActiveView(firstView);
+      evaluateItemWidth();
+      state.visibleItems = getFullyVisibleItems();
 
-    loadDocuments()
-      .then(() => {
-        // onFirstDocumentLoaded
-        const firstView = document.querySelector(config.class.view);
-        setActiveView(firstView);
-        evaluateItemWidth();
-        state.visibleItems = getFullyVisibleItems();
-
-        const container = document.querySelector(config.class.main);
-        documentObserver.observe(container.lastElementChild);
-      });
+      const container = document.querySelector(config.class.main);
+      documentObserver.observe(container.lastElementChild);
+    });
 
     Object.values(features).forEach(feature => {
       if (feature.enabled) {
@@ -206,10 +197,6 @@ module.exports = function () {
     });
   });
 };
-
-
-
-
 
 /*
 * Document Loading
@@ -251,11 +238,10 @@ function loadDocuments() {
     return Promise.reject('No documents left to load.');
   }
 
-  return loadDocumentBatch(batchSize)
-    .then(docs => {
-      console.info('Loaded document batch.');
-      docs.forEach(doc => onDocumentLoaded(container, doc));
-    });
+  return loadDocumentBatch(batchSize).then(docs => {
+    console.info('Loaded document batch.');
+    docs.forEach(doc => onDocumentLoaded(container, doc));
+  });
 }
 
 function loadDocumentBatch(batchSize) {
@@ -331,53 +317,65 @@ function enableDocumentScrolling(view) {
   let transitionValue;
   let doc;
 
-  view.addEventListener('touchstart', function(event) {
-    if (config.moveViewItemsWithTransform) {
-      view.style.setProperty('will-change', 'transform');
-    }
-
-    state.touched = true;
-    doc = view.querySelector(config.class.doc);
-    transitionValue = getComputedStyle(doc).getPropertyValue('transition');
-    doc.style.setProperty('transition', 'none');
-
-    prevX = event.targetTouches[0].clientX;
-  }, supportsPassive ? { passive: true } : false);
-
-  view.addEventListener('touchmove', function(event) {
-    if (state.touched) {
-      const touch = event.targetTouches[0];
-      const offsetX = touch.clientX - prevX;
-      const offsetY = touch.clientY - prevY;
-
-      // Determine vertical/horizontal scrolling ratio
-      const directionRatio = Math.abs(offsetX / offsetY);
-      if (directionRatio < 1) {
-        return;
-      }
-
-      activateOnHover(event);
-      const newItemX = getViewPixelPos(view) - offsetX;
-      const disableTransition = true;
-      setViewPixelPos(view, newItemX, disableTransition);
-      prevX = touch.clientX;
-      prevY = touch.clientY;
-    }
-  }, supportsPassive ? { passive: true } : false);
-
-  view.addEventListener('touchend', function(event) {
-    if (state.touched) {
-      const newPos = getViewPos(view);
-      setViewPos(view, Math.round(newPos));
-
+  view.addEventListener(
+    'touchstart',
+    function(event) {
       if (config.moveViewItemsWithTransform) {
-        view.style.setProperty('will-change', 'auto');
+        view.style.setProperty('will-change', 'transform');
       }
 
-      state.touched = false;
-      doc.style.setProperty('transition', transitionValue);
-    }
-  }, supportsPassive ? { passive: true } : false);
+      state.touched = true;
+      doc = view.querySelector(config.class.doc);
+      transitionValue = getComputedStyle(doc).getPropertyValue('transition');
+      doc.style.setProperty('transition', 'none');
+
+      prevX = event.targetTouches[0].clientX;
+    },
+    supportsPassive ? { passive: true } : false
+  );
+
+  view.addEventListener(
+    'touchmove',
+    function(event) {
+      if (state.touched) {
+        const touch = event.targetTouches[0];
+        const offsetX = touch.clientX - prevX;
+        const offsetY = touch.clientY - prevY;
+
+        // Determine vertical/horizontal scrolling ratio
+        const directionRatio = Math.abs(offsetX / offsetY);
+        if (directionRatio < 1) {
+          return;
+        }
+
+        activateOnHover(event);
+        const newItemX = getViewPixelPos(view) - offsetX;
+        const disableTransition = true;
+        setViewPixelPos(view, newItemX, disableTransition);
+        prevX = touch.clientX;
+        prevY = touch.clientY;
+      }
+    },
+    supportsPassive ? { passive: true } : false
+  );
+
+  view.addEventListener(
+    'touchend',
+    function(event) {
+      if (state.touched) {
+        const newPos = getViewPos(view);
+        setViewPos(view, Math.round(newPos));
+
+        if (config.moveViewItemsWithTransform) {
+          view.style.setProperty('will-change', 'auto');
+        }
+
+        state.touched = false;
+        doc.style.setProperty('transition', transitionValue);
+      }
+    },
+    supportsPassive ? { passive: true } : false
+  );
 }
 
 function evaluateItemWidth() {
@@ -402,13 +400,9 @@ function getFullyVisibleItems() {
   return Math.floor(viewWidth / itemOuterWidth);
 }
 
-
-
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// NAVIGATION
-
+/*
+* Navigation
+*/
 function handleKeyboardInput(event) {
   if (event.keyCode in controlKeyNames) {
     event.preventDefault();
@@ -428,10 +422,6 @@ function activateOnHover(event) {
   setActiveView(view);
   setActiveItem(view, item);
 }
-
-
-
-
 
 /*
 * Item Linking.
@@ -466,10 +456,6 @@ function openItem(view, ctrlKey) {
     window.location.href = itemSource;
   }
 }
-
-
-
-
 
 /*
 * Modifier keys.
@@ -513,9 +499,6 @@ function onModifierBlur() {
   const doc = state.activeView.querySelector(config.class.doc);
   doc.style.setProperty('cursor', 'auto');
 }
-
-
-
 
 /*
 * Mouse wheel item navigation
@@ -588,10 +571,9 @@ function moveItem(distance) {
   const viewRect = view.getBoundingClientRect();
   const marginLeft = getFloatPropertyValue(targetItem, 'margin-left');
   const marginRight = getFloatPropertyValue(targetItem, 'margin-right');
-  const isFullyVisible = (
+  const isFullyVisible =
     targetRect.left >= viewRect.left &&
-    (targetRect.right + marginLeft + marginRight) <= (viewRect.left + viewRect.width)
-  );
+    targetRect.right + marginLeft + marginRight <= viewRect.left + viewRect.width;
   const actualDistance = targetIndex - currentIndex;
   if (isFullyVisible === false) {
     moveView(actualDistance);
@@ -711,10 +693,6 @@ function getItemByIndex(view, index) {
   return doc.children[index];
 }
 
-
-
-
-
 /*
 * Modal window
 *
@@ -819,7 +797,8 @@ function trapTabKey(event) {
   }
 }
 
-const focusableElementsSelector = 'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex], [contenteditable=true]';
+const focusableElementsSelector =
+  'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex], [contenteditable=true]';
 
 function getFocusableElements(ancestor = document) {
   return Array.from(ancestor.querySelectorAll(focusableElementsSelector));
@@ -857,10 +836,6 @@ function isInteractive(element) {
 
   return false;
 }
-
-
-
-
 
 /*
 * Toggle Buttons
@@ -907,8 +882,6 @@ function triggerButtonAction(button, stateAttr) {
       break;
   }
 }
-
-
 
 /*
 * Lazy-loading page images
@@ -961,10 +934,6 @@ function setItemAspectRatio(view) {
   view.style.setProperty('--page-aspect-ratio', aspectRatio);
 }
 
-
-
-
-
 /*
 * MISC
 */
@@ -988,7 +957,6 @@ try {
 
 const activeListener = supportsPassive ? { passive: false } : false;
 const passiveListener = supportsPassive ? { passive: true } : false;
-
 
 function getFloatPropertyValue(element, property) {
   const value = getComputedStyle(element).getPropertyValue(property);
