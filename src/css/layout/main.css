@@ -24,7 +24,7 @@
     position: relative;
 
     overflow: hidden;
-    border: 1px solid var(--c-grey-light);
+    border: 1px solid var(--c-alt-light);
 }
 
 @media only screen and (min-width: 600px) {
@@ -66,12 +66,12 @@
     width: var(--page-width);
     height: var(--page-height);
 
-    border: var(--border-width) solid var(--c-grey-light);
+    border: var(--border-width) solid var(--c-alt-light);
     margin: calc(-1 * var(--border-width));
     margin-right: 0;
 
     /* Make sure transparent slides appear on white background */
-    background-color: var(--c-background);
+    background-color: #fff;
 }
 
 .doc__page:not(.doc-info) {
@@ -91,7 +91,6 @@
 
 .doc-info {
     padding: calc(var(--spacing) / 2);
-    color: var(--c-grey-dark);
 }
 
 .doc-title {

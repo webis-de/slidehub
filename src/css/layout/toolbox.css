@@ -1,6 +1,6 @@
 .toolbox {
-    --c-text: #fff;
-    --c-background: #222;
+    --c-text: #222;
+    --c-background: #efefef;
 
     position: fixed;
     will-change: transform;
