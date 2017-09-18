@@ -21,7 +21,7 @@ const config = {
 
   // HTML classes that can be used in CSS selectors
   class: {
-    main: '.main-content',
+    main: '.doc-container',
     view: '.doc-view',
     doc: '.doc',
     item: '.doc__page'

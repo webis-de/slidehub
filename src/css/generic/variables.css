@@ -32,4 +32,9 @@
     --c-grey-light: hsl(0, 0%, 80%);
     --c-grey:       hsl(0, 0%, 50%);
     --c-grey-dark:  hsl(0, 0%, 20%);
+
+    /*
+    * Toolbox
+    */
+    --toolbox-height: 48px;
 }

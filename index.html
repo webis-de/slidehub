@@ -222,6 +222,8 @@
 </head>
 
 <body>
+    <a href="#main-content" class="skip-link visually-hidden focusable">Skip to content</a>
+
     <header class="toolbox">
         <h1 class="site-title">
             <a href="#">SlideHub</a>
@@ -232,7 +234,9 @@
         <button data-target-modal="modal--features" disabled>Features</button>
     </header>
 
-    <main class="main-content"></main>
+    <main class="main-content" id="main-content">
+        <div class="doc-container"></div>
+    </main>
 
     <div class="modal modal--shortcuts closed" aria-hidden="true" aria-labelledby="shortcuts-title" role="dialog">
         <div class="modal-content" role="document">

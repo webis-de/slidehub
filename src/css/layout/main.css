@@ -1,5 +1,16 @@
-.main-content {
-    margin-top: calc(var(--spacing) * 4);
+/*
+* Hello. This is some selector specificity-foo to override the utility class
+* for visually hidden but keyboard-focusable elements.
+*/
+.skip-link.visually-hidden.focusable:focus {
+    position: relative;
+    display: inline-block;
+    top: var(--toolbox-height);
+    margin: var(--spacing);
+    padding: calc(var(--spacing) / 2);
+}
+
+.doc-container {
     padding: var(--spacing);
 }
 
