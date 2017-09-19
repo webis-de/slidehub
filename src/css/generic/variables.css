@@ -1,40 +1,40 @@
 :root {
-    /*
-    * Used to create uniform visual space. Smaller/bigger values should be
-    * created using `calc`:
-    *
-    * padding: calc( var(--spacing) / 2 );
-    */
-    --spacing: 12px;
+  /*
+  * Used to create uniform visual space. Smaller/bigger values should be
+  * created using `calc`:
+  *
+  * padding: calc( var(--spacing) / 2 );
+  */
+  --spacing: 12px;
 
-    /*
-    * Hierarchy of z-index values (i.e. planes). To elevate elements within
-    * these planes, add arbitrary values small than 100 via `calc`:
-    *
-    * z-index: calc( var(--plane-document) + 10 );
-    */
-    --plane-document: 200;
-    --plane-toolbox: 300;
-    --plane-modal: 400;
+  /*
+  * Hierarchy of z-index values (i.e. planes). To elevate elements within
+  * these planes, add arbitrary values small than 100 via `calc`:
+  *
+  * z-index: calc( var(--plane-document) + 10 );
+  */
+  --plane-document: 200;
+  --plane-toolbox: 300;
+  --plane-modal: 400;
 
-    /*
-    * Colors
-    */
-    --c-text: hsl(0, 0%, 15%);
-    --c-text-disabled: hsl(0, 0%, 70%);
-    --c-background: hsl(0, 0%, 100%);
+  /*
+  * Colors
+  */
+  --c-text: hsl(0, 0%, 15%);
+  --c-text-disabled: hsl(0, 0%, 70%);
+  --c-background: hsl(0, 0%, 100%);
 
-    --c-focus: hsl(40, 80%, 50%);
+  --c-focus: hsl(40, 80%, 50%);
 
-    --c-accent: hsl(220, 50%, 40%);
-    --c-accent-dark: hsl(220, 50%, 30%);
+  --c-accent: hsl(220, 50%, 40%);
+  --c-accent-dark: hsl(220, 50%, 30%);
 
-    --c-alt-light: hsl(0, 0%, 80%);
-    --c-alt: hsl(0, 0%, 50%);
-    --c-alt-dark:  hsl(0, 0%, 20%);
+  --c-alt-light: hsl(0, 0%, 80%);
+  --c-alt: hsl(0, 0%, 50%);
+  --c-alt-dark: hsl(0, 0%, 20%);
 
-    /*
-    * Toolbox
-    */
-    --toolbox-height: 48px;
+  /*
+  * Toolbox
+  */
+  --toolbox-height: 48px;
 }

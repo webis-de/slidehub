@@ -1,21 +1,21 @@
 .shortcut-table-wrapper {
-    display: flex;
-    flex-wrap: wrap;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .shortcut-table__input {
-    text-align: right;
-    min-width: 10em;
+  text-align: right;
+  min-width: 10em;
 }
 
 .shortcut-table__action {
-    text-align: left;
+  text-align: left;
 }
 
 .shortcut-group:not(:last-child) {
-    margin-bottom: calc(var(--spacing) / 2);
+  margin-bottom: calc(var(--spacing) / 2);
 }
 
 .shortcut-group > kbd {
-    display: inline-block;
+  display: inline-block;
 }

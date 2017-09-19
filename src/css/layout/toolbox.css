@@ -1,34 +1,34 @@
 .toolbox {
-    --c-text: #222;
-    --c-background: #efefef;
+  --c-text: #222;
+  --c-background: #efefef;
 
-    position: fixed;
-    will-change: transform;
-    top: 0;
-    right: 0;
-    left: 0;
-    height: var(--toolbox-height);
-    z-index: var(--plane-toolbox);
-    display: flex;
-    align-items: center;
-    padding: calc(var(--spacing) / 2) calc(var(--spacing) * 2);
-    color: var(--c-text);
-    background-color: var(--c-background);
+  position: fixed;
+  will-change: transform;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: var(--toolbox-height);
+  z-index: var(--plane-toolbox);
+  display: flex;
+  align-items: center;
+  padding: calc(var(--spacing) / 2) calc(var(--spacing) * 2);
+  color: var(--c-text);
+  background-color: var(--c-background);
 }
 
 .main-content {
-    padding-top: var(--toolbox-height);
+  padding-top: var(--toolbox-height);
 }
 
 .toolbox a {
-    color: currentColor;
+  color: currentColor;
 }
 
 .toolbox > *:not(:last-child) {
-    margin-right: calc(var(--spacing) * 2);
+  margin-right: calc(var(--spacing) * 2);
 }
 
 .site-title {
-    margin-bottom: 0;
-    font-size: 1rem;
+  margin-bottom: 0;
+  font-size: 1rem;
 }
