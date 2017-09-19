@@ -92,7 +92,6 @@ const features = {
 const state = {
   activeView: null,
   viewObserver: null,
-  visibleItems: null,
   lastFocusedElement: null,
   touched: false
 };
@@ -184,7 +183,6 @@ module.exports = function() {
       const firstView = document.querySelector(config.class.view);
       setActiveView(firstView);
       evaluateItemWidth();
-      state.visibleItems = getFullyVisibleItems();
 
       const container = document.querySelector(config.class.main);
       documentObserver.observe(container.lastElementChild);
@@ -530,7 +528,8 @@ function handleWheelNavigation(event) {
 
   // Prevent unnecessary actions when there is nothing to scroll
   const numItems = view.querySelector(config.class.doc).childElementCount;
-  if (numItems <= state.visibleItems) {
+  console.log(numItems, getFullyVisibleItems());
+  if (numItems <= getFullyVisibleItems()) {
     return;
   }
 
@@ -608,7 +607,8 @@ function setViewPos(view, itemPos) {
   }
 
   const doc = view.querySelector(config.class.doc);
-  const maxPos = getItemCount(view) - state.visibleItems;
+  const maxPos = getItemCount(view) - getFullyVisibleItems();
+  console.log(maxPos);
   itemPos = clamp(itemPos, 0, maxPos);
   // if (itemPos < 0) {
   //   itemPos = 0;
