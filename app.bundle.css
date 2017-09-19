@@ -1,37 +1,42 @@
 :root {
-    /*
-    * Used to create uniform visual space. Smaller/bigger values should be
-    * created using `calc`:
-    *
-    * padding: calc( var(--spacing) / 2 );
-    */
-    --spacing: 12px;
+  /*
+  * Used to create uniform visual space. Smaller/bigger values should be
+  * created using `calc`:
+  *
+  * padding: calc( var(--spacing) / 2 );
+  */
+  --spacing: 12px;
 
-    /*
-    * Hierarchy of z-index values (i.e. planes). To elevate elements within
-    * these planes, add arbitrary values small than 100 via `calc`:
-    *
-    * z-index: calc( var(--plane-document) + 10 );
-    */
-    --plane-document: 200;
-    --plane-toolbox: 300;
-    --plane-modal: 400;
+  /*
+  * Hierarchy of z-index values (i.e. planes). To elevate elements within
+  * these planes, add arbitrary values small than 100 via `calc`:
+  *
+  * z-index: calc( var(--plane-document) + 10 );
+  */
+  --plane-document: 200;
+  --plane-toolbox: 300;
+  --plane-modal: 400;
 
-    /*
-    * Colors
-    */
-    --c-text: #222;
-    --c-text-disabled: hsl(0, 0%, 70%);
-    --c-background: #fff;
-    --c-focus: hsl(40, 80%, 50%);
+  /*
+  * Colors
+  */
+  --c-text: hsl(0, 0%, 15%);
+  --c-text-disabled: hsl(0, 0%, 70%);
+  --c-background: hsl(0, 0%, 100%);
 
-    --c-accent-light: hsl(220, 80%, 80%);
-    --c-accent:       hsl(220, 50%, 50%);
-    --c-accent-dark:  hsl(220, 50%, 40%);
+  --c-focus: hsl(40, 80%, 50%);
 
-    --c-grey-light: hsl(0, 0%, 80%);
-    --c-grey:       hsl(0, 0%, 50%);
-    --c-grey-dark:  hsl(0, 0%, 20%);
+  --c-accent: hsl(220, 50%, 40%);
+  --c-accent-dark: hsl(220, 50%, 30%);
+
+  --c-alt-light: hsl(0, 0%, 80%);
+  --c-alt: hsl(0, 0%, 50%);
+  --c-alt-dark: hsl(0, 0%, 20%);
+
+  /*
+  * Toolbox
+  */
+  --toolbox-height: 48px;
 }
 /*
 * Defaults
@@ -39,129 +44,148 @@
 *,
 *::before,
 *::after {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 body,
-h1, h2, h3, h4, h5, h6,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
 p,
 blockquote,
 pre,
-ul, ol, dl, dd,
+ul,
+ol,
+dl,
+dd,
 figure {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 details,
 summary,
 main {
-    display: block;
+  display: block;
 }
-
-
 
 /*
 * Basic appearance & typography
 */
 html {
-    overflow-y: scroll;
-    font-size: 1em;
-    line-height: 1.5;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-    color: var(--c-text);
-    background-color: var(--c-background);
+  overflow-y: scroll;
+  font-size: 1em;
+  line-height: 1.5;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  color: var(--c-text);
+  background-color: var(--c-background);
 }
 
 /* Set `margin-bottom` to maintain vertycal rhythm */
-h1, h2, h3, h4, h5, h6,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
 p,
 blockquote,
 pre,
-ul, ol, dl,
+ul,
+ol,
+dl,
 figure {
-    margin-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 :focus {
-    outline-color: var(--c-focus);
+  outline: 2px solid var(--c-focus);
+}
+
+a:focus {
+  outline-offset: 2px;
 }
 
 a {
-    color: cornflowerblue;
-    color: var(--c-accent);
-    text-decoration: none;
+  color: hsl(220, 50%, 40%);
+  color: var(--c-accent);
+  text-decoration: none;
 }
 
 a:visited {
-    color: royalblue;
-    color: var(--c-accent-dark);
+  color: hsl(220, 50%, 30%);
+  color: var(--c-accent-dark);
 }
 
 a:hover,
 a:active {
-    text-decoration: underline;
+  text-decoration: underline;
+  /* Improve visibility for focused links */
+  outline: none;
 }
 
 abbr[title] {
-    border-bottom: 1px dotted;
+  border-bottom: 1px dotted;
 }
-
-
 
 /*
 * Image
 */
 img {
-    max-width: 100%;
-    border: 0;
+  max-width: 100%;
+  border: 0;
 }
 
 img,
 svg {
-    vertical-align: middle;
+  vertical-align: middle;
 }
-
-
 
 /*
 * Figure
 */
 figure > img {
-    display: block;
+  display: block;
 }
 
 figure > * {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
-
-
 
 /*
 * Table
 */
 table {
-    border-collapse: collapse;
-    border-spacing: 0;
+  border-collapse: collapse;
+  border-spacing: 0;
 }
 
-table, tbody, tfoot, thead, tr, th, td {
-    margin: 0;
-    border: 0;
-    font-size: 100%;
-    font: inherit;
-    vertical-align: baseline;
+table,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td {
+  margin: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
 }
 
-th, td {
-    padding: calc(var(--spacing) / 2);
+th,
+td {
+  padding: calc(var(--spacing) / 2);
 }
 
 th {
-    font-weight: bold;
+  font-weight: bold;
 }
-
-
 
 /*
 * Code / user input
@@ -170,266 +194,292 @@ pre,
 code,
 kbd,
 samp {
-    font-family: "Fira Mono", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-family: 'Fira Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
 }
 
 kbd {
-    padding: calc(var(--spacing) / 4) var(--spacing);
-    border: 1px solid var(--c-grey-light);
-    border-radius: 4px;
-    box-shadow: 0 1px var(--c-grey-dark);
-    text-transform: capitalize;
+  padding: calc(var(--spacing) / 4) var(--spacing);
+  border: 1px solid var(--c-alt-light);
+  border-radius: 4px;
+  box-shadow: 0 1px var(--c-alt-dark);
+  text-transform: capitalize;
 }
-
-
 
 /*
 * Utility
 */
+
+/*
+* as per: https://github.com/h5bp/html5-boilerplate
+*
+* Hide only visually, but have it available for screen readers:
+* https://snook.ca/archives/html_and_css/hiding-content-for-accessibility
+*
+* 1. For long content, line feeds are not interpreted as spaces and small width
+*    causes content to wrap 1 word per line:
+*    https://medium.com/@jessebeach/beware-smushed-off-screen-accessible-text-5952a4c2cbfe
+*/
 .visually-hidden {
-    clip-path: inset(100%);
-    clip: rect(1px, 1px, 1px, 1px);
-    height: 1px;
-    overflow: hidden;
-    position: absolute;
-    white-space: nowrap;
-    width: 1px;
+  position: absolute;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  -webkit-clip-path: inset(50%);
+  clip-path: inset(50%);
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  white-space: nowrap; /* 1 */
+}
+
+/*
+* Extends the .visuallyhidden class to allow the element
+* to be focusable when navigated to via the keyboard:
+* https://www.drupal.org/node/897638
+*/
+.visually-hidden.focusable:active,
+.visually-hidden.focusable:focus {
+  position: static;
+  overflow: visible;
+  clip: auto;
+  -webkit-clip-path: none;
+  clip-path: none;
+  width: auto;
+  height: auto;
+  margin: 0;
+  white-space: inherit;
 }
 /*
 * Resets
 */
 fieldset {
-    margin: 0;
-    padding: 0;
-    border: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
 }
 
 legend {
-    padding: 0;
-    border: 0;
+  padding: 0;
+  border: 0;
 }
 
 button,
 input {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    overflow: visible;
-    font: inherit;
-    border: 0;
-    padding: 0;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  overflow: visible;
+  font: inherit;
+  border: 0;
+  padding: 0;
 }
-
-
 
 /*
 * Basic Styling
 */
 input,
 button {
-    color: #222;
-    color: var(--c-text);
+  color: #222;
+  color: var(--c-text);
 }
 
 input:disabled,
 button:disabled {
-    color: lightgrey;
-    color: var(--c-text-disabled);
+  color: hsl(0, 0%, 70%);
+  color: var(--c-text-disabled);
 }
 
-input[type="email"],
-input[type="number"],
-input[type="password"],
-input[type="search"],
-input[type="text"],
-input[type="url"],
-button:disabled {
-    background-color: grey;
-    background-color: var(--c-grey);
-}
-
-input[type="submit"],
+input[type='submit'],
 button {
-    color: #fff;
-    background-color: cornflowerblue;
-    background-color: var(--c-accent);
+  color: hsl(220, 50%, 40%);
+  color: var(--c-accent);
+  background-color: #fff;
+  border: 2px solid;
+  border-radius: 3px;
 }
 
 .form-group {
-    padding: var(--spacing);
+  padding: var(--spacing);
 }
 
 .form-label {
-    max-width: 400px;
+  max-width: 400px;
 }
-
-
 
 /*
 * Button
 */
-input[type="submit"],
+input[type='submit'],
 button {
-    padding: calc(var(--spacing) / 4) var(--spacing);
+  padding: calc(var(--spacing) / 4) var(--spacing);
 }
 
-input[type="submit"]:enabled:active,
+input[type='submit']:enabled:active,
 button:enabled:active {
-    background-color: royalblue;
-    background-color: var(--c-accent-dark);
+  color: #000;
 }
 
-input[type="submit"]:disabled:focus,
+input[type='submit']:disabled:focus,
 button:disabled:focus {
-    outline: 0;
+  outline: 0;
 }
 
 .button--close {
-    padding: calc(var(--spacing) / 2);
+  padding: calc(var(--spacing) / 2);
+  border: 0;
 }
 
 .button--close,
 .button--close:enabled:active {
-    background-color: transparent;
+  background-color: transparent;
 }
-
-
 
 /*
 * Switch button
 */
 .form-group--switch {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .form-group--switch:not(:last-child) {
-    border-bottom: 1px solid var(--c-grey-light);
+  border-bottom: 1px solid var(--c-alt-light);
 }
 
 .form-group--switch .form-label {
-    flex: 1;
-    margin-right: calc(4 * var(--spacing));
+  flex: 1;
+  margin-right: calc(4 * var(--spacing));
 }
 
 [aria-checked] {
-    display: flex;
-    color: #fff;
+  display: flex;
+  color: #fff;
 
-    /* --size: calc(var(--spacing) * 2); */
-    --offset: 4px;
-    position: relative;
-    width: calc(var(--spacing) * 4.5);
-    height: calc(var(--spacing) * 2 + var(--offset) * 2);
-    padding: var(--offset);
-    border: 0;
-    border-radius: calc(var(--spacing) * 2 + var(--offset));
-    box-shadow: inset 0 0 calc(var(--offset) * 2) hsla(0, 0%, 0%, 0.5);
+  /* --size: calc(var(--spacing) * 2); */
+  --offset: 4px;
+  position: relative;
+  width: calc(var(--spacing) * 4.5);
+  height: calc(var(--spacing) * 2 + var(--offset) * 2);
+  padding: var(--offset);
+  border: 0;
+  border-radius: calc(var(--spacing) * 2 + var(--offset));
+  /*box-shadow: inset 0 0 calc(var(--offset) * 2) hsla(0, 0%, 0%, 0.5);*/
 }
 
 [aria-checked]:disabled {
-    background-color: var(--c-grey);
+  background-color: var(--c-alt);
 }
 
-[aria-checked="true"]:enabled {
-    background-color: cornflowerblue;
-    background-color: var(--c-accent);
+[aria-checked='true']:enabled {
+  background-color: hsl(220, 50%, 40%);
+  background-color: var(--c-accent);
 }
 
-[aria-checked="false"]:enabled {
-    background-color: var(--c-grey);
+[aria-checked='false']:enabled {
+  background-color: var(--c-alt);
 }
 
 [aria-checked] .state {
-    position: absolute;
-    top: var(--offset);
-    width: calc(var(--spacing) * 2);
-    height: calc(var(--spacing) * 2);
-    line-height: calc(var(--spacing) * 2);
-    color: var(--c-text);
-    border-radius: var(--spacing);
+  position: absolute;
+  top: var(--offset);
+  width: calc(var(--spacing) * 2);
+  height: calc(var(--spacing) * 2);
+  line-height: calc(var(--spacing) * 2);
+  color: var(--c-text);
+  border-radius: var(--spacing);
 }
 
 [aria-checked] .state--true {
-    left: var(--offset);
+  left: var(--offset);
 }
 
 [aria-checked] .state--false {
-    right: var(--offset);
+  right: var(--offset);
 }
 
-[aria-checked="true"]:enabled .state--true,
-[aria-checked="false"]:enabled .state--false {
-    background-color: #fff;
-    box-shadow:
+[aria-checked='true']:enabled .state--true,
+[aria-checked='false']:enabled .state--false {
+  background-color: #fff;
+  /*box-shadow:
         inset 0 0 4px hsla(0, 0%, 0%, 0.3),
-        0 0 4px hsla(0, 0%, 0%, 0.3);
+        0 0 4px hsla(0, 0%, 0%, 0.3);*/
 }
 
-[aria-checked="true"]:disabled .state--true,
-[aria-checked="false"]:disabled .state--false {
-    background-color: var(--c-grey-light);
+[aria-checked='true']:disabled .state--true,
+[aria-checked='false']:disabled .state--false {
+  background-color: var(--c-alt-light);
 }
 .modal {
-    position: fixed;
-    will-change: transform;
-    z-index: var(--plane-modal);
-    top: 0;
-    right: 0; /* test */
-    bottom: 0; /* test */
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(0, 0, 0, 0.6);
+  position: fixed;
+  will-change: transform;
+  z-index: var(--plane-modal);
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.6);
 }
 
 .modal.closed {
-    display: none;
+  display: none;
 }
 
 .modal-content {
-    position: relative;
-    overflow: auto;
-    padding: calc(var(--spacing) * 2);
-    box-shadow: 0 0 10px #000;
-    background-color: var(--c-background);
+  position: relative;
+  overflow: auto;
+  padding: calc(var(--spacing) * 2);
+  box-shadow: 0 0 10px #000;
+  background-color: var(--c-background);
 }
 
 .modal__close {
-    position: absolute;
-    top: calc(var(--spacing) / 2);
-    right: calc(var(--spacing) / 2);
+  position: absolute;
+  top: calc(var(--spacing) / 2);
+  right: calc(var(--spacing) / 2);
 }
 
 .modal-content h2 {
-    margin-bottom: 0;
-    border-bottom: 1px solid var(--c-grey-light);
+  margin-bottom: 0;
+  border-bottom: 1px solid var(--c-alt-light);
 }
-.main-content {
-    margin-top: calc(var(--spacing) * 4);
-    padding: var(--spacing);
+/*
+* Hello. This is some selector specificity-foo to override the utility class
+* for visually hidden but keyboard-focusable elements.
+*/
+.skip-link.visually-hidden.focusable:focus {
+  position: relative;
+  display: inline-block;
+  top: var(--toolbox-height);
+  margin: var(--spacing);
+  padding: calc(var(--spacing) / 2);
+}
+
+.doc-container {
+  padding: var(--spacing);
 }
 
 .doc-view {
-    --page-aspect-ratio: 1.25;
-    --page-width: 200px;
-    --page-height: calc(var(--page-width) / var(--page-aspect-ratio));
-    --border-width: 1px;
+  --page-aspect-ratio: 1.25;
+  --page-width: 200px;
+  --page-height: calc(var(--page-width) / var(--page-aspect-ratio));
+  --border-width: 1px;
 
-    width: 100%;
-    position: relative;
+  width: 100%;
+  position: relative;
 
-    overflow: hidden;
-    border: 1px solid var(--c-grey-light);
+  overflow: hidden;
+  border: 1px solid var(--c-alt-light);
 }
 
 @media only screen and (min-width: 600px) {
-    .doc-view {
-        --page-width: 300px;
-    }
+  .doc-view {
+    --page-width: 300px;
+  }
 }
 
 /*
@@ -441,164 +491,167 @@ button:disabled:focus {
 * negative in one of the two dimensions.
 */
 .doc-view:not(:last-child) {
-    margin-bottom: calc(-1 * var(--border-width));
+  margin-bottom: calc(-1 * var(--border-width));
 }
 
 .doc {
-    /* Clears floated .doc__page elements */
-    display: flow-root;
+  /* Clears floated .doc__page elements */
+  display: flow-root;
 
-    /*transition: transform 0.1s ease-in-out;*/
+  /*transition: transform 0.1s ease-in-out;*/
 }
 
 .doc.select-disabled {
-    /* as per: https://stackoverflow.com/a/4407335/2036825 */
-    -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-    -moz-user-select: none; /* Firefox */
-    -ms-user-select: none; /* Internet Explorer/Edge */
-    user-select: none; /* Non-prefixed version */
+  /* as per: https://stackoverflow.com/a/4407335/2036825 */
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version */
 }
 
 .doc__page {
-    float: left;
-    width: var(--page-width);
-    height: var(--page-height);
+  float: left;
+  width: var(--page-width);
+  height: var(--page-height);
 
-    border: var(--border-width) solid var(--c-grey-light);
-    margin: calc(-1 * var(--border-width));
-    margin-right: 0;
+  border: var(--border-width) solid var(--c-alt-light);
+  margin: calc(-1 * var(--border-width));
+  margin-right: 0;
 
-    /* Make sure transparent slides appear on white background */
-    background-color: var(--c-background);
+  /* Make sure transparent slides appear on white background */
+  background-color: #fff;
 }
 
 .doc__page:not(.doc-info) {
-    text-align: center;
+  text-align: center;
 }
 
 .doc__page > img {
-    /* Maintain aspect-ratio while filling the container */
-    object-fit: contain;
+  /* Maintain aspect-ratio while filling the container */
+  object-fit: contain;
 
-    /* alt text styles  */
-    margin-right: auto;
-    margin-left: auto;
-    line-height: var(--page-height);
-    font-style: italic;
+  /* alt text styles  */
+  margin-right: auto;
+  margin-left: auto;
+  line-height: var(--page-height);
+  font-style: italic;
 }
 
 .doc-info {
-    padding: calc(var(--spacing) / 2);
-    color: var(--c-grey-dark);
+  padding: calc(var(--spacing) / 2);
 }
 
 .doc-title {
-    margin-bottom: 0;
-    font-weight: normal;
-    font-size: 1rem;
+  margin-bottom: 0;
+  font-weight: normal;
+  font-size: 1rem;
 }
 
 .doc-view:focus {
-    outline: 0;
+  outline: 0;
 }
 
 .doc-view:focus,
 .doc-view.active {
-    /*border-color: var(--c-accent);
-    box-shadow: 0 0 2px 0 var(--c-accent);*/
+  /*border-color: var(--c-accent);
+  box-shadow: 0 0 2px 0 var(--c-accent);*/
 
-    /*
-    * Elevate the active view above all other views. This is used to make its
-    * border visible when negative margins are used to collapse the border
-    * widths.
-    */
-    z-index: var(--plane-document);
+  /*
+  * Elevate the active view above all other views. This is used to make its
+  * border visible when negative margins are used to collapse the border
+  * widths.
+  */
+  z-index: var(--plane-document);
 }
 
 .doc-view,
 .doc__page {
-    position: relative;
+  position: relative;
 }
 
 .doc-view.active .doc::before,
 .doc-view.active .doc__page.active::before {
-    content: "";
-    pointer-events: none;
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background-color: hsl(220, 50%, 50%);
-    /*background-color: var(--c-accent);*/
-    opacity: 0.15;
-    /*transition: all 0.1s ease-in;*/
+  content: '';
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: hsl(220, 50%, 50%);
+  /*background-color: var(--c-accent);*/
+  opacity: 0.15;
+  /*transition: all 0.1s ease-in;*/
 }
 
 .doc-view.active .doc::before {
-    z-index: 20;
-    /*z-index: calc(var(--plane-document) + 10);*/
+  z-index: 20;
+  /*z-index: calc(var(--plane-document) + 10);*/
 }
 
 .doc-view.active .doc__page.active::before {
-    z-index: 30;
-    /*z-index: calc(var(--plane-document) + 20);*/
+  z-index: 30;
+  /*z-index: calc(var(--plane-document) + 20);*/
 }
 
 [data-src]::after {
-    content: " loading ...";
+  content: ' loading ...';
 }
 .toolbox {
-    --c-text: #fff;
-    --c-background: #222;
+  --c-text: #222;
+  --c-background: #efefef;
 
-    position: fixed;
-    will-change: transform;
-    top: 0;
-    right: 0;
-    left: 0;
-    height: calc(var(--spacing) * 4);
-    z-index: var(--plane-toolbox);
-    display: flex;
-    align-items: center;
-    padding: calc(var(--spacing) / 2) calc(var(--spacing) * 2);
-    color: var(--c-text);
-    background-color: var(--c-background);
+  position: fixed;
+  will-change: transform;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: var(--toolbox-height);
+  z-index: var(--plane-toolbox);
+  display: flex;
+  align-items: center;
+  padding: calc(var(--spacing) / 2) calc(var(--spacing) * 2);
+  color: var(--c-text);
+  background-color: var(--c-background);
+}
+
+.main-content {
+  padding-top: var(--toolbox-height);
 }
 
 .toolbox a {
-    color: currentColor;
+  color: currentColor;
 }
 
 .toolbox > *:not(:last-child) {
-    margin-right: calc(var(--spacing) * 2);
+  margin-right: calc(var(--spacing) * 2);
 }
 
 .site-title {
-    margin-bottom: 0;
-    font-size: 1rem;
+  margin-bottom: 0;
+  font-size: 1rem;
 }
 .shortcut-table-wrapper {
-    display: flex;
-    flex-wrap: wrap;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .shortcut-table__input {
-    text-align: right;
-    min-width: 10em;
+  text-align: right;
+  min-width: 10em;
 }
 
 .shortcut-table__action {
-    text-align: left;
+  text-align: left;
 }
 
 .shortcut-group:not(:last-child) {
-    margin-bottom: calc(var(--spacing) / 2);
+  margin-bottom: calc(var(--spacing) / 2);
 }
 
 .shortcut-group > kbd {
-    display: inline-block;
+  display: inline-block;
 }
 
 /*# sourceMappingURL=app.bundle.css.map*/
