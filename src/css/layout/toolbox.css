@@ -1,6 +1,9 @@
+:root {
+  --toolbox-height: 48px;
+}
+
 .toolbox {
-  --c-text: #222;
-  --c-background: #efefef;
+  --c-background: hsl(0, 0%, 85%);
 
   position: fixed;
   will-change: transform;
@@ -12,8 +15,11 @@
   display: flex;
   align-items: center;
   padding: calc(var(--spacing) / 2) calc(var(--spacing) * 2);
-  color: var(--c-text);
   background-color: var(--c-background);
+}
+
+.skip-link {
+  top: var(--toolbox-height);
 }
 
 .main-content {

@@ -1,15 +1,3 @@
-/*
-* Hello. This is some selector specificity-foo to override the utility class
-* for visually hidden but keyboard-focusable elements.
-*/
-.skip-link.visually-hidden.focusable:focus {
-  position: relative;
-  display: inline-block;
-  top: var(--toolbox-height);
-  margin: var(--spacing);
-  padding: calc(var(--spacing) / 2);
-}
-
 .doc-container {
   padding: var(--spacing);
 }
@@ -24,7 +12,7 @@
   position: relative;
 
   overflow: hidden;
-  border: 1px solid var(--c-alt-light);
+  border: var(--border-width) solid var(--c-alt-light);
 }
 
 @media only screen and (min-width: 600px) {
@@ -48,8 +36,6 @@
 .doc {
   /* Clears floated .doc__page elements */
   display: flow-root;
-
-  /*transition: transform 0.1s ease-in-out;*/
 }
 
 .doc.select-disabled {
@@ -121,6 +107,12 @@
   position: relative;
 }
 
+.doc-view.active {
+    --c-text: #000;
+    --c-accent: hsl(220, 100%, 15%);
+    --c-accent-dark: hsl(220, 100%, 5%);
+}
+
 .doc-view.active .doc::before,
 .doc-view.active .doc__page.active::before {
   content: '';
@@ -130,11 +122,16 @@
   right: 0;
   bottom: 0;
   left: 0;
-  background-color: hsl(220, 50%, 50%);
-  /*background-color: var(--c-accent);*/
-  opacity: 0.15;
-  /*transition: all 0.1s ease-in;*/
 }
+
+.doc-view.active .doc::before {
+  background-color: hsla(220, 50%, 40%, 0.15);
+}
+
+.doc-view.active .doc__page.active::before {
+  border: 2px solid hsla(220, 50%, 40%, 0.25);
+}
+
 
 .doc-view.active .doc::before {
   z-index: 20;
