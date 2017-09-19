@@ -84,7 +84,7 @@ Additionally, the <kbd>Home</kbd> or <kbd>Pos1</kbd> key jumps to the first page
 |---:|-----:|--------:|-------:|-------:|------:|
 | —  | 15   | 31      | 49     | 9.1    | 36    |
 
-**Features**:
+**Used Features**:
 
 - [CSS custom properties](https://caniuse.com/#feat=css-variables)
 - [Promises](https://caniuse.com/#feat=promises)
@@ -93,41 +93,26 @@ Additionally, the <kbd>Home</kbd> or <kbd>Pos1</kbd> key jumps to the first page
 
 ## To Do
 
-- *Layout*: Indicate that pages are still loading
-- *Interaction*: Marking/selecting pages in order to generate a new PDF (low priority)
-- *Interaction*: Touch scrolling with ballistics
-- *Interaction*: Implement horizontal scrolling for document containers *→ Horizontal scrolling via touch devices is not great. Feels slow and unresponsive.*
-- *Interaction*: On document keyboard navigation, scroll active out-of-sight documents into view.
-- *Internal Logic*: Recalculate view with `IntersectionObserver` when item is not fully visible anymore
-- *Internal Logic*: Dynamic determination of the number of slides per slide deck
-- *Internal Logic*: Create a `setItemPos` function
-- *Performance*: Study the quality-size trade-off of slide PNGs
-- *Performance*: Evaluate whether to set `will-change: contents;` when moving pages
-- *Layout*: Evaluate usage of CSS Grid. Does grid allow overflowing grid cells?
-- *Layout*: Dynamic solution for toolbox on small screens
-- *PDF Linking*: Opening of PDF with a mouse/pointer device (currently, only via keyboard)
+- Marking/selecting pages in order to generate a new PDF (low priority)
+- Dynamic determination of the number of slides per slide deck
+- Study the quality-size trade-off of slide PNGs
 
 **Server-related**:
 
-- Prepended page with meta information such as year, venue, author. *→ Needs server integration.*
-- Dynamic loading of documents based on our publications infrastructure. *→ Needs server integration.*
+- Prepending page with meta information such as year, venue, author.
+- Dynamic loading of documents based on our publications infrastructure.
 - Organization of documents by, e.g., topic, year, etc. *→ Missing data. Will there be a metadata file for each document?*
 
 
 
 ## Known Issues
 
-- *Interaction*: Active state is not transferred on scrolling.
-- *Interaction*: Horizontal page navigation via the wheelNavigation feature is too fast with desktop touchpads as the wheel event is fired too quickly. Likely the only possible solution is somehow throttling the event if it’s fired multiple times in a short timespan. However mouse-based scroll wheels should always fire the event for each turn of the scrolling wheel.
-- *Interaction*: Horizontal page navigation state via the `ew-resize` cursor is not transferred in all cases (e.g. when holding shift and scrolling up/down).
-- *Interaction*: The `touchstart` event triggers a `mousemove` event which is used to highlight active documents/pages, however this highlighting is not relevant when doing any kind of touch-based interactions. Such interactions happen directly on the element (i.e. the user points to the location *where* the interaction takes place) instead of indirectly via keyboard shortcuts.
-- Holding the modifier key currently shows an `ew-resize` cursor on containers. That signifies a click-and-drag interaction instead of the intended scrolling interaction. However <kbd>Alt</kbd>+<kbd>Click-dragging</kbd> on Ubuntu is an OS-level feature that allows dragging a window. It cannot be disabled via JavaScript’s `event.preventDefault()`. Therefor, the `ew-resize` cursor is not appropriate.
+- Horizontal page navigation state via the `ew-resize` cursor is not transferred in all cases (e.g. when holding shift and scrolling up/down).
 - Some modifiers are problematic:
   - Holding <kbd>Alt</kbd> triggers the browser menu bar on some platforms.
   - Holding <kbd>Ctrl</kbd> while scrolling usually adjusts the zoom level
 - documents `unit-en-radial-basis-functions.pdf`, `unit-de-conceptual-design3.pdf`, `unit-de-relational-design0.pdf` have no PNGs (e.g. all entries with only one page)
 - ImageMagick occasionally creates transparent PNGs (For documents with a specific background color, this might have a drastic impact on perceivability)
-- <s>Scalability: A large amount of documents cause the initialization to run very long</s>
 
 
 
