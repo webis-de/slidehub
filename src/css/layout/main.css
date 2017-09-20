@@ -1,7 +1,15 @@
+/*
+* Container for all documents
+*/
 .doc-container {
   padding: var(--spacing);
 }
 
+/*
+* Document view
+*
+* The document view contains a document. This document overflows.
+*/
 .doc-view {
   --page-aspect-ratio: 1.25;
   --page-width: 200px;
@@ -10,9 +18,11 @@
 
   width: 100%;
   position: relative;
+  z-index: var(--plane-document);
 
   overflow: hidden;
   border: var(--border-width) solid var(--c-alt-light);
+  margin: calc(-1 * var(--border-width));
 }
 
 @media only screen and (min-width: 600px) {
@@ -21,16 +31,17 @@
   }
 }
 
-/*
-* Collapse vertical borders by applying a negative margin on one side.
-*
-* Details: Applying a border in general leads to stacking borders when elements
-* appear right next to each other. Since `doc-view` is stacked vertically by
-* default, removing the redundant border width can be done by applying a
-* negative in one of the two dimensions.
-*/
-.doc-view:not(:last-child) {
-  margin-bottom: calc(-1 * var(--border-width));
+.doc-view.active {
+  --c-text: #000;
+  --c-accent: hsl(220, 100%, 15%);
+  --c-accent-dark: hsl(220, 100%, 5%);
+
+  /*
+  Elevate the active view above all other views. This is used to make its
+  border visible when negative margins are used to collapse the border
+  widths.
+  */
+  z-index: calc(var(--plane-document) + 10);
 }
 
 .doc {
@@ -51,66 +62,40 @@
   float: left;
   width: var(--page-width);
   height: var(--page-height);
+  position: relative;
 
-  border: var(--border-width) solid var(--c-alt-light);
-  margin: calc(-1 * var(--border-width));
-  margin-right: 0;
+  outline: var(--border-width) solid var(--c-alt-light);
 
   /* Make sure transparent slides appear on white background */
   background-color: #fff;
 }
 
-.doc__page:not(.doc-info) {
-  text-align: center;
+.doc__page:not(:last-child) {
+  margin-right: var(--border-width);
 }
 
 .doc__page > img {
+  display: block;
+
   /* Maintain aspect-ratio while filling the container */
   object-fit: contain;
 
-  /* alt text styles  */
+  /* Style alt text */
+  text-align: center;
   margin-right: auto;
   margin-left: auto;
   line-height: var(--page-height);
   font-style: italic;
 }
 
-.doc-info {
+.doc-meta {
   padding: calc(var(--spacing) / 2);
 }
 
-.doc-title {
+.doc-meta__title {
   margin-bottom: 0;
   font-weight: normal;
   font-size: 1rem;
-}
-
-.doc-view:focus {
-  outline: 0;
-}
-
-.doc-view:focus,
-.doc-view.active {
-  /*border-color: var(--c-accent);
-  box-shadow: 0 0 2px 0 var(--c-accent);*/
-
-  /*
-  * Elevate the active view above all other views. This is used to make its
-  * border visible when negative margins are used to collapse the border
-  * widths.
-  */
-  z-index: var(--plane-document);
-}
-
-.doc-view,
-.doc__page {
-  position: relative;
-}
-
-.doc-view.active {
-    --c-text: #000;
-    --c-accent: hsl(220, 100%, 15%);
-    --c-accent-dark: hsl(220, 100%, 5%);
 }
 
 .doc-view.active .doc::before,
@@ -132,17 +117,46 @@
   border: 2px solid hsla(220, 50%, 40%, 0.25);
 }
 
-
 .doc-view.active .doc::before {
-  z-index: 20;
-  /*z-index: calc(var(--plane-document) + 10);*/
+  z-index: 220;
+
+  /*
+  Custom properties don’t work on pseudo elements in Edge 15. See:
+  https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/11495448/
+  In the future, this can be uncommented:
+  */
+  /* z-index: calc(var(--plane-document) + 20); */
 }
 
 .doc-view.active .doc__page.active::before {
-  z-index: 30;
-  /*z-index: calc(var(--plane-document) + 20);*/
+  z-index: 230;
+
+  /*
+  Custom properties don’t work on pseudo elements in Edge 15. See:
+  https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/11495448/
+  In the future, this can be uncommented:
+  */
+  /* z-index: calc(var(--plane-document) + 30); */
 }
 
-[data-src]::after {
-  content: ' loading ...';
+/* .dov-view {
+  background-color: var(--c-alt-light);
 }
+
+.doc-view:not(.active) {
+  padding-bottom: 8px;
+}
+
+.doc-view.active {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.doc-view::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.doc-view::-webkit-scrollbar-thumb {
+  background-color: var(--c-alt);
+} */

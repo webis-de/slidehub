@@ -279,13 +279,13 @@ function createDocument(docName, itemCount) {
         data-doc-source="${docSource}"
         data-page-count="${itemCount + 1}">
         <div class="${config.class.doc.slice(1)}">
-          <div class="${config.class.item.slice(1)} doc-info active" data-page="0">
-            <h2 class="doc-title">
+          <div class="${config.class.item.slice(1)} active" data-page="0">
+            <div class="doc-meta">
+              <h2 class="doc-meta__title">
               <a href="${docSource}">${docName}</a>
             </h2>
-            by <span class="doc-author">author</span>,
-            <span class="doc-pages-count">${itemCount}</span> pages,
-            2018
+              by author, ${itemCount} pages, 2018
+            </div>
           </div>
           ${items}
         </div>

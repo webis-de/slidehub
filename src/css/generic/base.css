@@ -106,6 +106,14 @@ svg {
 }
 
 /*
+* Indicate that a lazy-loaded image is still loading.
+* Note: [data-src] is used to store the src for lazy-loading
+*/
+img[data-src]::after {
+  content: ' loading ...';
+}
+
+/*
 * Figure
 */
 figure > img {
