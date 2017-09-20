@@ -25,10 +25,7 @@ const config = {
     view: '.doc-view',
     doc: '.doc',
     item: '.doc__page'
-  },
-
-  // Modifier key. Possible values: ctrlKey, shiftKey, altKey
-  modifierKey: 'shiftKey'
+  }
 };
 
 /*
@@ -459,13 +456,6 @@ function openItem(view, ctrlKey) {
 * Modifier keys.
 */
 function enableModifier() {
-  const modifier = config.modifierKey.replace('Key', '');
-  const modifierElements = Array.from(document.querySelectorAll('[aria-label="Modifier"]'));
-  modifierElements.forEach(element => {
-    element.innerText = modifier;
-    element.setAttribute('aria-label', modifier);
-  });
-
   document.addEventListener('keydown', onModifierDown, passiveListener);
   document.addEventListener('keyup', onModifierUp, passiveListener);
   window.addEventListener('blur', onModifierBlur, passiveListener);
@@ -479,7 +469,7 @@ function disableModifier() {
 
 function onModifierDown(event) {
   const modifierKey = modifierKeyNames[event.keyCode];
-  if (modifierKey === config.modifierKey) {
+  if (modifierKey === 'shiftKey') {
     const doc = state.activeView.querySelector(config.class.doc);
     doc.style.setProperty('cursor', 'ew-resize');
   }
@@ -487,7 +477,7 @@ function onModifierDown(event) {
 
 function onModifierUp(event) {
   const modifierKey = modifierKeyNames[event.keyCode];
-  if (modifierKey === config.modifierKey) {
+  if (modifierKey === 'shiftKey') {
     const doc = state.activeView.querySelector(config.class.doc);
     doc.style.setProperty('cursor', 'auto');
   }
@@ -501,21 +491,18 @@ function onModifierBlur() {
 /*
 * Mouse wheel item navigation
 */
-// let combinedDelta = 0;
 
 function handleWheelNavigation(event) {
   const scrollingVertically = Math.abs(event.deltaX / event.deltaY) < 1;
   const delta = scrollingVertically ? event.deltaY : event.deltaX;
 
   // When scrolling vertically, only trigger navigation when modifier is pressed
-  if (scrollingVertically && event[config.modifierKey] === false) {
+  if (scrollingVertically && event['shiftKey'] === false) {
     return;
   }
 
   if (!scrollingVertically) {
-    // combinedDelta += delta
-    // console.log(combinedDelta)
-    console.log('handle horizontal wheel scrolling properly');
+    console.warn('Handle horizontal wheel scrolling properly');
   }
 
   const view = event.target.closest(config.class.view);
@@ -528,7 +515,6 @@ function handleWheelNavigation(event) {
 
   // Prevent unnecessary actions when there is nothing to scroll
   const numItems = view.querySelector(config.class.doc).childElementCount;
-  console.log(numItems, getFullyVisibleItems());
   if (numItems <= getFullyVisibleItems()) {
     return;
   }
@@ -608,7 +594,6 @@ function setViewPos(view, itemPos) {
 
   const doc = view.querySelector(config.class.doc);
   const maxPos = getItemCount(view) - getFullyVisibleItems();
-  console.log(maxPos);
   itemPos = clamp(itemPos, 0, maxPos);
   // if (itemPos < 0) {
   //   itemPos = 0;
