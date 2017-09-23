@@ -10,17 +10,13 @@ module.exports = {
         test: /\.css$/,
         exclude: /node_modules/,
         use: ExtractTextPlugin.extract({
-          fallback: 'style-loader',
-          use: 'css-loader'
+          loader: 'css-loader',
+          options: { sourceMap: true }
         })
       }
     ]
   },
-  plugins: [
-    new ExtractTextPlugin({
-      filename: '[name].bundle.css'
-    })
-  ],
+  plugins: [new ExtractTextPlugin('[name].bundle.css')],
   output: {
     filename: '[name].bundle.js'
   }
