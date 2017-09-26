@@ -139,13 +139,13 @@ const controlKey = Object.freeze({
   arrowLeft: {
     direction: -1,
     trigger: function(event) {
-      moveItem(this.direction * (event.ctrlKey ? 3 : 1));
+      moveItem(this.direction * (event.shiftKey ? 3 : 1));
     }
   },
   arrowRight: {
     direction: 1,
     trigger: function(event) {
-      moveItem(this.direction * (event.ctrlKey ? 3 : 1));
+      moveItem(this.direction * (event.shiftKey ? 3 : 1));
     }
   },
   arrowUp: {
