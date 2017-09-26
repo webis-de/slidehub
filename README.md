@@ -1,52 +1,16 @@
 # SlideHub
 
-SlideHub ([demo](http://test.webis.de/slidehub)) is a web-based overview of paged documents (i.e. slide decks of a presentation/talk/lecture/…). Its goal is to provide quick access to a database of documents.
+SlideHub ([demo website](http://test.webis.de/slidehub)) is a web-based presentation/lecture/talk slide explorer. Its goal is to provide quick access to a database of paged documents. The documents are represented as rows of a grid-like structure while each cell is a page.
 
-Each document is converted to a set of graphics—one for each page. These graphics are arranged in a grid-like structure where each row represents a document. The cells of a row are the pages of that document.
-
-
-
-## Development Setup
-
-**Install dependencies**:
-
-Installs all required development dependencies as defined in `package.json`.
-
-```
-npm install
-```
-
-**Generate development/production bundles**:
-
-The regular build script just bundles JavaScript files into one file that can be sourced from an HTML document. The same applies for CSS files. This can be configured in the `webpack.config.js` file.
-
-```
-npm run build
-```
-
-There is also a build script for production using the `webpack -p` command instead of just `webpack`. This build step includes minification of the JavaScript and CSS bundles.
-
-```
-npm run build-production
-```
-
-**Start local development server**:
-
-Starts a local development server and generates bundled JavaScript/CSS files in memory.
-
-```
-npm start
-```
-
-This will run the `start` script as defined in `package.json`.
+All documents are available as PDF files. In addition, all slides are available as images that act as a kind of preview for the actual documents’ page.
 
 
 
 ## Features
 
-- Documents are listed row-wise with its pages displayed side-by-side in a horizontal container.
-- Page images are only loaded if they become visible (i.e. if they are about to enter the viewport).
-- The original PDF pages of a document are referenced from their SlideHub page. They can be opened by navigating to them and pressing <kbd>Return</kbd>.
+- Keyboard navigation
+- Page images are lazy-loaded (i.e. if they are about to become visible)
+- Each page links to its original PDF file (with *page* URL parameter for browsers that support targetting individual pages)
 
 
 
@@ -54,7 +18,7 @@ This will run the `start` script as defined in `package.json`.
 
 The application needs to be usable on mobile and desktop devices utilizing the following primary input devices:
 
-- Mouse
+- Mouse/Trackpad
 - Touchpad
 - Keyboard
 
@@ -70,11 +34,11 @@ Navigating through pages of documents on the horizontal axis is done by using th
 
 #### Keyboard
 
-The arrow keys are used to navigate across documents and pages. Vertical navigation across documents is done with Arrow Up <kbd>↑</kbd> and Arrow Down <kbd>↓</kbd>. Horizontal navigation across pages is done with Arrow Left <kbd>←</kbd> and Arrow Right <kbd>→</kbd>.
+The arrow keys are used to navigate across documents and pages. Vertical navigation across documents is done with Upwards Arrow <kbd>↑</kbd> and Downwards Arrow <kbd>↓</kbd>. Horizontal navigation across pages is done with Leftwards Arrow <kbd>←</kbd> and Rightwards Arrow <kbd>→</kbd>.
 
-One can also navigate in chunks of 3 by holding <kbd>Ctrl</kbd> while navigating pages of a document.
+One can also navigate in chunks of 3 by holding <kbd>Shift</kbd> while navigating pages of a document.
 
-Additionally, the <kbd>Home</kbd> or <kbd>Pos1</kbd> key jumps to the first page of a document, while the <kbd>End</kbd> key jumps to the last page.
+Additionally, the <kbd>Home</kbd> (or <kbd>Pos1</kbd>) key jumps to the first page of a document, while the <kbd>End</kbd> key jumps to the last page.
 
 
 
@@ -84,10 +48,47 @@ Additionally, the <kbd>Home</kbd> or <kbd>Pos1</kbd> key jumps to the first page
 |---:|-----:|--------:|-------:|-------:|------:|
 | —  | 15   | 31      | 49     | 9.1    | 36    |
 
-**Used Features**:
+Currently, SlideHub does not support Internet Explorer in any version. All features listed below are not supported by Internet Explorer (unless a polyfill is provided). To achieve support for Internet Explorer 11, the JavaScript code needs to be transpiled to not use unsupported features (like promises). In addition, the CSS has to be written in a way to either not use custom properties at all or provide explicit fallbacks to property declarations using them.
+
+I’d like to avoid Internet Explorer. It doesn’t have great support for [Flexbox](https://caniuse.com/#feat=flexbox). It only has [support for an old version](https://caniuse.com/#feat=css-grid) of the CSS grid specification. It also lacks support for a lot of [ECMAScript 6](https://kangax.github.io/compat-table/es6/) features.
+
+**Used Features** (sorted by most unsupported feature first):
 
 - [CSS custom properties](https://caniuse.com/#feat=css-variables)
 - [Promises](https://caniuse.com/#feat=promises)
+- [IntersectionObserver](https://caniuse.com/#feat=intersectionobserver) with [polyfill](https://github.com/w3c/IntersectionObserver/tree/master/polyfill)
+
+
+
+## Development Setup
+
+**Install dependencies**:
+
+Installs all required development dependencies.
+
+```
+npm install
+```
+
+**Build production bundles**:
+
+The build script bundles JavaScript and CSS files into one file each. It also applies minification in order to reduce file size (i.e. the amount of data that needs to be transferred to the user).
+
+```
+npm run build
+```
+
+*(Runs the `build` script as defined in `package.json`.)*
+
+**Development environment**:
+
+Starts a local development server and generates bundled JavaScript/CSS files in memory. This is currently not configured to apply minification.
+
+```
+npm start
+```
+
+*(Runs the `start` script as defined in `package.json`.)*
 
 
 
