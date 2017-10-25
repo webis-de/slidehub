@@ -17,6 +17,8 @@
   --border-width: 1px;
 
   width: 100%;
+  height: var(--page-height);
+  box-sizing: content-box;
   position: relative;
   z-index: var(--plane-document);
 
@@ -42,6 +44,10 @@
   widths.
   */
   z-index: calc(var(--plane-document) + 10);
+}
+
+.doc-scrollbox {
+  overflow-x: auto;
 }
 
 .doc {

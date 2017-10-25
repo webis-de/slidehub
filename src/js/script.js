@@ -9,11 +9,6 @@ const config = {
 
   itemWidth: 300,
 
-  // How to position scrollable content
-  //   true:  Use CSS transforms
-  //   false: Use the views `scrollLeft`/`scrollTop` property
-  moveViewItemsWithTransform: true,
-
   // Preserve aspect ratio of document items
   //   true:  Preserves aspect ratio
   //   false: Uses a default aspect ratio of 5:4
@@ -23,6 +18,7 @@ const config = {
   class: {
     main: '.doc-container',
     view: '.doc-view',
+    scrollbox: '.doc-scrollbox',
     doc: '.doc',
     item: '.doc__page'
   }
@@ -35,6 +31,7 @@ const features = {
   core: {
     enabled: true,
     enable: function() {
+      // detectScrollingCapabilities();
       enableModalButtons();
       enableToggleButtons();
     },
@@ -45,6 +42,7 @@ const features = {
 
   wheelNavigation: {
     enabled: true,
+    scrollingMode: 'native',
     enable: function() {
       enableModifier();
       document.addEventListener('wheel', handleWheelNavigation, activeListener);
@@ -125,27 +123,29 @@ const controlKey = Object.freeze({
   homeKey: {
     direction: -1,
     trigger: function() {
-      // setViewPos(state.activeView, 0)
-      moveItem(this.direction * getItemCount(state.activeView));
+      const view = state.activeView;
+      navigateView(view, this.direction * getItemCount(state.activeView));
     }
   },
   endKey: {
     direction: 1,
     trigger: function() {
-      // setViewPos(state.activeView, getLastItemIndex())
-      moveItem(this.direction * getItemCount(state.activeView));
+      const view = state.activeView;
+      navigateView(view, this.direction * getItemCount(state.activeView));
     }
   },
   arrowLeft: {
     direction: -1,
     trigger: function(event) {
-      moveItem(this.direction * (event.shiftKey ? 3 : 1));
+      const view = state.activeView;
+      navigateView(view, this.direction * (event.shiftKey ? 3 : 1));
     }
   },
   arrowRight: {
     direction: 1,
     trigger: function(event) {
-      moveItem(this.direction * (event.shiftKey ? 3 : 1));
+      const view = state.activeView;
+      navigateView(view, this.direction * (event.shiftKey ? 3 : 1));
     }
   },
   arrowUp: {
@@ -255,7 +255,6 @@ function onDocumentLoaded(container, doc) {
   const view = container.lastElementChild;
   state.viewObserver.observe(view);
   setDocumentWidth(view.querySelector(config.class.doc));
-  enableDocumentScrolling(view);
 }
 
 function createDocument(docName, itemCount) {
@@ -278,16 +277,18 @@ function createDocument(docName, itemCount) {
         id="${docName}"
         data-doc-source="${docSource}"
         data-page-count="${itemCount + 1}">
-        <div class="${config.class.doc.slice(1)}">
-          <div class="${config.class.item.slice(1)} active" data-page="0">
-            <div class="doc-meta">
-              <h2 class="doc-meta__title">
-              <a href="${docSource}">${docName}</a>
-            </h2>
-              by author, ${itemCount} pages, 2018
+        <div class="doc-scrollbox">
+          <div class="${config.class.doc.slice(1)}">
+            <div class="${config.class.item.slice(1)} active" data-page="0">
+              <div class="doc-meta">
+                <h2 class="doc-meta__title">
+                  <a href="${docSource}">${docName}</a>
+                </h2>
+                by author, ${itemCount} pages, 2018
+              </div>
             </div>
+            ${items}
           </div>
-          ${items}
         </div>
       </div>
     `;
@@ -305,72 +306,6 @@ function setDocumentWidth(doc) {
     getFloatPropertyValue(doc, 'margin-right');
 
   doc.style.setProperty('width', documentOuterWidth + 'px');
-}
-
-function enableDocumentScrolling(view) {
-  let prevX, prevY;
-  let transitionValue;
-  let doc;
-
-  view.addEventListener(
-    'touchstart',
-    function(event) {
-      if (config.moveViewItemsWithTransform) {
-        view.style.setProperty('will-change', 'transform');
-      }
-
-      state.touched = true;
-      doc = view.querySelector(config.class.doc);
-      transitionValue = getComputedStyle(doc).getPropertyValue('transition');
-      doc.style.setProperty('transition', 'none');
-
-      prevX = event.targetTouches[0].clientX;
-    },
-    supportsPassive ? { passive: true } : false
-  );
-
-  view.addEventListener(
-    'touchmove',
-    function(event) {
-      if (state.touched) {
-        const touch = event.targetTouches[0];
-        const offsetX = touch.clientX - prevX;
-        const offsetY = touch.clientY - prevY;
-
-        // Determine vertical/horizontal scrolling ratio
-        const directionRatio = Math.abs(offsetX / offsetY);
-        if (directionRatio < 1) {
-          return;
-        }
-
-        activateOnHover(event);
-        const newItemX = getViewPixelPos(view) - offsetX;
-        const disableTransition = true;
-        setViewPixelPos(view, newItemX, disableTransition);
-        prevX = touch.clientX;
-        prevY = touch.clientY;
-      }
-    },
-    supportsPassive ? { passive: true } : false
-  );
-
-  view.addEventListener(
-    'touchend',
-    function(event) {
-      if (state.touched) {
-        const newPos = getViewPos(view);
-        setViewPos(view, Math.round(newPos));
-
-        if (config.moveViewItemsWithTransform) {
-          view.style.setProperty('will-change', 'auto');
-        }
-
-        state.touched = false;
-        doc.style.setProperty('transition', transitionValue);
-      }
-    },
-    supportsPassive ? { passive: true } : false
-  );
 }
 
 function evaluateItemWidth() {
@@ -393,6 +328,49 @@ function getFullyVisibleItems() {
   const viewSample = document.querySelector(config.class.view);
   const viewWidth = getFloatPropertyValue(viewSample, 'width');
   return Math.floor(viewWidth / itemOuterWidth);
+}
+
+function detectScrollingCapabilities() {
+  if (userAgentNeedsCustomScrolling()) {
+    // Prevent auto-loading wheel navigation with custom scrolling
+    // features.wheelNavigation.enabled = true;
+    features.wheelNavigation.scrollingMode = 'custom';
+  } else {
+    // features.wheelNavigation.enabled = false;
+    features.wheelNavigation.scrollingMode = 'native';
+  }
+}
+
+/*
+Returns true for user agents that require custom scrolling due to a missing
+interaction technique for horizontal scrolling.
+
+Detailed explanation: https://github.com/webis-de/slidehub/issues/9
+*/
+function userAgentNeedsCustomScrolling() {
+  return userAgentIsEdge() || userAgentIsFirefoxBelowVersion(58);
+}
+
+/*
+Returns true for any user agent representing a desktop version of Edge.
+*/
+function userAgentIsEdge() {
+  return window.navigator.userAgent.includes('Edge/');
+}
+
+/*
+Returns true for any user agent representing Firefox up to a certain version.
+*/
+function userAgentIsFirefoxBelowVersion(targetVersion) {
+  const last = window.navigator.userAgent.split(' ').slice(-1)[0];
+  if (last.includes('Firefox/')) {
+    const version = last.split('/')[1];
+    const majorVersion = parseInt(version.split('.')[0]);
+    if (majorVersion < targetVersion) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /*
@@ -489,87 +467,161 @@ function onModifierBlur() {
 }
 
 /*
-* Mouse wheel item navigation
+* Mouse wheel handler for item navigation
 */
 
+const scrolling = {
+  vertical: {
+    delta: 'deltaY'
+  },
+  horizontal: {
+    delta: 'deltaX'
+  }
+};
+
+/*
+Handles horizontal view navigation
+*/
 function handleWheelNavigation(event) {
-  const scrollingVertically = Math.abs(event.deltaX / event.deltaY) < 1;
-  const delta = scrollingVertically ? event.deltaY : event.deltaX;
-
-  // When scrolling vertically, only trigger navigation when modifier is pressed
-  if (scrollingVertically && event['shiftKey'] === false) {
-    return;
-  }
-
-  if (!scrollingVertically) {
-    console.warn('Handle horizontal wheel scrolling properly');
-  }
-
+  // Don’t handle scrolling on elements that are not inside a view
   const view = event.target.closest(config.class.view);
   if (view === null) {
     return;
   }
 
-  // Prevent vertical scrolling
-  event.preventDefault();
+  const ratio = Math.abs(event.deltaX / event.deltaY);
+  const scrollingDirection = ratio < 1 ? scrolling.vertical : scrolling.horizontal;
 
-  // Prevent unnecessary actions when there is nothing to scroll
+  if (scrollingDirection === scrolling.horizontal) {
+    console.log('Horizontal scrolling ...');
+  }
+
+  // When scrolling vertically, only trigger navigation when modifier is pressed
+  if (scrollingDirection === scrolling.vertical && event.shiftKey) {
+    // Prevent vertical scrolling
+    event.preventDefault();
+
+    const delta = event[scrollingDirection.delta];
+    navigateView(view, Math.sign(delta));
+  }
+}
+
+function navigateView(view, distance) {
+  setActiveView(view);
+
+  if (!viewIsAligned(view)) {
+    // console.log('> View is not aligned. Correcting ...');
+    alignView(view, distance);
+  }
+
+  updateActiveItem(view, distance);
+
+  // If all items are already visible, we’re done here.
+  if (allItemsVisible(view)) {
+    // console.log('> All items are visible. Not navigating view.');
+    return;
+  }
+
+  // If the active item is already inside the view, we’re done here.
+  if (activeItemInsideView(view)) {
+    // console.log('> Active item already in view. Not navigating view.');
+    return;
+  }
+
+  // console.log('> View needs update');
+  updateView(view, distance);
+}
+
+function setActiveView(view) {
+  // Remove all active views
+  const views = document.querySelectorAll(`${config.class.view}.active`);
+  Array.from(views).forEach(element => element.classList.remove('active'));
+
+  // Set new active view
+  state.activeView = view;
+  state.activeView.classList.add('active');
+  document.activeElement.blur();
+}
+
+function updateActiveItem(view, distance) {
+  const nextElementProp = `${distance > 0 ? 'next' : 'previous'}ElementSibling`;
+  let steps = Math.abs(distance);
+  while (steps--) {
+    setNextActiveItem(view, nextElementProp);
+  }
+}
+
+/*
+Updates the active item in a view if necessary. For example, if the active item
+is the last item in a document, moving it past the end is not possible. In this
+case, the active item stays the same.
+*/
+function setNextActiveItem(view, nextElementProp) {
+  const activeItem = getActiveItem(view);
+  const nextItem = activeItem[nextElementProp];
+
+  // Only update the active item if necessary.
+  if (nextItem !== null) {
+    setActiveItem(view, nextItem);
+  }
+}
+
+function viewIsAligned(view) {
+  const currentViewPos = getViewPos(view);
+  if ((currentViewPos % config.itemWidth) % 1 === 0) {
+    return true;
+  }
+
+  return false;
+}
+
+function alignView(view, distance) {
+  const currentViewPos = getViewPos(view);
+  const maxViewPos = getLastItemIndex(view) - getFullyVisibleItems();
+  const alignedViewPos = clamp(Math.round(currentViewPos), 0, maxViewPos);
+  setViewPos(view, alignedViewPos);
+}
+
+function allItemsVisible(view) {
   const numItems = view.querySelector(config.class.doc).childElementCount;
   if (numItems <= getFullyVisibleItems()) {
-    return;
+    return true;
   }
-
-  moveView(Math.sign(delta));
 }
 
-function moveView(distance) {
-  const view = state.activeView;
-  if (view === null) {
-    return;
-  }
-
-  // Move items along with view
-  // moveItem(distance)
-
-  let currentViewPos = getViewPos(view);
-  // if (isNotAligned(currentViewPos)) {
-  //   currentViewPos = Math.round(currentViewPos);
-  // }
-  setViewPos(view, currentViewPos + distance);
-}
-
-function isNotAligned(itemsBeforeView) {
-  return itemsBeforeView % 1 !== 0;
-}
-
-function moveItem(distance) {
-  const view = state.activeView;
-  const item = getActiveItem(view);
-  const currentIndex = parseInt(item.getAttribute('data-page'));
-  const lastIndex = getItemCount(view) - 1;
-  const targetIndex = clamp(currentIndex + distance, 0, lastIndex);
-  const targetItem = getItemByIndex(view, targetIndex);
-  setActiveItem(view, targetItem);
-
-  // Move view if item would become partially hidden
-  const targetRect = targetItem.getBoundingClientRect();
+/*
+Tests whether a view’s active item is completely inside the view (i.e. the item
+is completely visible and not occluded).
+*/
+function activeItemInsideView(view) {
   const viewRect = view.getBoundingClientRect();
-  const marginLeft = getFloatPropertyValue(targetItem, 'margin-left');
-  const marginRight = getFloatPropertyValue(targetItem, 'margin-right');
-  const isFullyVisible =
-    targetRect.left >= viewRect.left &&
-    targetRect.right + marginLeft + marginRight <= viewRect.left + viewRect.width;
-  const actualDistance = targetIndex - currentIndex;
-  if (isFullyVisible === false) {
-    moveView(actualDistance);
-    return;
+  const itemRect = getActiveItem(view).getBoundingClientRect();
+
+  if (
+    viewRect.left <= itemRect.left &&
+    itemRect.right <= viewRect.right &&
+    viewRect.top <= itemRect.top &&
+    itemRect.bottom <= viewRect.bottom
+  ) {
+    return true;
   }
 
-  // Move view if it’s not aligned
-  // let currentViewPos = getViewPos(view)
-  // if (isNotAligned(currentViewPos) && Math.sign(distance) < 0) {
-  //   setViewPos(view, Math.floor(currentViewPos))
-  // }
+  return false;
+}
+
+function updateView(view, distance) {
+  const activeItem = getActiveItem(view);
+  const currentViewPos = getViewPos(view);
+  const currentItemPos = getItemPos(activeItem);
+  let newItemPos;
+  if (distance > 0) {
+    newItemPos = currentViewPos - currentItemPos;
+  } else {
+    const lastVisibleItem = currentViewPos + getFullyVisibleItems();
+    newItemPos = lastVisibleItem - currentItemPos;
+  }
+
+  setViewPos(view, currentViewPos + distance);
 }
 
 function getViewPos(view) {
@@ -577,58 +629,23 @@ function getViewPos(view) {
 }
 
 function getViewPixelPos(view) {
-  if (config.moveViewItemsWithTransform) {
-    const doc = view.querySelector(config.class.doc);
-    // Negate the value in order to match scrollbar position values
-    const itemPos = -1 * getTranslateX(doc);
-    return itemPos;
-  }
-
-  return view.scrollLeft;
+  const scrollbox = view.querySelector(config.class.scrollbox);
+  return scrollbox.scrollLeft;
 }
 
 function setViewPos(view, itemPos) {
-  if (view === null) {
-    return;
-  }
-
   const doc = view.querySelector(config.class.doc);
   const maxPos = getItemCount(view) - getFullyVisibleItems();
   itemPos = clamp(itemPos, 0, maxPos);
-  // if (itemPos < 0) {
-  //   itemPos = 0;
-  // }
-  // else if (itemPos > maxPos) {
-  //   itemPos = maxPos;
-  // }
 
   let itemX = itemPos * config.itemWidth;
-  // const maxX = getOuterWidth(doc) - getOuterWidth(view)
-  // if (itemX > maxX) {
-  //   itemX = maxX;
-  // }
 
   setViewPixelPos(view, itemX);
 }
 
 function setViewPixelPos(view, itemX, disableTransition = false) {
-  const doc = view.querySelector(config.class.doc);
-
-  if (config.moveViewItemsWithTransform) {
-    doc.style.setProperty('transform', `translateX(${-itemX}px)`);
-  } else {
-    view.scrollLeft = itemX;
-  }
-}
-
-function getTranslateX(element) {
-  const matrix = getComputedStyle(element).getPropertyValue('transform');
-
-  if (matrix === 'none') {
-    return 0;
-  }
-
-  return parseFloat(matrix.split(',')[4]);
+  const scrollbox = view.querySelector(config.class.scrollbox);
+  scrollbox.scrollLeft = itemX;
 }
 
 function goToPreviousView() {
@@ -645,21 +662,17 @@ function goToNextView() {
   }
 }
 
-function getLastItemIndex() {
-  const doc = state.activeView.querySelector(config.class.doc);
+function getItemPos(item) {
+  return parseInt(item.dataset.page);
+}
+
+function getLastItemIndex(view) {
+  const doc = view.querySelector(config.class.doc);
   return doc.childElementCount - 1;
 }
 
-function setActiveView(view) {
-  const views = document.querySelectorAll(`${config.class.view}.active`);
-  Array.from(views).forEach(element => element.classList.remove('active'));
-  state.activeView = view;
-  state.activeView.classList.add('active');
-  document.activeElement.blur();
-}
-
 function getItemCount(view) {
-  return parseInt(view.getAttribute('data-page-count'));
+  return parseInt(view.dataset.pageCount);
 }
 
 function getActiveItem(view) {
