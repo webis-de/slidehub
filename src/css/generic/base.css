@@ -105,6 +105,12 @@ svg {
   vertical-align: middle;
 }
 
+img[src=''] {
+  /* Style alt text */
+  text-align: center;
+  font-style: italic;
+}
+
 /*
 * Indicate that a lazy-loaded image is still loading.
 * Note: [data-src] is used to store the src for lazy-loading

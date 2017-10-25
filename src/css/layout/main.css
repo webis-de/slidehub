@@ -79,13 +79,9 @@
 
   /* Maintain aspect-ratio while filling the container */
   object-fit: contain;
-
-  /* Style alt text */
-  text-align: center;
   margin-right: auto;
   margin-left: auto;
   line-height: var(--page-height);
-  font-style: italic;
 }
 
 .doc-meta {
