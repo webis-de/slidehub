@@ -26,17 +26,12 @@
 
   --c-focus: hsl(40, 80%, 50%);
 
-  --c-accent: hsl(220, 50%, 40%);
-  --c-accent-dark: hsl(220, 50%, 30%);
+  --c-accent: hsl(220, 60%, 41%);
+  --c-accent-dark: hsl(220, 60%, 30%);
 
-  --c-alt-light: hsl(0, 0%, 80%);
+  --c-alt-light: hsl(0, 0%, 85%);
   --c-alt: hsl(0, 0%, 50%);
   --c-alt-dark: hsl(0, 0%, 20%);
-
-  /*
-  * Toolbox
-  */
-  --toolbox-height: 48px;
 }
 /*
 * Defaults
@@ -143,6 +138,20 @@ img {
 img,
 svg {
   vertical-align: middle;
+}
+
+img[src=''] {
+  /* Style alt text */
+  text-align: center;
+  font-style: italic;
+}
+
+/*
+* Indicate that a lazy-loaded image is still loading.
+* Note: [data-src] is used to store the src for lazy-loading
+*/
+img[data-src]::after {
+  content: ' loading ...';
 }
 
 /*
@@ -355,7 +364,6 @@ button:disabled:focus {
   display: flex;
   color: #fff;
 
-  /* --size: calc(var(--spacing) * 2); */
   --offset: 4px;
   position: relative;
   width: calc(var(--spacing) * 4.5);
@@ -363,7 +371,6 @@ button:disabled:focus {
   padding: var(--offset);
   border: 0;
   border-radius: calc(var(--spacing) * 2 + var(--offset));
-  /*box-shadow: inset 0 0 calc(var(--offset) * 2) hsla(0, 0%, 0%, 0.5);*/
 }
 
 [aria-checked]:disabled {
@@ -376,6 +383,7 @@ button:disabled:focus {
 }
 
 [aria-checked='false']:enabled {
+  background-color: hsl(0, 0%, 50%);
   background-color: var(--c-alt);
 }
 
@@ -400,9 +408,6 @@ button:disabled:focus {
 [aria-checked='true']:enabled .state--true,
 [aria-checked='false']:enabled .state--false {
   background-color: #fff;
-  /*box-shadow:
-        inset 0 0 4px hsla(0, 0%, 0%, 0.3),
-        0 0 4px hsla(0, 0%, 0%, 0.3);*/
 }
 
 [aria-checked='true']:disabled .state--true,
@@ -448,21 +453,27 @@ button:disabled:focus {
   border-bottom: 1px solid var(--c-alt-light);
 }
 /*
-* Hello. This is some selector specificity-foo to override the utility class
+* This is some selector specificity-foo to override the utility class
 * for visually hidden but keyboard-focusable elements.
 */
 .skip-link.visually-hidden.focusable:focus {
   position: relative;
   display: inline-block;
-  top: var(--toolbox-height);
   margin: var(--spacing);
   padding: calc(var(--spacing) / 2);
 }
-
+/*
+* Container for all documents
+*/
 .doc-container {
   padding: var(--spacing);
 }
 
+/*
+* Document view
+*
+* The document view contains a document. This document overflows.
+*/
 .doc-view {
   --page-aspect-ratio: 1.25;
   --page-width: 200px;
@@ -470,10 +481,14 @@ button:disabled:focus {
   --border-width: 1px;
 
   width: 100%;
+  height: var(--page-height);
+  box-sizing: content-box;
   position: relative;
+  z-index: var(--plane-document);
 
   overflow: hidden;
-  border: 1px solid var(--c-alt-light);
+  border: var(--border-width) solid var(--c-alt-light);
+  margin: calc(-1 * var(--border-width));
 }
 
 @media only screen and (min-width: 600px) {
@@ -482,23 +497,26 @@ button:disabled:focus {
   }
 }
 
-/*
-* Collapse vertical borders by applying a negative margin on one side.
-*
-* Details: Applying a border in general leads to stacking borders when elements
-* appear right next to each other. Since `doc-view` is stacked vertically by
-* default, removing the redundant border width can be done by applying a
-* negative in one of the two dimensions.
-*/
-.doc-view:not(:last-child) {
-  margin-bottom: calc(-1 * var(--border-width));
+.doc-view.active {
+  --c-text: #000;
+  --c-accent: hsl(220, 100%, 15%);
+  --c-accent-dark: hsl(220, 100%, 5%);
+
+  /*
+  Elevate the active view above all other views. This is used to make its
+  border visible when negative margins are used to collapse the border
+  widths.
+  */
+  z-index: calc(var(--plane-document) + 10);
+}
+
+.doc-scrollbox {
+  overflow-x: auto;
 }
 
 .doc {
   /* Clears floated .doc__page elements */
   display: flow-root;
-
-  /*transition: transform 0.1s ease-in-out;*/
 }
 
 .doc.select-disabled {
@@ -514,60 +532,36 @@ button:disabled:focus {
   float: left;
   width: var(--page-width);
   height: var(--page-height);
+  position: relative;
 
-  border: var(--border-width) solid var(--c-alt-light);
-  margin: calc(-1 * var(--border-width));
-  margin-right: 0;
+  outline: var(--border-width) solid var(--c-alt-light);
 
   /* Make sure transparent slides appear on white background */
   background-color: #fff;
 }
 
-.doc__page:not(.doc-info) {
-  text-align: center;
+.doc__page:not(:last-child) {
+  margin-right: var(--border-width);
 }
 
 .doc__page > img {
+  display: block;
+
   /* Maintain aspect-ratio while filling the container */
   object-fit: contain;
-
-  /* alt text styles  */
   margin-right: auto;
   margin-left: auto;
   line-height: var(--page-height);
-  font-style: italic;
 }
 
-.doc-info {
+.doc-meta {
   padding: calc(var(--spacing) / 2);
 }
 
-.doc-title {
+.doc-meta__title {
   margin-bottom: 0;
   font-weight: normal;
   font-size: 1rem;
-}
-
-.doc-view:focus {
-  outline: 0;
-}
-
-.doc-view:focus,
-.doc-view.active {
-  /*border-color: var(--c-accent);
-  box-shadow: 0 0 2px 0 var(--c-accent);*/
-
-  /*
-  * Elevate the active view above all other views. This is used to make its
-  * border visible when negative margins are used to collapse the border
-  * widths.
-  */
-  z-index: var(--plane-document);
-}
-
-.doc-view,
-.doc__page {
-  position: relative;
 }
 
 .doc-view.active .doc::before,
@@ -579,28 +573,65 @@ button:disabled:focus {
   right: 0;
   bottom: 0;
   left: 0;
-  background-color: hsl(220, 50%, 50%);
-  /*background-color: var(--c-accent);*/
-  opacity: 0.15;
-  /*transition: all 0.1s ease-in;*/
 }
 
 .doc-view.active .doc::before {
-  z-index: 20;
-  /*z-index: calc(var(--plane-document) + 10);*/
+  background-color: hsla(220, 50%, 40%, 0.15);
 }
 
 .doc-view.active .doc__page.active::before {
-  z-index: 30;
-  /*z-index: calc(var(--plane-document) + 20);*/
+  border: 2px solid hsla(220, 50%, 40%, 0.25);
 }
 
-[data-src]::after {
-  content: ' loading ...';
+.doc-view.active .doc::before {
+  z-index: 220;
+
+  /*
+  Custom properties don’t work on pseudo elements in Edge 15. See:
+  https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/11495448/
+  In the future, this can be uncommented:
+  */
+  /* z-index: calc(var(--plane-document) + 20); */
 }
+
+.doc-view.active .doc__page.active::before {
+  z-index: 230;
+
+  /*
+  Custom properties don’t work on pseudo elements in Edge 15. See:
+  https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/11495448/
+  In the future, this can be uncommented:
+  */
+  /* z-index: calc(var(--plane-document) + 30); */
+}
+
+/* .dov-view {
+  background-color: var(--c-alt-light);
+}
+
+.doc-view:not(.active) {
+  padding-bottom: 8px;
+}
+
+.doc-view.active {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.doc-view::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.doc-view::-webkit-scrollbar-thumb {
+  background-color: var(--c-alt);
+} */
+:root {
+  --toolbox-height: 48px;
+}
+
 .toolbox {
-  --c-text: #222;
-  --c-background: #efefef;
+  --c-background: hsl(0, 0%, 85%);
 
   position: fixed;
   will-change: transform;
@@ -612,8 +643,11 @@ button:disabled:focus {
   display: flex;
   align-items: center;
   padding: calc(var(--spacing) / 2) calc(var(--spacing) * 2);
-  color: var(--c-text);
   background-color: var(--c-background);
+}
+
+.skip-link {
+  top: var(--toolbox-height);
 }
 
 .main-content {
