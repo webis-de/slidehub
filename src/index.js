@@ -9,7 +9,7 @@ import './css/layout/main.css';
 import './css/layout/toolbox.css';
 import './css/layout/shortcut-table.css';
 
-import './js/intersection-observer.js';
-import initialize from './js/script.js';
+import './js/lib/intersection-observer.js';
+import { initialize } from './js/app.js';
 
 initialize();
