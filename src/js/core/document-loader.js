@@ -5,7 +5,7 @@
 import { config } from '../config';
 import { setActiveView } from './view-navigation';
 import { getComputedOuterChildrenWidth, getOuterWidth, getFloatPropertyValue } from '../util';
-import { observeView } from './image-loader';
+import { startImageObserver } from './image-loader';
 
 export const DocumentLoader = {
   enable() {
@@ -80,7 +80,7 @@ function loadDocumentBatch(batchSize) {
 function onDocumentLoaded(container, doc) {
   container.insertAdjacentHTML('beforeend', doc);
   const view = container.lastElementChild;
-  observeView(view);
+  startImageObserver(view);
   setDocumentWidth(view.querySelector(config.class.doc));
 }
 

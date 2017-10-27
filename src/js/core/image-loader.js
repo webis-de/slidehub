@@ -4,7 +4,13 @@
 
 import { config } from '../config';
 
-export { ImageLoader, observeView };
+export { ImageLoader, startImageObserver };
+
+let imageObserver;
+
+const observerOptions = {
+  rootMargin: `500px 0px`
+};
 
 const ImageLoader = {
   enable() {
@@ -12,21 +18,15 @@ const ImageLoader = {
   }
 };
 
-let viewObserver;
-
 /*
 * Observes document views in order to load their item images only when
 * they’re visible.
 */
 function initialize() {
-  const options = {
-    rootMargin: `500px 0px`
-  };
-
-  viewObserver = new IntersectionObserver(viewObservationHandler, options);
+  imageObserver = new IntersectionObserver(imageLoadHandler, observerOptions);
 }
 
-function viewObservationHandler(entries, observer) {
+function imageLoadHandler(entries, observer) {
   for (const entry of entries) {
     if (entry.isIntersecting) {
       const view = entry.target;
@@ -61,6 +61,6 @@ function setItemAspectRatio(view) {
   view.style.setProperty('--page-aspect-ratio', aspectRatio);
 }
 
-function observeView(view) {
-  viewObserver.observe(view);
+function startImageObserver(view) {
+  imageObserver.observe(view);
 }
