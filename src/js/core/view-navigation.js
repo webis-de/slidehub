@@ -175,6 +175,29 @@ function setActiveView(view) {
   document.activeElement.blur();
 }
 
+function getOutOfViewOffset(view) {
+  const offsets = getViewOffsetsToWindow(view);
+
+  for (const offset of Object.values(offsets)) {
+    if (offset < 0) {
+      return offset;
+    }
+  }
+
+  return 0;
+}
+
+function getViewOffsetsToWindow(view) {
+  const viewRect = view.getBoundingClientRect();
+
+  return {
+    left: viewRect.left,
+    right: document.documentElement.clientWidth - viewRect.right,
+    top: viewRect.top,
+    bottom: document.documentElement.clientHeight - viewRect.bottom
+  };
+}
+
 function getActiveItem(view) {
   return view.querySelector(`${config.class.item}.active`);
 }
@@ -196,11 +219,23 @@ function goToPreviousView() {
   if (targetView !== null) {
     setActiveView(targetView);
   }
+
+  const offset = getOutOfViewOffset(activeView);
+  if (offset < 0) {
+    console.log(offset);
+    document.documentElement.scrollTop -= -offset;
+  }
 }
 
 function goToNextView() {
   const targetView = activeView.nextElementSibling;
   if (targetView !== null) {
     setActiveView(targetView);
+  }
+
+  const offset = getOutOfViewOffset(activeView);
+  if (offset < 0) {
+    console.log(offset);
+    document.documentElement.scrollTop += -offset;
   }
 }
