@@ -3,8 +3,7 @@ import {
   navigateView,
   setActiveView,
   getItemCount,
-  goToPreviousView,
-  goToNextView
+  navigateDocument
 } from '../core/view-navigation';
 
 export const KeyboardNavigationModule = {
@@ -74,22 +73,15 @@ const controlKey = Object.freeze({
     }
   },
   arrowUp: {
+    direction: -1,
     trigger: function() {
-      goToPreviousView();
+      navigateDocument(this.direction);
     }
   },
   arrowDown: {
+    direction: 1,
     trigger: function() {
-      goToNextView();
-    }
-  },
-  tabKey: {
-    trigger: function(event) {
-      if (event.shiftKey) {
-        goToPreviousView();
-      } else {
-        goToNextView();
-      }
+      navigateDocument(this.direction);
     }
   }
 });

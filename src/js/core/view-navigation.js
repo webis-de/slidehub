@@ -9,14 +9,13 @@ export {
   getActiveView,
   setActiveView,
   getItemCount,
-  goToPreviousView,
-  goToNextView
+  navigateDocument
 };
 
-let activeView;
+let activeDocument;
 
 function navigateView(distance) {
-  const view = activeView;
+  const view = activeDocument;
 
   if (!viewIsAligned(view)) {
     // console.log('> View is not aligned. Correcting ...');
@@ -160,42 +159,19 @@ function getItemCount(view) {
 }
 
 function getActiveView() {
-  return activeView;
+  return activeDocument;
 }
 
 function setActiveView(view) {
   // Remove active class from currently active view
-  if (activeView) {
-    activeView.classList.remove('active');
+  if (activeDocument) {
+    activeDocument.classList.remove('active');
   }
 
   // Set new active view
-  activeView = view;
-  activeView.classList.add('active');
+  activeDocument = view;
+  activeDocument.classList.add('active');
   document.activeElement.blur();
-}
-
-function getOutOfViewOffset(view) {
-  const offsets = getViewOffsetsToWindow(view);
-
-  for (const offset of Object.values(offsets)) {
-    if (offset < 0) {
-      return offset;
-    }
-  }
-
-  return 0;
-}
-
-function getViewOffsetsToWindow(view) {
-  const viewRect = view.getBoundingClientRect();
-
-  return {
-    left: viewRect.left,
-    right: document.documentElement.clientWidth - viewRect.right,
-    top: viewRect.top,
-    bottom: document.documentElement.clientHeight - viewRect.bottom
-  };
 }
 
 function getActiveItem(view) {
@@ -214,28 +190,39 @@ function getItemByIndex(view, index) {
   return doc.children[index];
 }
 
-function goToPreviousView() {
-  const targetView = activeView.previousElementSibling;
-  if (targetView !== null) {
-    setActiveView(targetView);
+/*
+Navigates through documents in a certain direction.
+*/
+function navigateDocument(direction) {
+  // Choose `nextElementSibling` or `previousElementSibling` based on direction
+  const prop = `${direction < 0 ? 'previous' : 'next'}ElementSibling`;
+  const targetDoc = activeDocument[prop];
+
+  if (targetDoc === null) {
+    return;
   }
 
-  const offset = getOutOfViewOffset(activeView);
+  setActiveView(targetDoc);
+
+  const offset = getOutOfViewOffset(targetDoc, direction);
   if (offset < 0) {
-    console.log(offset);
-    document.documentElement.scrollTop -= -offset;
+    // The missing part is indicated by a negative value, so we need to flip it
+    const missingPart = -offset;
+    // Adding a little extra so a new document is already partially visisble
+    const extraPart = targetDoc.clientHeight / 2;
+    document.documentElement.scrollTop += direction * (missingPart + extraPart);
   }
 }
 
-function goToNextView() {
-  const targetView = activeView.nextElementSibling;
-  if (targetView !== null) {
-    setActiveView(targetView);
-  }
+function getOutOfViewOffset(doc, direction) {
+  const documentEl = document.documentElement;
 
-  const offset = getOutOfViewOffset(activeView);
-  if (offset < 0) {
-    console.log(offset);
-    document.documentElement.scrollTop += -offset;
+  if (direction < 0) {
+    const viewportOffsetTop = documentEl.scrollTop;
+    return doc.offsetTop - viewportOffsetTop;
+  } else {
+    const viewportOffsetBot = documentEl.scrollTop + documentEl.clientHeight;
+    const docOffsetBot = doc.offsetTop + doc.offsetHeight;
+    return viewportOffsetBot - docOffsetBot;
   }
 }
