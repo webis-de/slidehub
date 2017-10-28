@@ -2,19 +2,21 @@ import { listener } from '../util';
 import { config } from '../config';
 import { setActiveView, setActiveItem } from '../core/view-navigation';
 
-export const ActivateOnHoverModule = {
+export { ActivationOnHover };
+
+const ActivationOnHover = {
   enabled: false,
-  name: 'activate-on-hover',
+  name: 'activation-on-hover',
   description: 'Activate pages on hover',
   enable() {
-    document.addEventListener('mousemove', activateOnHover, listener.passive);
+    document.addEventListener('mousemove', handleActivationOnHover, listener.passive);
   },
   disable() {
-    document.removeEventListener('mousemove', activateOnHover, listener.passive);
+    document.removeEventListener('mousemove', handleActivationOnHover, listener.passive);
   }
 };
 
-function activateOnHover(event) {
+function handleActivationOnHover(event) {
   const view = event.target.closest(config.class.view);
   const item = event.target.closest(config.class.item);
 
