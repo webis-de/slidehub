@@ -2,17 +2,19 @@ import { listener } from '../util';
 import { config } from '../config';
 import { navigateView, getActiveView, setActiveView } from '../core/view-navigation';
 
-export const WheelNavigationModule = {
+export { ItemNavigation };
+
+const ItemNavigation = {
   enabled: true,
-  name: 'wheel-navigation',
+  name: 'item-navigation',
   description: 'Navigate pages with mouse wheel',
   enable() {
     enableModifier();
-    document.addEventListener('wheel', handleWheelNavigation, listener.active);
+    document.addEventListener('wheel', handleItemNavigation, listener.active);
   },
   disable() {
     disableModifier();
-    document.removeEventListener('wheel', handleWheelNavigation, listener.active);
+    document.removeEventListener('wheel', handleItemNavigation, listener.active);
   }
 };
 
@@ -70,24 +72,25 @@ const scrolling = {
 /*
 Handles horizontal view navigation
 */
-function handleWheelNavigation(event) {
+function handleItemNavigation(event) {
   // Don’t handle scrolling on elements that are not inside a view
   const view = event.target.closest(config.class.view);
   if (view === null) {
     return;
   }
 
-  setActiveView(view);
-
   const ratio = Math.abs(event.deltaX / event.deltaY);
   const scrollingDirection = ratio < 1 ? scrolling.vertical : scrolling.horizontal;
 
   if (scrollingDirection === scrolling.horizontal) {
+    setActiveView(view);
     console.log('Horizontal scrolling ...');
   }
 
   // When scrolling vertically, only trigger navigation when modifier is pressed
   if (scrollingDirection === scrolling.vertical && event.shiftKey) {
+    setActiveView(view);
+
     // Prevent vertical scrolling
     event.preventDefault();
 
