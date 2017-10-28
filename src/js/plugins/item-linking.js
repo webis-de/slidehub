@@ -7,42 +7,58 @@
 import { listener } from '../util';
 import { getActiveView, getActiveItem } from '../core/view-navigation';
 
-export { ItemLinkingModule };
+export { ItemLinking };
 
-const ItemLinkingModule = {
+const ItemLinking = {
   enabled: true,
   name: 'item-linking',
   description: 'Link pages to PDF source',
   enable() {
-    document.addEventListener('keydown', handleItemLinking, listener.passive);
+    document.addEventListener('keydown', handleKeyDown, listener.passive);
+    document.addEventListener('dblclick', handleDoubleClick, listener.passive);
   },
   disable() {
-    document.removeEventListener('keydown', handleItemLinking, listener.passive);
+    document.removeEventListener('keydown', handleKeyDown, listener.passive);
+    document.removeEventListener('dblclick', handleDoubleClick, listener.passive);
   }
 };
 
-function handleItemLinking(event) {
+function handleKeyDown(event) {
   if (event.keyCode !== 13) {
     return;
   }
 
-  // Focusable elements have a default behavior (e.g. activating a link)
-  // That behavior shall not be altered/extended.
-  if (isInteractive(event.target)) {
+  const openInNewTab = event.ctrlKey;
+  handleOpenIntent(event.target, openInNewTab);
+}
+
+function handleDoubleClick(event) {
+  if (event.button !== 0) {
     return;
   }
 
-  openItem(event.ctrlKey);
+  const openInNewTab = true;
+  handleOpenIntent(event.target, openInNewTab);
 }
 
-function openItem(ctrlKey) {
+function handleOpenIntent(eventTarget, openInNewTab) {
+  // Focusable elements have a default behavior (e.g. activating a link)
+  // That behavior shall not be altered/extended.
+  if (isInteractive(eventTarget)) {
+    return;
+  }
+
+  openItem(openInNewTab);
+}
+
+function openItem(openInNewTab) {
   const view = getActiveView();
   const docSource = view.getAttribute('data-doc-source');
   const itemIndex = getActiveItem(view).getAttribute('data-page');
   const fragment = itemIndex !== '0' ? `#page=${itemIndex}` : '';
   const itemSource = docSource + fragment;
 
-  if (ctrlKey) {
+  if (openInNewTab) {
     window.open(itemSource);
   } else {
     window.location.href = itemSource;
