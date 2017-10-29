@@ -13,11 +13,11 @@ export const DocumentLoader = {
       const documentObserver = new IntersectionObserver(documentObserverHandler, { threshold: 1 });
 
       loadDocuments().then(() => {
-        const firstView = document.querySelector(config.class.view);
+        const firstView = document.querySelector(config.selector.view);
         setActiveView(firstView);
         evaluateItemWidth();
 
-        const container = document.querySelector(config.class.main);
+        const container = document.querySelector(config.selector.main);
         documentObserver.observe(container.lastElementChild);
       });
     });
@@ -26,7 +26,7 @@ export const DocumentLoader = {
 
 function documentObserverHandler(entries, observer) {
   for (const entry of entries) {
-    if (entry.isIntersecting === false) {
+    if (!entry.isIntersecting) {
       continue;
     }
 
@@ -37,7 +37,7 @@ function documentObserverHandler(entries, observer) {
     loadDocuments()
       .then(() => {
         // remove loading indicator
-        const container = document.querySelector(config.class.main);
+        const container = document.querySelector(config.selector.main);
         observer.observe(container.lastElementChild);
       })
       .catch(message => {
@@ -54,7 +54,7 @@ function documentObserverHandler(entries, observer) {
 
 function loadDocuments() {
   const batchSize = 10;
-  const container = document.querySelector(config.class.main);
+  const container = document.querySelector(config.selector.main);
 
   if (documentsData.length === 0) {
     return Promise.reject('No documents left to load.');
@@ -79,9 +79,10 @@ function loadDocumentBatch(batchSize) {
 
 function onDocumentLoaded(container, doc) {
   container.insertAdjacentHTML('beforeend', doc);
+
   const view = container.lastElementChild;
   startImageObserver(view);
-  setDocumentWidth(view.querySelector(config.class.doc));
+  setDocumentWidth(view.querySelector(config.selector.doc));
 }
 
 function createDocument(docName, itemCount) {
@@ -90,7 +91,7 @@ function createDocument(docName, itemCount) {
     for (var i = 0; i < itemCount; i++) {
       const source = `${config.assetPath}/${docName}-${i}.png`;
       items += `
-        <div class="${config.class.item.slice(1)}" data-page="${i + 1}">
+        <div class="${config.selector.item.slice(1)}" data-page="${i + 1}">
           <img data-src="${source}" alt="page ${i + 1}">
         </div>
       `;
@@ -100,13 +101,13 @@ function createDocument(docName, itemCount) {
 
     const docMarkup = `
       <div
-        class="${config.class.view.slice(1)}"
+        class="${config.selector.view.slice(1)}"
         id="${docName}"
         data-doc-source="${docSource}"
         data-page-count="${itemCount + 1}">
         <div class="doc-scrollbox">
-          <div class="${config.class.doc.slice(1)}">
-            <div class="${config.class.item.slice(1)} active" data-page="0">
+          <div class="${config.selector.doc.slice(1)}">
+            <div class="${config.selector.item.slice(1)} active" data-page="0">
               <div class="doc-meta">
                 <h2 class="doc-meta__title">
                   <a href="${docSource}">${docName}</a>
@@ -136,7 +137,7 @@ function setDocumentWidth(doc) {
 }
 
 function evaluateItemWidth() {
-  const itemSample = document.querySelector(config.class.item);
+  const itemSample = document.querySelector(config.selector.item);
   const itemOuterWidth = getOuterWidth(itemSample);
 
   if (itemOuterWidth !== config.itemWidth) {

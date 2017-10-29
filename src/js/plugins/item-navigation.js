@@ -42,7 +42,7 @@ function disableModifier() {
 function onModifierDown(event) {
   const modifierKey = modifierKeyNames[event.keyCode];
   if (modifierKey === 'shiftKey') {
-    const doc = getActiveView().querySelector(config.class.doc);
+    const doc = getActiveView().querySelector(config.selector.doc);
     doc.style.setProperty('cursor', 'ew-resize');
   }
 }
@@ -50,13 +50,13 @@ function onModifierDown(event) {
 function onModifierUp(event) {
   const modifierKey = modifierKeyNames[event.keyCode];
   if (modifierKey === 'shiftKey') {
-    const doc = getActiveView().querySelector(config.class.doc);
+    const doc = getActiveView().querySelector(config.selector.doc);
     doc.style.setProperty('cursor', 'auto');
   }
 }
 
 function onModifierBlur() {
-  const doc = getActiveView().querySelector(config.class.doc);
+  const doc = getActiveView().querySelector(config.selector.doc);
   doc.style.setProperty('cursor', 'auto');
 }
 
@@ -74,7 +74,7 @@ Handles horizontal view navigation
 */
 function handleItemNavigation(event) {
   // Don’t handle scrolling on elements that are not inside a view
-  const view = event.target.closest(config.class.view);
+  const view = event.target.closest(config.selector.view);
   if (view === null) {
     return;
   }

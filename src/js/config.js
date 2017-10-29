@@ -12,8 +12,8 @@ export const config = {
   //   false: Uses a default aspect ratio of 5:4
   preserveAspectRatio: true,
 
-  // HTML classes that can be used in CSS selectors
-  class: {
+  // Selectors for UI components
+  selector: {
     main: '.doc-container',
     view: '.doc-view',
     scrollbox: '.doc-scrollbox',

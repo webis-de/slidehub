@@ -2,7 +2,7 @@ import { config } from '../config';
 import { getFloatPropertyValue, getOuterWidth } from '.';
 
 export function getFullyVisibleItems(view) {
-  const itemSample = view.querySelector(config.class.item);
+  const itemSample = view.querySelector(config.selector.item);
   const itemOuterWidth = getOuterWidth(itemSample);
 
   const viewWidth = getFloatPropertyValue(view, 'width');

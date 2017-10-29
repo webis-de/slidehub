@@ -9,7 +9,7 @@ export { ImageLoader, startImageObserver };
 let imageObserver;
 
 const observerOptions = {
-  rootMargin: `500px 0px`
+  rootMargin: `500px 1000px`
 };
 
 const ImageLoader = {
@@ -29,38 +29,35 @@ function initialize() {
 function imageLoadHandler(entries, observer) {
   for (const entry of entries) {
     if (entry.isIntersecting) {
-      const view = entry.target;
-      const images = Array.from(view.querySelectorAll('img[data-src]'));
-      // For each image …
-      images.forEach(img => {
-        // … swap out the `data-src` attribute with the `src` attribute.
-        // This will start loading the images.
-        if (img.hasAttribute('data-src')) {
-          img.setAttribute('src', img.getAttribute('data-src'));
-          img.removeAttribute('data-src');
-        }
-      });
+      const image = entry.target;
+      image.setAttribute('src', image.getAttribute('data-src'));
+      image.removeAttribute('data-src');
 
-      images[0].addEventListener('load', () => handleFirstItemImageLoaded(entry.target));
+      image.addEventListener('load', () => handleItemImageLoaded(image));
 
       // Unobserve the current target because no further action is required
-      observer.unobserve(entry.target);
+      observer.unobserve(image);
     }
   }
 }
 
-function handleFirstItemImageLoaded(view) {
+function handleItemImageLoaded(image) {
   if (config.preserveAspectRatio) {
-    setItemAspectRatio(view);
+    const view = image.closest(config.selector.view);
+    setItemAspectRatio(view, image);
   }
 }
 
-function setItemAspectRatio(view) {
-  const imgSample = view.querySelector(`${config.class.item} > img`);
-  const aspectRatio = imgSample.naturalWidth / imgSample.naturalHeight;
-  view.style.setProperty('--page-aspect-ratio', aspectRatio);
+function setItemAspectRatio(view, image) {
+  if (!view.style.cssText.includes('--page-aspect-ratio')) {
+    const aspectRatio = image.naturalWidth / image.naturalHeight;
+    view.style.setProperty('--page-aspect-ratio', aspectRatio);
+  }
 }
 
 function startImageObserver(view) {
-  imageObserver.observe(view);
+  if (imageObserver) {
+    const images = view.querySelectorAll('img[data-src]');
+    images.forEach(image => imageObserver.observe(image));
+  }
 }

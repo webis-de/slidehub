@@ -80,7 +80,7 @@ function alignView(view, distance) {
 }
 
 function allItemsVisible(view) {
-  const numItems = view.querySelector(config.class.doc).childElementCount;
+  const numItems = view.querySelector(config.selector.doc).childElementCount;
   if (numItems <= getFullyVisibleItems(view)) {
     return true;
   }
@@ -126,12 +126,12 @@ function getViewPos(view) {
 }
 
 function getViewPixelPos(view) {
-  const scrollbox = view.querySelector(config.class.scrollbox);
+  const scrollbox = view.querySelector(config.selector.scrollbox);
   return scrollbox.scrollLeft;
 }
 
 function setViewPos(view, itemPos) {
-  const doc = view.querySelector(config.class.doc);
+  const doc = view.querySelector(config.selector.doc);
   const maxPos = getItemCount(view) - getFullyVisibleItems(view);
   itemPos = clamp(itemPos, 0, maxPos);
 
@@ -141,7 +141,7 @@ function setViewPos(view, itemPos) {
 }
 
 function setViewPixelPos(view, itemX, disableTransition = false) {
-  const scrollbox = view.querySelector(config.class.scrollbox);
+  const scrollbox = view.querySelector(config.selector.scrollbox);
   scrollbox.scrollLeft = itemX;
 }
 
@@ -150,12 +150,12 @@ function getItemPos(item) {
 }
 
 function getLastItemIndex(view) {
-  const doc = view.querySelector(config.class.doc);
+  const doc = view.querySelector(config.selector.doc);
   return doc.childElementCount - 1;
 }
 
 function getItemCount(view) {
-  return view.querySelector(config.class.doc).childElementCount;
+  return view.querySelector(config.selector.doc).childElementCount;
 }
 
 function getActiveView() {
@@ -175,7 +175,7 @@ function setActiveView(view) {
 }
 
 function getActiveItem(view) {
-  return view.querySelector(`${config.class.item}.active`);
+  return view.querySelector(`${config.selector.item}.active`);
 }
 
 function setActiveItem(view, targetItem) {
@@ -186,7 +186,7 @@ function setActiveItem(view, targetItem) {
 }
 
 function getItemByIndex(view, index) {
-  const doc = view.querySelector(config.class.doc);
+  const doc = view.querySelector(config.selector.doc);
   return doc.children[index];
 }
 

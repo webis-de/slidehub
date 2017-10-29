@@ -5,7 +5,7 @@ import { setActiveView, setActiveItem } from '../core/view-navigation';
 export { ActivationOnHover };
 
 const ActivationOnHover = {
-  enabled: false,
+  enabled: true,
   name: 'activation-on-hover',
   description: 'Activate pages on hover',
   enable() {
@@ -17,8 +17,8 @@ const ActivationOnHover = {
 };
 
 function handleActivationOnHover(event) {
-  const view = event.target.closest(config.class.view);
-  const item = event.target.closest(config.class.item);
+  const view = event.target.closest(config.selector.view);
+  const item = event.target.closest(config.selector.item);
 
   if (view === null || item === null) {
     return;
