@@ -105,7 +105,8 @@ svg {
   vertical-align: middle;
 }
 
-img[src=''] {
+img[src=''],
+img[data-src] {
   /* Style alt text */
   text-align: center;
   font-style: italic;
