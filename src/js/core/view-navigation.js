@@ -218,10 +218,10 @@ function getOutOfViewOffset(doc, direction) {
   const documentEl = document.documentElement;
 
   if (direction < 0) {
-    const viewportOffsetTop = documentEl.scrollTop;
+    const viewportOffsetTop = window.scrollY;
     return doc.offsetTop - viewportOffsetTop;
   } else {
-    const viewportOffsetBot = documentEl.scrollTop + documentEl.clientHeight;
+    const viewportOffsetBot = window.scrollY + documentEl.clientHeight;
     const docOffsetBot = doc.offsetTop + doc.offsetHeight;
     return viewportOffsetBot - docOffsetBot;
   }
