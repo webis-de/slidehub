@@ -210,7 +210,8 @@ function navigateDocument(direction) {
     const missingPart = -offset;
     // Adding a little extra so a new document is already partially visisble
     const extraPart = targetDoc.clientHeight / 2;
-    document.documentElement.scrollTop += direction * (missingPart + extraPart);
+    window.scrollBy(0, direction * (missingPart + extraPart));
+    // window.scrollY += direction * (missingPart + extraPart);
   }
 }
 
