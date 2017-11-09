@@ -1,0 +1,16 @@
+{
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/**": true,
+    "**/*.bundle.css": true,
+    "**/*.bundle.js": true,
+    "**/*.map": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/*.bundle.css": true,
+    "**/*.bundle.js": true,
+    "**/*.map": true
+  }
+}
