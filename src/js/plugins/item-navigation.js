@@ -1,6 +1,7 @@
 import { listener } from '../util';
 import { config } from '../config';
-import { navigateView, getActiveView, setActiveView } from '../core/view-navigation';
+import { navigateView } from '../core/view-navigation';
+import { getActiveDocument, setActiveDocument } from '../core/document-navigation';
 
 export { ItemNavigation };
 
@@ -42,7 +43,7 @@ function disableModifier() {
 function onModifierDown(event) {
   const modifierKey = modifierKeyNames[event.keyCode];
   if (modifierKey === 'shiftKey') {
-    const doc = getActiveView().querySelector(config.selector.doc);
+    const doc = getActiveDocument().querySelector(config.selector.doc);
     doc.style.setProperty('cursor', 'ew-resize');
   }
 }
@@ -50,13 +51,13 @@ function onModifierDown(event) {
 function onModifierUp(event) {
   const modifierKey = modifierKeyNames[event.keyCode];
   if (modifierKey === 'shiftKey') {
-    const doc = getActiveView().querySelector(config.selector.doc);
+    const doc = getActiveDocument().querySelector(config.selector.doc);
     doc.style.setProperty('cursor', 'auto');
   }
 }
 
 function onModifierBlur() {
-  const doc = getActiveView().querySelector(config.selector.doc);
+  const doc = getActiveDocument().querySelector(config.selector.doc);
   doc.style.setProperty('cursor', 'auto');
 }
 
@@ -83,13 +84,13 @@ function handleItemNavigation(event) {
   const scrollingDirection = ratio < 1 ? scrolling.vertical : scrolling.horizontal;
 
   if (scrollingDirection === scrolling.horizontal) {
-    setActiveView(view);
+    setActiveDocument(view);
     console.log('Horizontal scrolling ...');
   }
 
   // When scrolling vertically, only trigger navigation when modifier is pressed
   if (scrollingDirection === scrolling.vertical && event.shiftKey) {
-    setActiveView(view);
+    setActiveDocument(view);
 
     // Prevent vertical scrolling
     event.preventDefault();

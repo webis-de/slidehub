@@ -1,21 +1,12 @@
 import { config } from '../config';
 import { clamp } from '../util';
 import { getFullyVisibleItems } from '../util';
+import { getActiveDocument, setActiveDocument } from './document-navigation';
 
-export {
-  navigateView,
-  getActiveItem,
-  setActiveItem,
-  getActiveView,
-  setActiveView,
-  getItemCount,
-  navigateDocument
-};
-
-let activeDocument;
+export { navigateView, getActiveItem, setActiveItem, getItemCount, navigateDocument };
 
 function navigateView(distance) {
-  const view = activeDocument;
+  const view = getActiveDocument();
 
   if (!viewIsAligned(view)) {
     // console.log('> View is not aligned. Correcting ...');
@@ -158,22 +149,6 @@ function getItemCount(view) {
   return view.querySelector(config.selector.doc).childElementCount;
 }
 
-function getActiveView() {
-  return activeDocument;
-}
-
-function setActiveView(view) {
-  // Remove active class from currently active view
-  if (activeDocument) {
-    activeDocument.classList.remove('active');
-  }
-
-  // Set new active view
-  activeDocument = view;
-  activeDocument.classList.add('active');
-  document.activeElement.blur();
-}
-
 function getActiveItem(view) {
   return view.querySelector(`${config.selector.item}.active`);
 }
@@ -188,42 +163,4 @@ function setActiveItem(view, targetItem) {
 function getItemByIndex(view, index) {
   const doc = view.querySelector(config.selector.doc);
   return doc.children[index];
-}
-
-/*
-Navigates through documents in a certain direction.
-*/
-function navigateDocument(direction) {
-  // Choose `nextElementSibling` or `previousElementSibling` based on direction
-  const prop = `${direction < 0 ? 'previous' : 'next'}ElementSibling`;
-  const targetDoc = activeDocument[prop];
-
-  if (targetDoc === null) {
-    return;
-  }
-
-  setActiveView(targetDoc);
-
-  const offset = getOutOfViewOffset(targetDoc, direction);
-  if (offset < 0) {
-    // The missing part is indicated by a negative value, so we need to flip it
-    const missingPart = -offset;
-    // Adding a little extra so a new document is already partially visisble
-    const extraPart = targetDoc.clientHeight / 2;
-    window.scrollBy(0, direction * (missingPart + extraPart));
-    // window.scrollY += direction * (missingPart + extraPart);
-  }
-}
-
-function getOutOfViewOffset(doc, direction) {
-  const documentEl = document.documentElement;
-
-  if (direction < 0) {
-    const viewportOffsetTop = window.scrollY;
-    return doc.offsetTop - viewportOffsetTop;
-  } else {
-    const viewportOffsetBot = window.scrollY + documentEl.clientHeight;
-    const docOffsetBot = doc.offsetTop + doc.offsetHeight;
-    return viewportOffsetBot - docOffsetBot;
-  }
 }

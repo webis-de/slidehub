@@ -3,7 +3,7 @@
 */
 
 import { config } from '../config';
-import { setActiveView } from './view-navigation';
+import { setActiveDocument } from './document-navigation';
 import { getComputedOuterChildrenWidth, getOuterWidth, getFloatPropertyValue } from '../util';
 import { startImageObserver } from './image-loader';
 
@@ -14,7 +14,7 @@ export const DocumentLoader = {
 
       loadDocuments().then(() => {
         const firstView = document.querySelector(config.selector.view);
-        setActiveView(firstView);
+        setActiveDocument(firstView);
         evaluateItemWidth();
 
         const container = document.querySelector(config.selector.main);

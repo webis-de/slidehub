@@ -1,10 +1,6 @@
 import { listener } from '../util';
-import {
-  navigateView,
-  setActiveView,
-  getItemCount,
-  navigateDocument
-} from '../core/view-navigation';
+import { navigateView, setActiveDocument, getItemCount } from '../core/view-navigation';
+import { navigateDocument } from '../core/document-navigation';
 
 export const KeyboardNavigationModule = {
   enabled: true,

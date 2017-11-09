@@ -5,7 +5,8 @@
 */
 
 import { listener } from '../util';
-import { getActiveView, getActiveItem } from '../core/view-navigation';
+import { getActiveItem } from '../core/view-navigation';
+import { getActiveDocument } from '../core/document-navigation';
 
 export { ItemLinking };
 
@@ -52,7 +53,7 @@ function handleOpenIntent(eventTarget, openInNewTab) {
 }
 
 function openItem(openInNewTab) {
-  const view = getActiveView();
+  const view = getActiveDocument();
   const docSource = view.getAttribute('data-doc-source');
   const itemIndex = getActiveItem(view).getAttribute('data-page');
   const fragment = itemIndex !== '0' ? `#page=${itemIndex}` : '';
