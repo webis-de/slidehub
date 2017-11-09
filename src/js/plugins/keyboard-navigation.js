@@ -31,6 +31,8 @@ function handleKeyboardInput(event) {
 * Removing an entry here disables its application-related interactions
 */
 const controlKeyNames = Object.freeze({
+  33: 'pageUp',
+  34: 'pageDown',
   35: 'endKey',
   36: 'homeKey',
   37: 'arrowLeft',
@@ -54,6 +56,18 @@ const controlKey = Object.freeze({
     direction: 1,
     trigger: function() {
       navigateView(this.direction * getItemCount());
+    }
+  },
+  pageUp: {
+    direction: -1,
+    trigger: function() {
+      navigateDocument(this.direction * 3);
+    }
+  },
+  pageDown: {
+    direction: 1,
+    trigger: function() {
+      navigateDocument(this.direction * 3);
     }
   },
   arrowLeft: {
