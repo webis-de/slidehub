@@ -4,7 +4,7 @@
 
 import { config } from '../config';
 import { setActiveDocument } from './document-navigation';
-import { getComputedOuterChildrenWidth, getOuterWidth, getFloatPropertyValue } from '../util';
+import { getOuterWidth, getFloatPropertyValue } from '../util';
 import { startImageObserver } from './image-loader';
 
 export const DocumentLoader = {
@@ -129,11 +129,21 @@ function setDocumentWidth(doc) {
   const documentOuterWidth =
     getFloatPropertyValue(doc, 'margin-left') +
     getFloatPropertyValue(doc, 'border-left-width') +
-    getComputedOuterChildrenWidth(doc) +
+    getOuterChildrenWidth(doc) +
     getFloatPropertyValue(doc, 'border-right-width') +
     getFloatPropertyValue(doc, 'margin-right');
 
   doc.style.setProperty('width', documentOuterWidth + 'px');
+}
+
+/*
+* Computes the total outer width of an element by accumulating its children’s
+* horizontal dimension property values (i.e. margin-left, width, margin-right)
+*/
+function getOuterChildrenWidth(element) {
+  return Array.from(element.children).reduce((sum, child) => {
+    return sum + getOuterWidth(child);
+  }, 0);
 }
 
 function evaluateItemWidth() {

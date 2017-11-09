@@ -47,13 +47,13 @@ const controlKey = Object.freeze({
   homeKey: {
     direction: -1,
     trigger: function() {
-      // navigateView(this.direction * getItemCount(view));
+      navigateView(this.direction * getItemCount());
     }
   },
   endKey: {
     direction: 1,
     trigger: function() {
-      // navigateView(this.direction * getItemCount(view));
+      navigateView(this.direction * getItemCount());
     }
   },
   arrowLeft: {

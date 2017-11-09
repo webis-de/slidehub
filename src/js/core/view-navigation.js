@@ -1,41 +1,56 @@
 import { config } from '../config';
-import { clamp } from '../util';
-import { getFullyVisibleItems } from '../util';
+import { clamp, getFloatPropertyValue } from '../util';
 import { getActiveDocument, setActiveDocument } from './document-navigation';
 
-export { navigateView, getActiveItem, setActiveItem, getItemCount, navigateDocument };
+export { navigateView, getActiveItem, setActiveItem, getItemCount };
 
 function navigateView(distance) {
-  const view = getActiveDocument();
-
-  if (!viewIsAligned(view)) {
+  if (!viewIsAligned()) {
     // console.log('> View is not aligned. Correcting ...');
-    alignView(view, distance);
+    alignView(distance);
   }
 
-  updateActiveItem(view, distance);
+  updateActiveItem(distance);
 
   // If all items are already visible, we’re done here.
-  if (allItemsVisible(view)) {
+  if (allItemsVisible()) {
     // console.log('> All items are visible. Not navigating view.');
     return;
   }
 
   // If the active item is already inside the view, we’re done here.
-  if (activeItemInsideView(view)) {
+  if (activeItemInsideView()) {
     // console.log('> Active item already in view. Not navigating view.');
     return;
   }
 
   // console.log('> View needs update');
-  updateView(view, distance);
+  setViewPos(getViewPos() + distance);
 }
 
-function updateActiveItem(view, distance) {
-  const nextElementProp = `${distance > 0 ? 'next' : 'previous'}ElementSibling`;
+function viewIsAligned() {
+  const viewPos = getViewPos();
+  // if ((viewPos % config.itemWidth) % 1 === 0) {
+  if (viewPos % config.itemWidth === 0) {
+    return true;
+  }
+
+  return false;
+}
+
+function alignView(distance) {
+  const currentViewPos = getViewPos();
+  const lastItemIndex = getItems().childElementCount - 1;
+  const maxViewPos = lastItemIndex - getFullyVisibleItems(getActiveDocument());
+  const alignedViewPos = clamp(Math.round(currentViewPos), 0, maxViewPos);
+  setViewPos(alignedViewPos);
+}
+
+function updateActiveItem(distance) {
+  const nextElementProp = distance < 0 ? 'previousElementSibling' : 'nextElementSibling';
   let steps = Math.abs(distance);
   while (steps--) {
-    setNextActiveItem(view, nextElementProp);
+    setNextActiveItem(nextElementProp);
   }
 }
 
@@ -44,35 +59,20 @@ Updates the active item in a view if necessary. For example, if the active item
 is the last item in a document, moving it past the end is not possible. In this
 case, the active item stays the same.
 */
-function setNextActiveItem(view, nextElementProp) {
-  const activeItem = getActiveItem(view);
+function setNextActiveItem(nextElementProp) {
+  const activeItem = getActiveItem();
   const nextItem = activeItem[nextElementProp];
 
   // Only update the active item if necessary.
   if (nextItem !== null) {
-    setActiveItem(view, nextItem);
+    setActiveItem(nextItem);
   }
 }
 
-function viewIsAligned(view) {
-  const currentViewPos = getViewPos(view);
-  if ((currentViewPos % config.itemWidth) % 1 === 0) {
-    return true;
-  }
-
-  return false;
-}
-
-function alignView(view, distance) {
-  const currentViewPos = getViewPos(view);
-  const maxViewPos = getLastItemIndex(view) - getFullyVisibleItems(view);
-  const alignedViewPos = clamp(Math.round(currentViewPos), 0, maxViewPos);
-  setViewPos(view, alignedViewPos);
-}
-
-function allItemsVisible(view) {
-  const numItems = view.querySelector(config.selector.doc).childElementCount;
-  if (numItems <= getFullyVisibleItems(view)) {
+function allItemsVisible() {
+  const activeDoc = getActiveDocument();
+  const numItems = getItems().childElementCount;
+  if (numItems <= getFullyVisibleItems(activeDoc)) {
     return true;
   }
 }
@@ -81,9 +81,9 @@ function allItemsVisible(view) {
 Tests whether a view’s active item is completely inside the view (i.e. the item
 is completely visible and not occluded).
 */
-function activeItemInsideView(view) {
-  const viewRect = view.getBoundingClientRect();
-  const itemRect = getActiveItem(view).getBoundingClientRect();
+function activeItemInsideView() {
+  const viewRect = getActiveDocument().getBoundingClientRect();
+  const itemRect = getActiveItem().getBoundingClientRect();
 
   if (
     viewRect.left <= itemRect.left &&
@@ -97,70 +97,43 @@ function activeItemInsideView(view) {
   return false;
 }
 
-function updateView(view, distance) {
-  const activeItem = getActiveItem(view);
-  const currentViewPos = getViewPos(view);
-  const currentItemPos = getItemPos(activeItem);
-  let newItemPos;
-  if (distance > 0) {
-    newItemPos = currentViewPos - currentItemPos;
-  } else {
-    const lastVisibleItem = currentViewPos + getFullyVisibleItems(view);
-    newItemPos = lastVisibleItem - currentItemPos;
-  }
-
-  setViewPos(view, currentViewPos + distance);
+function getItemCount() {
+  return getItems().childElementCount;
 }
 
-function getViewPos(view) {
-  return getViewPixelPos(view) / config.itemWidth;
+function getActiveItem() {
+  const activeDoc = getActiveDocument();
+  return activeDoc.querySelector(`${config.selector.item}.active`);
 }
 
-function getViewPixelPos(view) {
-  const scrollbox = view.querySelector(config.selector.scrollbox);
-  return scrollbox.scrollLeft;
-}
-
-function setViewPos(view, itemPos) {
-  const doc = view.querySelector(config.selector.doc);
-  const maxPos = getItemCount(view) - getFullyVisibleItems(view);
-  itemPos = clamp(itemPos, 0, maxPos);
-
-  let itemX = itemPos * config.itemWidth;
-
-  setViewPixelPos(view, itemX);
-}
-
-function setViewPixelPos(view, itemX, disableTransition = false) {
-  const scrollbox = view.querySelector(config.selector.scrollbox);
-  scrollbox.scrollLeft = itemX;
-}
-
-function getItemPos(item) {
-  return parseInt(item.dataset.page);
-}
-
-function getLastItemIndex(view) {
-  const doc = view.querySelector(config.selector.doc);
-  return doc.childElementCount - 1;
-}
-
-function getItemCount(view) {
-  return view.querySelector(config.selector.doc).childElementCount;
-}
-
-function getActiveItem(view) {
-  return view.querySelector(`${config.selector.item}.active`);
-}
-
-function setActiveItem(view, targetItem) {
-  const activeItem = getActiveItem(view);
+function setActiveItem(targetItem) {
+  const activeItem = getActiveItem();
   activeItem.classList.remove('active');
   targetItem.classList.add('active');
   document.activeElement.blur();
 }
 
-function getItemByIndex(view, index) {
-  const doc = view.querySelector(config.selector.doc);
-  return doc.children[index];
+function getFullyVisibleItems() {
+  const activeDoc = getActiveDocument();
+  const docWidth = getFloatPropertyValue(activeDoc, 'width');
+  return Math.floor(docWidth / config.itemWidth);
+}
+
+function getItems() {
+  return getActiveDocument().querySelector(config.selector.doc);
+}
+
+function getViewPos() {
+  return getScrollbox().scrollLeft / config.itemWidth;
+}
+
+function setViewPos(itemPos) {
+  const maxPos = getItems().childElementCount - getFullyVisibleItems(getActiveDocument());
+  itemPos = clamp(itemPos, 0, maxPos);
+
+  getScrollbox().scrollLeft = itemPos * config.itemWidth;
+}
+
+function getScrollbox() {
+  return getActiveDocument().querySelector(config.selector.scrollbox);
 }

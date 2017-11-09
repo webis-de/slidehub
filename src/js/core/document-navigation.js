@@ -7,7 +7,7 @@ Navigates through documents in a certain direction.
 */
 function navigateDocument(direction) {
   // Choose `nextElementSibling` or `previousElementSibling` based on direction
-  const prop = `${direction < 0 ? 'previous' : 'next'}ElementSibling`;
+  const prop = direction < 0 ? 'previousElementSibling' : 'nextElementSibling';
   const targetDoc = getActiveDocument()[prop];
 
   if (targetDoc === null) {
@@ -16,7 +16,7 @@ function navigateDocument(direction) {
 
   setActiveDocument(targetDoc);
 
-  const offset = getOutOfViewOffset(targetDoc, direction);
+  const offset = getOutOfViewportOffset(targetDoc, direction);
   if (offset < 0) {
     // The missing part is indicated by a negative value, so we need to flip it
     const missingPart = -offset;
@@ -30,19 +30,19 @@ function getActiveDocument() {
   return activeDocument;
 }
 
-function setActiveDocument(view) {
-  // Remove active class from currently active view
+function setActiveDocument(doc) {
+  // Remove active class from currently active document
   if (activeDocument) {
     activeDocument.classList.remove('active');
   }
 
-  // Set new active view
-  activeDocument = view;
+  // Set new active document
+  activeDocument = doc;
   activeDocument.classList.add('active');
   document.activeElement.blur();
 }
 
-function getOutOfViewOffset(doc, direction) {
+function getOutOfViewportOffset(doc, direction) {
   const documentEl = document.documentElement;
 
   if (direction < 0) {

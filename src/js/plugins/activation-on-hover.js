@@ -44,5 +44,5 @@ function handleActivationOnHover(event) {
   }
 
   setActiveDocument(view);
-  setActiveItem(view, item);
+  setActiveItem(item);
 }

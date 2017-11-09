@@ -53,9 +53,9 @@ function handleOpenIntent(eventTarget, openInNewTab) {
 }
 
 function openItem(openInNewTab) {
-  const view = getActiveDocument();
-  const docSource = view.getAttribute('data-doc-source');
-  const itemIndex = getActiveItem(view).getAttribute('data-page');
+  const activeDoc = getActiveDocument();
+  const docSource = activeDoc.dataset.docSource;
+  const itemIndex = getActiveItem().dataset.page;
   const fragment = itemIndex !== '0' ? `#page=${itemIndex}` : '';
   const itemSource = docSource + fragment;
 
