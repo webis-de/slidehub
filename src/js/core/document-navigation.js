@@ -16,13 +16,12 @@ function navigateDocument(direction) {
 
   setActiveDocument(targetDoc);
 
-  const offset = getOutOfViewportOffset(targetDoc, direction);
-  if (offset < 0) {
-    // The missing part is indicated by a negative value, so we need to flip it
-    const missingPart = -offset;
-    // Adding a little extra so a new document is already partially visisble
-    const extraPart = targetDoc.clientHeight / 2;
-    window.scrollBy(0, Math.sign(direction) * (missingPart + extraPart));
+  const offset = getVerticalOffsets(targetDoc);
+  const extraPart = targetDoc.clientHeight / 2;
+  if (offset.top < 0) {
+    window.scrollBy(0, -(Math.abs(offset.top) + extraPart));
+  } else if (offset.bottom < 0) {
+    window.scrollBy(0, Math.abs(offset.bottom) + extraPart);
   }
 }
 
@@ -41,14 +40,12 @@ function getDocuments() {
   return getActiveDocument().parentElement.children;
 }
 
-function getOutOfViewportOffset(element, direction) {
-  if (direction < 0) {
-    return element.offsetTop - window.scrollY;
-  } else {
-    const viewportOffsetBot = window.scrollY + document.documentElement.clientHeight;
-    const elOffsetBot = element.offsetTop + element.offsetHeight;
-    return viewportOffsetBot - elOffsetBot;
-  }
+function getVerticalOffsets(element) {
+  const docEl = document.documentElement;
+  return {
+    top: element.offsetTop - window.scrollY,
+    bottom: window.scrollY + docEl.clientHeight - (element.offsetTop + element.offsetHeight)
+  };
 }
 
 function getActiveDocument() {
