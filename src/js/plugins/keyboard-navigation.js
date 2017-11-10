@@ -2,14 +2,15 @@ import { listener } from '../util';
 import { navigateView, setActiveDocument, getItemCount } from '../core/view-navigation';
 import { navigateDocument } from '../core/document-navigation';
 
-export const KeyboardNavigationModule = {
+export { KeyboardNavigationModule };
+
+const KeyboardNavigationModule = {
   enabled: true,
   name: 'keyboard-navigation',
   description: 'Navigate pages with keyboard',
   enable() {
     document.addEventListener('keydown', handleKeyboardInput, listener.active);
   },
-
   disable() {
     document.removeEventListener('keydown', handleKeyboardInput, listener.active);
   }
@@ -84,14 +85,14 @@ const controlKey = Object.freeze({
   },
   arrowUp: {
     direction: -1,
-    trigger: function() {
-      navigateDocument(this.direction);
+    trigger: function(event) {
+      navigateDocument(this.direction * (event.shiftKey ? 3 : 1));
     }
   },
   arrowDown: {
     direction: 1,
-    trigger: function() {
-      navigateDocument(this.direction);
+    trigger: function(event) {
+      navigateDocument(this.direction * (event.shiftKey ? 3 : 1));
     }
   }
 });
