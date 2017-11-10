@@ -4,41 +4,33 @@ SlideHub ([demo website](http://test.webis.de/slidehub)) is a web-based presenta
 
 All documents are available as PDF files. In addition, all slides are available as images that act as a kind of preview for the actual documents’ page.
 
+- [Features](#features)
+- [Navigation](#navigation)
+- [Browser Support](#browser-support)
+- [Development Setup](#development-setup)
+- [To Do](#to-do)
+- [Known Issues](#known-issues)
+- [Generate graphics from PDF files](#generate-graphics-from-pdf-files)
+- [Examples](#examples)
+- [Troubleshooting](#troubleshooting)
+
 
 
 ## Features
 
 - Keyboard navigation
-- Page images are lazy-loaded (i.e. if they are about to become visible)
-- Each page links to its original PDF file (with *page* URL parameter for browsers that support targetting individual pages)
+- Page images are only loaded when necessary
+- Each page links to its original PDF file (using the *page* fragment in the URL for browsers that support targetting individual pages in their PDF viewer)
 
 
 
 ## Navigation
 
-The application needs to be usable on mobile and desktop devices utilizing the following primary input devices:
+The application can be navigated with the most common input devices (i.e. mouse, trackpad, touchpad, keyboard).
 
-- Mouse/Trackpad
-- Touchpad
-- Keyboard
+With a mouse, one can navigate the pages within a document by holding down <kbd>Shift</kbd> and turning the mouse wheel. With a double-click on a page, the PDF is opened at this page.
 
-The challenge is implementing a navigation pattern for a layout that is interactive in two dimensions. While a keyboard offers a variety of possibilities for doing so, a mouse is more limited. It’s safe to assume a mouse with a primary and secondary mouse button and a scrolling wheel with the ability to trigger a click as well. That said, browsers already leverage these buttons for navigation of a web page.
-
-The scrolling wheel moves the viewport across the vertical axis while the primary mouse button is used for all sorts of interaction on the page (e.g. opening links, clicking buttons, etc.). The secondary mouse button is mostly used for opening a context menu in order to invoke browser-specific features. These interactions vary across operating systems. While it’s easy to overwrite the default behavior in most cases, such a step needs to be justified.
-
-### Current Concept
-
-#### Mouse
-
-Navigating through pages of documents on the horizontal axis is done by using the scrolling wheel in addition to holding a modifier key. It’s advised to not use <kbd>Ctrl</kbd> since most user agents change the zoom level with <kbd>Ctrl</kbd><kbd>MouseWheel</kbd>. Also, the <kbd>Alt</kbd> key is problematic, as on some browsers (e.g. Firefox) pressing the <kbd>Alt</kbd> key reveals the browsers menu bar. This leaves only the <kbd>Shift</kbd> key as an option without immediate conflicts.
-
-#### Keyboard
-
-The arrow keys are used to navigate across documents and pages. Vertical navigation across documents is done with Upwards Arrow <kbd>↑</kbd> and Downwards Arrow <kbd>↓</kbd>. Horizontal navigation across pages is done with Leftwards Arrow <kbd>←</kbd> and Rightwards Arrow <kbd>→</kbd>.
-
-One can also navigate in chunks of 3 by holding <kbd>Shift</kbd> while navigating pages of a document.
-
-Additionally, the <kbd>Home</kbd> (or <kbd>Pos1</kbd>) key jumps to the first page of a document, while the <kbd>End</kbd> key jumps to the last page.
+With a keyboard, the arrow keys allow navigating the pages within documents and the documents itself. Holding down <kbd>Shift</kbd> while pressing an arrow key navigates three pages or documents at a time. Furthermore, <kbd>Home</kbd>/<kbd>End</kbd> jump to the first/last page of a document.
 
 
 
@@ -48,7 +40,7 @@ Additionally, the <kbd>Home</kbd> (or <kbd>Pos1</kbd>) key jumps to the first pa
 |---:|-----:|--------:|-------:|-------:|------:|
 | —  | 15   | 31      | 49     | 9.1    | 36    |
 
-Currently, SlideHub does not support Internet Explorer in any version. All features listed below are not supported by Internet Explorer (unless a polyfill is provided). To achieve support for Internet Explorer 11, the JavaScript code needs to be transpiled to not use unsupported features (like promises). In addition, the CSS has to be written in a way to either not use custom properties at all or provide explicit fallbacks to property declarations using them.
+SlideHub does not support Internet Explorer. All features listed below are not supported by Internet Explorer (unless a polyfill is provided). To achieve support for Internet Explorer 11, the JavaScript code needs to be transpiled to not use unsupported features (like promises). In addition, the CSS has to be written in a way to either not use custom properties at all or provide explicit fallbacks to property declarations using them.
 
 I’d like to avoid Internet Explorer. It doesn’t have great support for [Flexbox](https://caniuse.com/#feat=flexbox). It only has [support for an old version](https://caniuse.com/#feat=css-grid) of the CSS grid specification. It also lacks support for a lot of [ECMAScript 6](https://kangax.github.io/compat-table/es6/) features.
 
@@ -108,10 +100,6 @@ npm start
 
 ## Known Issues
 
-- Horizontal page navigation state via the `ew-resize` cursor is not transferred in all cases (e.g. when holding shift and scrolling up/down).
-- Some modifiers are problematic:
-  - Holding <kbd>Alt</kbd> triggers the browser menu bar on some platforms.
-  - Holding <kbd>Ctrl</kbd> while scrolling usually adjusts the zoom level
 - documents `unit-en-radial-basis-functions.pdf`, `unit-de-conceptual-design3.pdf`, `unit-de-relational-design0.pdf` have no PNGs (e.g. all entries with only one page)
 - ImageMagick occasionally creates transparent PNGs (For documents with a specific background color, this might have a drastic impact on perceivability)
 
@@ -167,7 +155,7 @@ mogrify -resize '600x>' *.png
 
 The same argument can also specified when converting from PDF.
 
-#### Troubleshooting
+### Troubleshooting
 
 One might run out of memory while converting some large PDFs. If this is the case, an error like the one below is printed.
 
