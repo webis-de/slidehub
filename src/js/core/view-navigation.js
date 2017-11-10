@@ -40,38 +40,23 @@ function viewIsAligned() {
 
 function alignView(distance) {
   const currentViewPos = getViewPos();
-  const lastItemIndex = getItems().childElementCount - 1;
+  const lastItemIndex = getItemCount() - 1;
   const maxViewPos = lastItemIndex - getFullyVisibleItems(getActiveDocument());
   const alignedViewPos = clamp(Math.round(currentViewPos), 0, maxViewPos);
   setViewPos(alignedViewPos);
 }
 
+// TO DO refactor see document-navigation.js#getTargetDoc
 function updateActiveItem(distance) {
-  const nextElementProp = distance < 0 ? 'previousElementSibling' : 'nextElementSibling';
-  let steps = Math.abs(distance);
-  while (steps--) {
-    setNextActiveItem(nextElementProp);
-  }
-}
-
-/*
-Updates the active item in a view if necessary. For example, if the active item
-is the last item in a document, moving it past the end is not possible. In this
-case, the active item stays the same.
-*/
-function setNextActiveItem(nextElementProp) {
-  const activeItem = getActiveItem();
-  const nextItem = activeItem[nextElementProp];
-
-  // Only update the active item if necessary.
-  if (nextItem !== null) {
-    setActiveItem(nextItem);
-  }
+  const items = getItems();
+  const currentIndex = getItemPos();
+  const targetIndex = clamp(currentIndex + distance, 0, items.length - 1);
+  setActiveItem(items[targetIndex]);
 }
 
 function allItemsVisible() {
   const activeDoc = getActiveDocument();
-  const numItems = getItems().childElementCount;
+  const numItems = getItemCount();
   if (numItems <= getFullyVisibleItems(activeDoc)) {
     return true;
   }
@@ -97,8 +82,37 @@ function activeItemInsideView() {
   return false;
 }
 
+function getFullyVisibleItems() {
+  const activeDoc = getActiveDocument();
+  const docWidth = getFloatPropertyValue(activeDoc, 'width');
+  return Math.floor(docWidth / config.itemWidth);
+}
+
+function getViewPos() {
+  return getScrollbox().scrollLeft / config.itemWidth;
+}
+
+function setViewPos(itemPos) {
+  const maxPos = getItems().length - getFullyVisibleItems(getActiveDocument());
+  itemPos = clamp(itemPos, 0, maxPos);
+
+  getScrollbox().scrollLeft = itemPos * config.itemWidth;
+}
+
+function getScrollbox() {
+  return getActiveDocument().querySelector(config.selector.scrollbox);
+}
+
+function getItems() {
+  return getActiveItem().parentElement.children;
+}
+
 function getItemCount() {
-  return getItems().childElementCount;
+  return getItems().length;
+}
+
+function getItemPos() {
+  return Array.from(getItems()).indexOf(getActiveItem());
 }
 
 function getActiveItem() {
@@ -111,29 +125,4 @@ function setActiveItem(targetItem) {
   activeItem.classList.remove('active');
   targetItem.classList.add('active');
   document.activeElement.blur();
-}
-
-function getFullyVisibleItems() {
-  const activeDoc = getActiveDocument();
-  const docWidth = getFloatPropertyValue(activeDoc, 'width');
-  return Math.floor(docWidth / config.itemWidth);
-}
-
-function getItems() {
-  return getActiveDocument().querySelector(config.selector.doc);
-}
-
-function getViewPos() {
-  return getScrollbox().scrollLeft / config.itemWidth;
-}
-
-function setViewPos(itemPos) {
-  const maxPos = getItems().childElementCount - getFullyVisibleItems(getActiveDocument());
-  itemPos = clamp(itemPos, 0, maxPos);
-
-  getScrollbox().scrollLeft = itemPos * config.itemWidth;
-}
-
-function getScrollbox() {
-  return getActiveDocument().querySelector(config.selector.scrollbox);
 }
