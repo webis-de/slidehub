@@ -142,7 +142,7 @@ mogrify -format png -density 72 -quality 90 *.pdf
 **Counting the number of graphics per document**:
 
 ```
-for f in *.pdf; do echo $f; ls -l $f*.png | wc -l; done
+for f in *.pdf; do count=$(ls -l $f*.png | wc -l);echo "            [\"$f\", $count],"; done
 ```
 
 **Resizing images to a specific width**
@@ -154,6 +154,14 @@ mogrify -resize '600x>' *.png
 ```
 
 The same argument can also specified when converting from PDF.
+
+**Optimizing**
+
+The following command optimizes the size of the PNG files.
+
+```
+optipng *.png
+```
 
 ### Troubleshooting
 
