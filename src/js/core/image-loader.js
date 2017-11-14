@@ -57,7 +57,7 @@ function setItemAspectRatio(view, image) {
 
 function startImageObserver(view) {
   if (imageObserver) {
-    const images = view.querySelectorAll('img[data-src]');
+    const images = Array.from(view.querySelectorAll('img[data-src]'));
     images.forEach(image => imageObserver.observe(image));
   }
 }
