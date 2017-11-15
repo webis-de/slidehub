@@ -171,7 +171,6 @@ figure > * {
 */
 table {
   border-collapse: collapse;
-  border-spacing: 0;
 }
 
 table,
@@ -188,9 +187,13 @@ td {
   vertical-align: baseline;
 }
 
+tr:not(:last-child) {
+  border-bottom: 1px solid var(--c-alt-light);
+}
+
 th,
 td {
-  padding: calc(var(--spacing) / 2);
+  padding: var(--spacing) calc(var(--spacing) / 2);
 }
 
 th {
@@ -431,7 +434,7 @@ button:disabled:focus {
   background-color: rgba(0, 0, 0, 0.6);
 }
 
-.modal.closed {
+.modal[aria-hidden='true'] {
   display: none;
 }
 
@@ -665,6 +668,10 @@ button:disabled:focus {
 .shortcut-table-wrapper {
   display: flex;
   flex-wrap: wrap;
+}
+
+.shortcut-table {
+  margin: var(--spacing);
 }
 
 .shortcut-table__input {
