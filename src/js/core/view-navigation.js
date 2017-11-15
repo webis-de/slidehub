@@ -122,7 +122,10 @@ function getActiveItem() {
 
 function setActiveItem(targetItem) {
   const activeItem = getActiveItem();
-  activeItem.classList.remove('active');
+  if (activeItem) {
+    activeItem.classList.remove('active');
+  }
+
   targetItem.classList.add('active');
   document.activeElement.blur();
 }

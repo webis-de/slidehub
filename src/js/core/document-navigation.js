@@ -1,4 +1,5 @@
 import { clamp } from '../util';
+import { config } from '../config';
 
 export { navigateDocument, getActiveDocument, setActiveDocument };
 
@@ -49,6 +50,10 @@ function getVerticalOffsets(element) {
 }
 
 function getActiveDocument() {
+  if (!activeDocument) {
+    activeDocument = document.querySelector(config.selector.view);
+  }
+
   return activeDocument;
 }
 

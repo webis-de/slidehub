@@ -7,6 +7,9 @@ export const config = {
 
   itemWidth: 300,
 
+  // Whether to create a meta slide for each document
+  metaSlide: false,
+
   // Preserve aspect ratio of document items
   //   true:  Preserves aspect ratio
   //   false: Uses a default aspect ratio of 5:4

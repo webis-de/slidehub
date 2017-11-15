@@ -4,6 +4,7 @@
 
 import { config } from '../config';
 import { setActiveDocument } from './document-navigation';
+import { setActiveItem } from './view-navigation';
 import { getOuterWidth, getFloatPropertyValue } from '../util';
 import { startImageObserver } from './image-loader';
 
@@ -32,11 +33,8 @@ function documentObserverHandler(entries, observer) {
 
     observer.unobserve(entry.target);
 
-    // add loading indicator
-
     loadDocuments()
       .then(() => {
-        // remove loading indicator
         const container = document.querySelector(config.selector.main);
         observer.observe(container.lastElementChild);
       })
@@ -81,6 +79,7 @@ function onDocumentLoaded(container, doc) {
   container.insertAdjacentHTML('beforeend', doc);
 
   const view = container.lastElementChild;
+  setActiveItem(view.querySelector(config.selector.item));
   startImageObserver(view);
   setDocumentWidth(view.querySelector(config.selector.doc));
 }
@@ -99,22 +98,26 @@ function createDocument(docName, itemCount) {
 
     const docSource = `${config.assetPath}/${docName}`;
 
+    const metaSlide = `
+      <div class="${config.selector.item.slice(1)}" data-page="0">
+        <div class="doc-meta">
+          <h2 class="doc-meta__title">
+            <a href="${docSource}">${docName}</a>
+          </h2>
+          by author, ${itemCount} pages, 2018
+        </div>
+      </div>
+    `;
+
     const docMarkup = `
       <div
         class="${config.selector.view.slice(1)}"
-        id="${docName}"
+        id="${docName.replace(/\.pdf$/, '')}"
         data-doc-source="${docSource}"
-        data-page-count="${itemCount + 1}">
+      >
         <div class="doc-scrollbox">
           <div class="${config.selector.doc.slice(1)}">
-            <div class="${config.selector.item.slice(1)} active" data-page="0">
-              <div class="doc-meta">
-                <h2 class="doc-meta__title">
-                  <a href="${docSource}">${docName}</a>
-                </h2>
-                by author, ${itemCount} pages, 2018
-              </div>
-            </div>
+            ${config.metaSlide ? metaSlide : ''}
             ${items}
           </div>
         </div>
