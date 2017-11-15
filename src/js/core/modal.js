@@ -18,7 +18,7 @@ export const Modal = {
         button.addEventListener('click', openModal);
       });
 
-      const modalCloseButtons = Array.from(document.querySelectorAll('.modal__close'));
+      const modalCloseButtons = Array.from(document.querySelectorAll('button[data-close-modal]'));
       modalCloseButtons.forEach(button => {
         button.addEventListener('click', closeModal);
       });
@@ -27,8 +27,8 @@ export const Modal = {
 };
 
 function openModal(event) {
-  const targetClass = event.currentTarget.getAttribute('data-target-modal');
-  const modal = document.querySelector(`.${targetClass}`);
+  const targetModalClass = event.currentTarget.dataset.targetModal;
+  const modal = document.querySelector(`.${targetModalClass}`);
 
   if (modal === null) {
     return;
@@ -93,28 +93,28 @@ function trapTabKey(event) {
 
   const activeElement = document.activeElement;
   const focusable = getFocusableElements(event.currentTarget);
-  const tabbable = focusable.filter(element => element.tabIndex > -1);
+  const tabable = focusable.filter(element => element.tabIndex > -1);
 
-  if (tabbable.length < 2) {
+  if (tabable.length < 2) {
     event.preventDefault();
     return;
   }
 
   if (event.shiftKey) {
-    if (activeElement === tabbable[0]) {
-      tabbable[tabbable.length - 1].focus();
+    if (activeElement === tabable[0]) {
+      tabable[tabable.length - 1].focus();
       event.preventDefault();
     }
   } else {
-    if (activeElement === tabbable[tabbable.length - 1]) {
-      tabbable[0].focus();
+    if (activeElement === tabable[tabable.length - 1]) {
+      tabable[0].focus();
       event.preventDefault();
     }
   }
 }
 
 const focusableElementsSelector =
-  'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex], [contenteditable=true]';
+  'a[href], input:not(:disabled), textarea:not(:disabled), button:not(:disabled), [tabindex]';
 
 function getFocusableElements(ancestor = document) {
   return Array.from(ancestor.querySelectorAll(focusableElementsSelector));
