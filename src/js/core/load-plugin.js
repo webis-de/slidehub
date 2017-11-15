@@ -11,6 +11,12 @@ export function loadPlugin(plugin) {
 }
 
 function registerPlugin(plugin) {
+  const fieldset = document.querySelector('.features-fieldset');
+
+  if (!fieldset) {
+    return;
+  }
+
   const toggleButtonMarkup = `
     <div class="form-group form-group--switch">
       <span class="form-label" id="feature-${plugin.name}">${plugin.description}</span>
@@ -21,7 +27,6 @@ function registerPlugin(plugin) {
     </div>
   `;
 
-  const fieldset = document.querySelector('.features-fieldset');
   fieldset.insertAdjacentHTML('beforeend', toggleButtonMarkup);
 
   const button = fieldset.querySelector(`[data-feature="${plugin.name}"]`);

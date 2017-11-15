@@ -12,12 +12,14 @@ let lastFocusedElement;
 export const Modal = {
   enable() {
     document.addEventListener('DOMContentLoaded', function() {
-      Array.from(document.querySelectorAll('button[data-target-modal]')).forEach(button => {
+      const modalOpenButtons = Array.from(document.querySelectorAll('button[data-target-modal]'));
+      modalOpenButtons.forEach(button => {
         button.removeAttribute('disabled');
         button.addEventListener('click', openModal);
       });
 
-      Array.from(document.querySelectorAll('.modal__close')).forEach(button => {
+      const modalCloseButtons = Array.from(document.querySelectorAll('.modal__close'));
+      modalCloseButtons.forEach(button => {
         button.addEventListener('click', closeModal);
       });
     });
