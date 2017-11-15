@@ -8,9 +8,14 @@ import { setActiveItem } from './view-navigation';
 import { getOuterWidth, getFloatPropertyValue } from '../util';
 import { startImageObserver } from './image-loader';
 
-export const DocumentLoader = {
+export { DocumentLoader };
+
+let slidehubContainer;
+
+const DocumentLoader = {
   enable() {
     document.addEventListener('DOMContentLoaded', function() {
+      createSlidehubContainer();
       const documentObserver = new IntersectionObserver(documentObserverHandler, { threshold: 1 });
 
       loadDocuments().then(() => {
@@ -18,12 +23,17 @@ export const DocumentLoader = {
         setActiveDocument(firstView);
         evaluateItemWidth();
 
-        const container = document.querySelector(config.selector.main);
-        documentObserver.observe(container.lastElementChild);
+        documentObserver.observe(slidehubContainer.lastElementChild);
       });
     });
   }
 };
+
+function createSlidehubContainer() {
+  slidehubContainer = document.createElement('div');
+  slidehubContainer.classList.add('slidehub-container');
+  document.querySelector('[data-slidehub]').appendChild(slidehubContainer);
+}
 
 function documentObserverHandler(entries, observer) {
   for (const entry of entries) {
@@ -35,8 +45,7 @@ function documentObserverHandler(entries, observer) {
 
     loadDocuments()
       .then(() => {
-        const container = document.querySelector(config.selector.main);
-        observer.observe(container.lastElementChild);
+        observer.observe(slidehubContainer.lastElementChild);
       })
       .catch(message => {
         console.info(message);
@@ -52,7 +61,6 @@ function documentObserverHandler(entries, observer) {
 
 function loadDocuments() {
   const batchSize = 10;
-  const container = document.querySelector(config.selector.main);
 
   if (documentsData.length === 0) {
     return Promise.reject('No documents left to load.');
@@ -60,7 +68,7 @@ function loadDocuments() {
 
   return loadDocumentBatch(batchSize).then(docs => {
     console.info('Loaded document batch.');
-    docs.forEach(doc => onDocumentLoaded(container, doc));
+    docs.forEach(doc => onDocumentLoaded(doc));
   });
 }
 
@@ -75,10 +83,10 @@ function loadDocumentBatch(batchSize) {
   return Promise.all(documents);
 }
 
-function onDocumentLoaded(container, doc) {
-  container.insertAdjacentHTML('beforeend', doc);
+function onDocumentLoaded(doc) {
+  slidehubContainer.insertAdjacentHTML('beforeend', doc);
 
-  const view = container.lastElementChild;
+  const view = slidehubContainer.lastElementChild;
   setActiveItem(view.querySelector(config.selector.item));
   startImageObserver(view);
   setDocumentWidth(view.querySelector(config.selector.doc));

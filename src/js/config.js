@@ -17,7 +17,6 @@ export const config = {
 
   // Selectors for UI components
   selector: {
-    main: '.doc-container',
     view: '.doc-view',
     scrollbox: '.doc-scrollbox',
     doc: '.doc',

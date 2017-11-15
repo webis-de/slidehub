@@ -1,7 +1,7 @@
 /*
 * Container for all documents
 */
-.doc-container {
+.slidehub-container {
   padding: var(--spacing);
 }
 

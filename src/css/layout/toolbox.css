@@ -23,7 +23,7 @@
 }
 
 .main-content {
-  padding-top: var(--toolbox-height);
+  margin-top: var(--toolbox-height);
 }
 
 .toolbox a {
