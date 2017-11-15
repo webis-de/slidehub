@@ -4,7 +4,7 @@
 
 import { config } from '../config';
 import { setActiveDocument } from './document-navigation';
-import { setActiveItem } from './view-navigation';
+import { setActiveItem, determineItemWidth } from './view-navigation';
 import { getOuterWidth, getFloatPropertyValue } from '../util';
 import { startImageObserver } from './image-loader';
 
@@ -21,7 +21,7 @@ const DocumentLoader = {
       loadDocuments().then(() => {
         const firstView = document.querySelector(config.selector.view);
         setActiveDocument(firstView);
-        evaluateItemWidth();
+        determineItemWidth();
 
         documentObserver.observe(slidehubContainer.lastElementChild);
       });
@@ -155,17 +155,4 @@ function getOuterChildrenWidth(element) {
   return Array.from(element.children).reduce((sum, child) => {
     return sum + getOuterWidth(child);
   }, 0);
-}
-
-function evaluateItemWidth() {
-  const itemSample = document.querySelector(config.selector.item);
-  const itemOuterWidth = getOuterWidth(itemSample);
-
-  if (itemOuterWidth !== config.itemWidth) {
-    console.info(
-      'Pre-configured page width does not match actual page width.',
-      'Updating configuration.'
-    );
-    config.itemWidth = itemOuterWidth;
-  }
 }

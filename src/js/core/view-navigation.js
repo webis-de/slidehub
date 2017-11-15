@@ -1,8 +1,10 @@
 import { config } from '../config';
-import { clamp, getFloatPropertyValue } from '../util';
+import { clamp, getFloatPropertyValue, getOuterWidth } from '../util';
 import { getActiveDocument, setActiveDocument } from './document-navigation';
 
-export { navigateView, getActiveItem, setActiveItem, getItemCount };
+export { navigateView, getActiveItem, setActiveItem, getItemCount, determineItemWidth };
+
+let itemWidth;
 
 function navigateView(distance) {
   if (!viewIsAligned()) {
@@ -30,8 +32,8 @@ function navigateView(distance) {
 
 function viewIsAligned() {
   const viewPos = getViewPos();
-  // if ((viewPos % config.itemWidth) % 1 === 0) {
-  if (viewPos % config.itemWidth === 0) {
+  // if ((viewPos % itemWidth) % 1 === 0) {
+  if (viewPos % itemWidth === 0) {
     return true;
   }
 
@@ -85,18 +87,18 @@ function activeItemInsideView() {
 function getFullyVisibleItems() {
   const activeDoc = getActiveDocument();
   const docWidth = getFloatPropertyValue(activeDoc, 'width');
-  return Math.floor(docWidth / config.itemWidth);
+  return Math.floor(docWidth / itemWidth);
 }
 
 function getViewPos() {
-  return getScrollbox().scrollLeft / config.itemWidth;
+  return getScrollbox().scrollLeft / itemWidth;
 }
 
 function setViewPos(itemPos) {
   const maxPos = getItems().length - getFullyVisibleItems(getActiveDocument());
   itemPos = clamp(itemPos, 0, maxPos);
 
-  getScrollbox().scrollLeft = itemPos * config.itemWidth;
+  getScrollbox().scrollLeft = itemPos * itemWidth;
 }
 
 function getScrollbox() {
@@ -128,4 +130,10 @@ function setActiveItem(targetItem) {
 
   targetItem.classList.add('active');
   document.activeElement.blur();
+}
+
+function determineItemWidth(newItemWidth) {
+  const itemSample = document.querySelector(config.selector.item);
+  itemWidth = getOuterWidth(itemSample);
+  Object.freeze(itemWidth);
 }
