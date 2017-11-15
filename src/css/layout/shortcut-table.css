@@ -3,6 +3,10 @@
   flex-wrap: wrap;
 }
 
+.shortcut-table {
+  margin: var(--spacing);
+}
+
 .shortcut-table__input {
   text-align: right;
   min-width: 10em;
