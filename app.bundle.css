@@ -461,12 +461,11 @@ button:disabled:focus {
   position: relative;
   display: inline-block;
   margin: var(--spacing);
-  padding: calc(var(--spacing) / 2);
 }
 /*
 * Container for all documents
 */
-.doc-container {
+.slidehub-container {
   padding: var(--spacing);
 }
 
@@ -648,7 +647,7 @@ button:disabled:focus {
 }
 
 .main-content {
-  padding-top: var(--toolbox-height);
+  margin-top: var(--toolbox-height);
 }
 
 .toolbox a {
