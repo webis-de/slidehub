@@ -15,21 +15,25 @@ export const Modal = {
       const modalOpenButtons = Array.from(document.querySelectorAll('button[data-target-modal]'));
       modalOpenButtons.forEach(button => {
         button.removeAttribute('disabled');
-        button.addEventListener('click', openModal);
+        button.addEventListener('click', event => {
+          const targetModalClass = event.currentTarget.dataset.targetModal;
+          const modal = document.querySelector(`.${targetModalClass}`);
+          openModal(modal);
+        });
       });
 
       const modalCloseButtons = Array.from(document.querySelectorAll('button[data-close-modal]'));
       modalCloseButtons.forEach(button => {
-        button.addEventListener('click', closeModal);
+        button.addEventListener('click', event => {
+          const modal = event.currentTarget.closest('.modal');
+          closeModal(modal);
+        });
       });
     });
   }
 };
 
-function openModal(event) {
-  const targetModalClass = event.currentTarget.dataset.targetModal;
-  const modal = document.querySelector(`.${targetModalClass}`);
-
+function openModal(modal) {
   if (modal === null) {
     return;
   }
@@ -40,19 +44,15 @@ function openModal(event) {
   document.body.setAttribute('aria-hidden', 'true');
   modal.setAttribute('aria-hidden', 'false');
 
-  modal.classList.remove('closed');
-
   getFocusableElements(modal)[0].focus();
 
   // Setup event listeners
-  modal.addEventListener('keydown', closeModalOnEscape, listener.passive);
+  document.addEventListener('keydown', event => closeOnEscape(event, modal), listener.passive);
   modal.addEventListener('keydown', trapTabKey, listener.active);
-  modal.addEventListener('click', closeModalOnBackground, listener.passive);
+  modal.addEventListener('click', closeOnBackground, listener.passive);
 }
 
-function closeModal(event) {
-  const modal = event.target.closest('.modal');
-
+function closeModal(modal) {
   if (modal === null) {
     return;
   }
@@ -60,26 +60,25 @@ function closeModal(event) {
   document.body.setAttribute('aria-hidden', 'false');
   modal.setAttribute('aria-hidden', 'true');
 
-  modal.classList.add('closed');
-
   // Clean up event listeners
-  modal.removeEventListener('keydown', closeModalOnEscape, listener.passive);
+  document.removeEventListener('keydown', event => closeOnEscape(event, modal), listener.passive);
   modal.removeEventListener('keydown', trapTabKey, listener.active);
-  modal.removeEventListener('click', closeModalOnBackground, listener.passive);
+  modal.removeEventListener('click', closeOnBackground, listener.passive);
 
   // Restore previously focused element
   lastFocusedElement.focus();
 }
 
-function closeModalOnBackground(event) {
-  if (event.target === event.currentTarget) {
-    closeModal(event);
+function closeOnBackground(event) {
+  const modal = event.currentTarget;
+  if (event.target === modal) {
+    closeModal(modal);
   }
 }
 
-function closeModalOnEscape(event) {
+function closeOnEscape(event, modal) {
   if (event.keyCode === 27) {
-    closeModal(event);
+    closeModal(modal);
   }
 }
 
