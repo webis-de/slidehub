@@ -4,6 +4,7 @@
 * Open an items’ source document (e.g. a PDF page) by pressing <kbd>Return</kbd>.
 */
 
+import { config } from '../config';
 import { listener } from '../util';
 import { getActiveItem } from '../core/view-navigation';
 import { getActiveDocument } from '../core/document-navigation';
@@ -38,8 +39,11 @@ function handleDoubleClick(event) {
     return;
   }
 
-  const openInNewTab = true;
-  handleOpenIntent(event.target, openInNewTab);
+  const view = event.target.closest(config.selector.view);
+  if (view) {
+    const openInNewTab = true;
+    handleOpenIntent(event.target, openInNewTab);
+  }
 }
 
 function handleOpenIntent(eventTarget, openInNewTab) {
