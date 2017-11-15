@@ -55,15 +55,6 @@
   display: flow-root;
 }
 
-.doc.select-disabled {
-  /* as per: https://stackoverflow.com/a/4407335/2036825 */
-  -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none; /* Safari */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* Internet Explorer/Edge */
-  user-select: none; /* Non-prefixed version */
-}
-
 .doc__page {
   float: left;
   width: var(--page-width);
@@ -82,6 +73,11 @@
 
 .doc__page > img {
   display: block;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  pointer-events: none;
 
   /* Maintain aspect-ratio while filling the container */
   object-fit: contain;
