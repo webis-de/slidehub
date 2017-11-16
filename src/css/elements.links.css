@@ -1,0 +1,25 @@
+:focus {
+  outline: 2px solid var(--c-focus);
+}
+
+a:focus {
+  outline-offset: 2px;
+}
+
+a {
+  color: hsl(220, 50%, 40%);
+  color: var(--c-accent);
+  text-decoration: none;
+}
+
+a:visited {
+  color: hsl(220, 50%, 30%);
+  color: var(--c-accent-dark);
+}
+
+a:hover,
+a:active {
+  text-decoration: underline;
+  /* Improve visibility for focused links */
+  outline: none;
+}
