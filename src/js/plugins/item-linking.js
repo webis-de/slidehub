@@ -6,7 +6,7 @@
 
 import { config } from '../config';
 import { listener } from '../util';
-import { getActiveItem } from '../core/view-navigation';
+import { getActiveItem } from '../core/item-navigation';
 import { getActiveDocument } from '../core/document-navigation';
 
 export { ItemLinking };
@@ -39,8 +39,8 @@ function handleDoubleClick(event) {
     return;
   }
 
-  const view = event.target.closest(config.selector.view);
-  if (view) {
+  const doc = event.target.closest(config.selector.doc);
+  if (doc) {
     const openInNewTab = true;
     handleOpenIntent(event.target, openInNewTab);
   }

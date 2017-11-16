@@ -1,6 +1,6 @@
 import { listener } from '../util';
 import { config } from '../config';
-import { setActiveItem } from '../core/view-navigation';
+import { setActiveItem } from '../core/item-navigation';
 import { setActiveDocument } from '../core/document-navigation';
 
 export { ActivationOnHover };
@@ -36,13 +36,13 @@ function handleActivationOnHover(event) {
     return;
   }
 
-  const view = event.target.closest(config.selector.view);
+  const doc = event.target.closest(config.selector.doc);
   const item = event.target.closest(config.selector.item);
 
-  if (view === null || item === null) {
+  if (doc === null || item === null) {
     return;
   }
 
-  setActiveDocument(view);
+  setActiveDocument(doc);
   setActiveItem(item);
 }

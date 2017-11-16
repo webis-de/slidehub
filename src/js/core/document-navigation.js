@@ -51,7 +51,7 @@ function getVerticalOffsets(element) {
 
 function getActiveDocument() {
   if (!activeDocument) {
-    activeDocument = document.querySelector(config.selector.view);
+    activeDocument = document.querySelector(config.selector.doc);
   }
 
   return activeDocument;

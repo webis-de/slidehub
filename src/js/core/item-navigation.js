@@ -2,50 +2,45 @@ import { config } from '../config';
 import { clamp, getFloatPropertyValue, getOuterWidth } from '../util';
 import { getActiveDocument, setActiveDocument } from './document-navigation';
 
-export { navigateView, getActiveItem, setActiveItem, getItemCount, determineItemWidth };
+export { navigateItem, getActiveItem, setActiveItem, getItemCount, determineItemWidth };
 
 let itemWidth;
 
-function navigateView(distance) {
-  if (!viewIsAligned()) {
-    // console.log('> View is not aligned. Correcting ...');
-    alignView(distance);
+function navigateItem(distance) {
+  if (!itemsAligned()) {
+    alignItems(distance);
   }
 
   updateActiveItem(distance);
 
   // If all items are already visible, we’re done here.
   if (allItemsVisible()) {
-    // console.log('> All items are visible. Not navigating view.');
     return;
   }
 
   // If the active item is already inside the view, we’re done here.
-  if (activeItemInsideView()) {
-    // console.log('> Active item already in view. Not navigating view.');
+  if (activeItemInView()) {
     return;
   }
 
   // console.log('> View needs update');
-  setViewPos(getViewPos() + distance);
+  setScrollPos(getScrollPos() + distance);
 }
 
-function viewIsAligned() {
-  const viewPos = getViewPos();
-  // if ((viewPos % itemWidth) % 1 === 0) {
-  if (viewPos % itemWidth === 0) {
+function itemsAligned() {
+  if (getScrollPos() % itemWidth === 0) {
     return true;
   }
 
   return false;
 }
 
-function alignView(distance) {
-  const currentViewPos = getViewPos();
+function alignItems(distance) {
+  const currentScrollPos = getScrollPos();
   const lastItemIndex = getItemCount() - 1;
-  const maxViewPos = lastItemIndex - getFullyVisibleItems(getActiveDocument());
-  const alignedViewPos = clamp(Math.round(currentViewPos), 0, maxViewPos);
-  setViewPos(alignedViewPos);
+  const maxScrollPos = lastItemIndex - getFullyVisibleItems(getActiveDocument());
+  const alignedScrollPos = clamp(Math.round(currentScrollPos), 0, maxScrollPos);
+  setScrollPos(alignedScrollPos);
 }
 
 // TO DO refactor see document-navigation.js#getTargetDoc
@@ -65,18 +60,18 @@ function allItemsVisible() {
 }
 
 /*
-Tests whether a view’s active item is completely inside the view (i.e. the item
+Tests whether a document’s active item is completely in view (i.e. the item
 is completely visible and not occluded).
 */
-function activeItemInsideView() {
-  const viewRect = getActiveDocument().getBoundingClientRect();
+function activeItemInView() {
+  const docRect = getActiveDocument().getBoundingClientRect();
   const itemRect = getActiveItem().getBoundingClientRect();
 
   if (
-    viewRect.left <= itemRect.left &&
-    itemRect.right <= viewRect.right &&
-    viewRect.top <= itemRect.top &&
-    itemRect.bottom <= viewRect.bottom
+    docRect.left <= itemRect.left &&
+    itemRect.right <= docRect.right &&
+    docRect.top <= itemRect.top &&
+    itemRect.bottom <= docRect.bottom
   ) {
     return true;
   }
@@ -90,11 +85,11 @@ function getFullyVisibleItems() {
   return Math.floor(docWidth / itemWidth);
 }
 
-function getViewPos() {
+function getScrollPos() {
   return getScrollbox().scrollLeft / itemWidth;
 }
 
-function setViewPos(itemPos) {
+function setScrollPos(itemPos) {
   const maxPos = getItems().length - getFullyVisibleItems(getActiveDocument());
   itemPos = clamp(itemPos, 0, maxPos);
 

@@ -4,7 +4,7 @@
 
 import { config } from '../config';
 import { setActiveDocument } from './document-navigation';
-import { setActiveItem, determineItemWidth } from './view-navigation';
+import { setActiveItem, determineItemWidth } from './item-navigation';
 import { getOuterWidth, getFloatPropertyValue } from '../util';
 import { startImageObserver } from './image-loader';
 
@@ -12,27 +12,39 @@ export { DocumentLoader };
 
 let slidehubContainer;
 
+/*
+Store often accessed properties once instead of recomputing them every time.
+*/
+const loaderSettings = {
+  classes: {
+    doc: config.selector.doc.slice(1),
+    scrollbox: config.selector.scrollbox.slice(1),
+    itemContainer: config.selector.itemContainer.slice(1),
+    item: config.selector.item.slice(1)
+  }
+};
+
 const DocumentLoader = {
   enable() {
     document.addEventListener('DOMContentLoaded', function() {
       createSlidehubContainer();
-      const documentObserver = new IntersectionObserver(documentObserverHandler, { threshold: 1 });
-
-      loadDocuments().then(() => {
-        const firstView = document.querySelector(config.selector.view);
-        setActiveDocument(firstView);
-        determineItemWidth();
-
-        documentObserver.observe(slidehubContainer.lastElementChild);
-      });
+      startDocumentObservation();
     });
   }
 };
 
+/*
+Hooks the Slidehub container element into the DOM.
+
+Requires an element with a custom attribute `data-slidehub`. A new <div> element
+will be created inside of it. No existing markup will be changed or removed.
+*/
 function createSlidehubContainer() {
   slidehubContainer = document.createElement('div');
   slidehubContainer.classList.add('slidehub-container');
 
+  // Expose highlight color override to the DOM as a CSS custom property.
+  // This allows CSS to use inside of a rule declaration.
   if (config.highlightColor && config.highlightColor !== '') {
     slidehubContainer.style.setProperty('--c-highlight', config.highlightColor);
   }
@@ -40,7 +52,19 @@ function createSlidehubContainer() {
   document.querySelector('[data-slidehub]').appendChild(slidehubContainer);
 }
 
-function documentObserverHandler(entries, observer) {
+function startDocumentObservation() {
+  const observer = new IntersectionObserver(observationHandler, { threshold: 1 });
+
+  loadDocuments().then(() => {
+    const firstDoc = document.querySelector(config.selector.doc);
+    setActiveDocument(firstDoc);
+    determineItemWidth();
+
+    observer.observe(slidehubContainer.lastElementChild);
+  });
+}
+
+function observationHandler(entries, observer) {
   for (const entry of entries) {
     if (!entry.isIntersecting) {
       continue;
@@ -57,8 +81,6 @@ function documentObserverHandler(entries, observer) {
 
         if ('disconnect' in IntersectionObserver.prototype) {
           observer.disconnect();
-        } else {
-          console.error('IntersectionObserver.disconnect not available.');
         }
       });
   }
@@ -71,85 +93,88 @@ function loadDocuments() {
     return Promise.reject('No documents left to load.');
   }
 
-  return loadDocumentBatch(batchSize).then(docs => {
+  return loadBatch(batchSize).then(docs => {
+    docs.forEach(docMarkup => onDocLoaded(docMarkup));
     console.info('Loaded document batch.');
-    docs.forEach(doc => onDocumentLoaded(doc));
   });
 }
 
-function loadDocumentBatch(batchSize) {
+function loadBatch(batchSize) {
   const documents = [];
 
   for (let i = 0; i < batchSize && documentsData.length > 0; i++) {
     const data = documentsData.shift();
-    documents.push(createDocument(data[0], data[1]));
+    const docName = data[0];
+    const itemCount = data[1];
+
+    if (itemCount === 0) {
+      continue;
+    }
+
+    documents.push(createDocument(docName, itemCount));
   }
 
   return Promise.all(documents);
 }
 
-function onDocumentLoaded(doc) {
-  slidehubContainer.insertAdjacentHTML('beforeend', doc);
-
-  const view = slidehubContainer.lastElementChild;
-  setActiveItem(view.querySelector(config.selector.item));
-  startImageObserver(view);
-  setDocumentWidth(view.querySelector(config.selector.doc));
-}
-
 function createDocument(docName, itemCount) {
-  return new Promise((resolve, reject) => {
-    let items = '';
-    for (var i = 0; i < itemCount; i++) {
-      const source = `${config.assets.images}/${docName}-${i}.png`;
-      items += `
-        <div class="${config.selector.item.slice(1)}" data-page="${i + 1}">
-          <img data-src="${source}" alt="page ${i + 1}">
-        </div>
-      `;
-    }
-
-    const docSource = `${config.assets.documents}/${docName}`;
-
-    const metaSlide = `
-      <div class="${config.selector.item.slice(1)}" data-page="0">
-        <div class="doc-meta">
-          <h2 class="doc-meta__title">
-            <a href="${docSource}">${docName}</a>
-          </h2>
-          by author, ${itemCount} pages, 2018
-        </div>
+  let items = '';
+  for (var i = 0; i < itemCount; i++) {
+    const source = `${config.assets.images}/${docName}-${i}.png`;
+    items += `
+      <div class="${loaderSettings.classes.item}" data-page="${i + 1}">
+        <img data-src="${source}" alt="page ${i + 1}">
       </div>
     `;
+  }
 
-    const docMarkup = `
-      <div
-        class="${config.selector.view.slice(1)}"
-        id="${docName.replace(/\.pdf$/, '')}"
-        data-doc-source="${docSource}"
-      >
-        <div class="doc-scrollbox">
-          <div class="${config.selector.doc.slice(1)}">
-            ${config.metaSlide ? metaSlide : ''}
-            ${items}
-          </div>
+  const docSource = `${config.assets.documents}/${docName}`;
+
+  const metaSlide = `
+    <div class="${loaderSettings.classes.item}" data-page="0">
+      <div class="doc-meta">
+        <h2 class="doc-meta__title">
+          <a href="${docSource}">${docName}</a>
+        </h2>
+        by author, ${itemCount} pages, 2018
+      </div>
+    </div>
+  `;
+
+  return `
+    <div
+      class="${loaderSettings.classes.doc}"
+      id="${docName.replace(/\.pdf$/, '')}"
+      data-doc-source="${docSource}"
+    >
+      <div class="${loaderSettings.classes.scrollbox}">
+        <div class="${loaderSettings.classes.itemContainer}">
+          ${config.metaSlide ? metaSlide : ''}
+          ${items}
         </div>
       </div>
-    `;
-
-    resolve(docMarkup);
-  });
+    </div>
+  `;
 }
 
-function setDocumentWidth(doc) {
-  const documentOuterWidth =
-    getFloatPropertyValue(doc, 'margin-left') +
-    getFloatPropertyValue(doc, 'border-left-width') +
-    getOuterChildrenWidth(doc) +
-    getFloatPropertyValue(doc, 'border-right-width') +
-    getFloatPropertyValue(doc, 'margin-right');
+function onDocLoaded(docMarkup) {
+  slidehubContainer.insertAdjacentHTML('beforeend', docMarkup);
 
-  doc.style.setProperty('width', documentOuterWidth + 'px');
+  const doc = slidehubContainer.lastElementChild;
+  setActiveItem(doc.querySelector(config.selector.item));
+  startImageObserver(doc);
+  setDocumentWidth(doc.querySelector(config.selector.itemContainer));
+}
+
+function setDocumentWidth(itemContainer) {
+  const itemContainerWidth =
+    getFloatPropertyValue(itemContainer, 'margin-left') +
+    getFloatPropertyValue(itemContainer, 'border-left-width') +
+    getOuterChildrenWidth(itemContainer) +
+    getFloatPropertyValue(itemContainer, 'border-right-width') +
+    getFloatPropertyValue(itemContainer, 'margin-right');
+
+  itemContainer.style.setProperty('width', itemContainerWidth + 'px');
 }
 
 /*

@@ -1,21 +1,21 @@
 import { listener } from '../util';
 import { config } from '../config';
-import { navigateView } from '../core/view-navigation';
+import { navigateItem } from '../core/item-navigation';
 import { getActiveDocument, setActiveDocument } from '../core/document-navigation';
 
-export { ItemNavigation };
+export { WheelNavigation };
 
-const ItemNavigation = {
+const WheelNavigation = {
   enabled: true,
   name: 'item-navigation',
   description: 'Navigate pages with mouse wheel',
   enable() {
     enableModifier();
-    document.addEventListener('wheel', handleItemNavigation, listener.active);
+    document.addEventListener('wheel', handleWheelNavigation, listener.active);
   },
   disable() {
     disableModifier();
-    document.removeEventListener('wheel', handleItemNavigation, listener.active);
+    document.removeEventListener('wheel', handleWheelNavigation, listener.active);
   }
 };
 
@@ -43,7 +43,7 @@ function disableModifier() {
 function onModifierDown(event) {
   const modifierKey = modifierKeyNames[event.keyCode];
   if (modifierKey === 'shiftKey') {
-    const doc = getActiveDocument().querySelector(config.selector.doc);
+    const doc = getActiveDocument().querySelector(config.selector.itemContainer);
     doc.style.setProperty('cursor', 'ew-resize');
   }
 }
@@ -51,13 +51,13 @@ function onModifierDown(event) {
 function onModifierUp(event) {
   const modifierKey = modifierKeyNames[event.keyCode];
   if (modifierKey === 'shiftKey') {
-    const doc = getActiveDocument().querySelector(config.selector.doc);
+    const doc = getActiveDocument().querySelector(config.selector.itemContainer);
     doc.style.setProperty('cursor', 'auto');
   }
 }
 
 function onModifierBlur() {
-  const doc = getActiveDocument().querySelector(config.selector.doc);
+  const doc = getActiveDocument().querySelector(config.selector.itemContainer);
   doc.style.setProperty('cursor', 'auto');
 }
 
@@ -71,12 +71,12 @@ const scrolling = {
 };
 
 /*
-Handles horizontal view navigation
+Handles wheel navigation
 */
-function handleItemNavigation(event) {
-  // Don’t handle scrolling on elements that are not inside a view
-  const view = event.target.closest(config.selector.view);
-  if (view === null) {
+function handleWheelNavigation(event) {
+  // Don’t handle scrolling on elements that are not inside a document
+  const doc = event.target.closest(config.selector.doc);
+  if (doc === null) {
     return;
   }
 
@@ -84,18 +84,18 @@ function handleItemNavigation(event) {
   const scrollingDirection = ratio < 1 ? scrolling.vertical : scrolling.horizontal;
 
   if (scrollingDirection === scrolling.horizontal) {
-    setActiveDocument(view);
+    setActiveDocument(doc);
     console.log('Horizontal scrolling ...');
   }
 
   // When scrolling vertically, only trigger navigation when modifier is pressed
   if (scrollingDirection === scrolling.vertical && event.shiftKey) {
-    setActiveDocument(view);
+    setActiveDocument(doc);
 
     // Prevent vertical scrolling
     event.preventDefault();
 
     const delta = event[scrollingDirection.delta];
-    navigateView(Math.sign(delta));
+    navigateItem(Math.sign(delta));
   }
 }

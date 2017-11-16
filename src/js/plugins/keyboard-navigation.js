@@ -1,5 +1,5 @@
 import { listener } from '../util';
-import { navigateView, setActiveDocument, getItemCount } from '../core/view-navigation';
+import { navigateItem, setActiveDocument, getItemCount } from '../core/item-navigation';
 import { navigateDocument } from '../core/document-navigation';
 
 export { KeyboardNavigationModule };
@@ -50,13 +50,13 @@ const controlKey = Object.freeze({
   homeKey: {
     direction: -1,
     trigger: function() {
-      navigateView(this.direction * getItemCount());
+      navigateItem(this.direction * getItemCount());
     }
   },
   endKey: {
     direction: 1,
     trigger: function() {
-      navigateView(this.direction * getItemCount());
+      navigateItem(this.direction * getItemCount());
     }
   },
   pageUp: {
@@ -74,13 +74,13 @@ const controlKey = Object.freeze({
   arrowLeft: {
     direction: -1,
     trigger: function(event) {
-      navigateView(this.direction * (event.shiftKey ? 3 : 1));
+      navigateItem(this.direction * (event.shiftKey ? 3 : 1));
     }
   },
   arrowRight: {
     direction: 1,
     trigger: function(event) {
-      navigateView(this.direction * (event.shiftKey ? 3 : 1));
+      navigateItem(this.direction * (event.shiftKey ? 3 : 1));
     }
   },
   arrowUp: {

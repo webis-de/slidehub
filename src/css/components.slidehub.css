@@ -8,11 +8,9 @@
 }
 
 /*
-* Document view
-*
-* The document view contains a document. This document overflows.
+* Document
 */
-.doc-view {
+.doc {
   --page-aspect-ratio: 1.25;
   --page-width: 200px;
   --page-height: calc(var(--page-width) / var(--page-aspect-ratio));
@@ -30,18 +28,18 @@
 }
 
 @media only screen and (min-width: 600px) {
-  .doc-view {
+  .doc {
     --page-width: 300px;
   }
 }
 
-.doc-view.active {
+.doc.active {
   --c-text: #000;
   --c-accent: hsl(220, 100%, 15%);
   --c-accent-dark: hsl(220, 100%, 5%);
 
   /*
-  Elevate the active view above all other views. This is used to make its
+  Elevate the active document above other document. This is used to make its
   border visible when negative margins are used to collapse the border
   widths.
   */
@@ -52,12 +50,12 @@
   overflow-x: auto;
 }
 
-.doc {
-  /* Clears floated .doc__page elements */
+.page-container {
+  /* Clears floated .page elements */
   display: flow-root;
 }
 
-.doc__page {
+.page {
   float: left;
   width: var(--page-width);
   height: var(--page-height);
@@ -69,11 +67,11 @@
   background-color: #fff;
 }
 
-.doc__page:not(:last-child) {
+.page:not(:last-child) {
   margin-right: var(--border-width);
 }
 
-.doc__page > img {
+.page > img {
   display: block;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -102,8 +100,8 @@
 * Highlighting
 */
 
-.doc-view.active .doc::before,
-.doc-view.active .doc__page.active::before {
+.doc.active .page-container::before,
+.doc.active .page.active::before {
   content: '';
   pointer-events: none;
   position: absolute;
@@ -118,19 +116,19 @@ Make sure that bug [1] doesn’t affect these elements when using custom
 properties on their pseudo elements.
 [1] developer.microsoft.com/en-us/microsoft-edge/platform/issues/11495448/
 */
-.doc-view.active .doc {
+.doc.active .page-container {
   color: inherit !important;
   background-color: transparent !important;
   opacity: inherit !important;
 }
 
-.doc-view.active .doc::before {
+.doc.active .page-container::before {
   background-color: hsl(220, 50%, 40%);
   background-color: var(--c-highlight);
   opacity: 0.15;
 }
 
-.doc-view.active .doc__page.active::before {
+.doc.active .page.active::before {
   border: 2px solid hsl(220, 50%, 40%);
   opacity: 0.25;
 }
@@ -140,12 +138,12 @@ Custom properties don’t work on pseudo elements in Edge 15 [1].
 [1] developer.microsoft.com/en-us/microsoft-edge/platform/issues/11495448/
 In the future, the custom property-based values can be used.
 */
-.doc-view.active .doc::before {
+.doc.active .page-container::before {
   z-index: 220;
   /* z-index: calc(var(--plane-document) + 20); */
 }
 
-.doc-view.active .doc__page.active::before {
+.doc.active .page.active::before {
   z-index: 230;
   /* z-index: calc(var(--plane-document) + 30); */
 }

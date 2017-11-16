@@ -19,7 +19,7 @@ const ImageLoader = {
 };
 
 /*
-* Observes document views in order to load their item images only when
+* Observes documents in order to load their item images only when
 * they’re visible.
 */
 function initialize() {
@@ -43,21 +43,21 @@ function imageLoadHandler(entries, observer) {
 
 function handleItemImageLoaded(image) {
   if (config.preserveAspectRatio) {
-    const view = image.closest(config.selector.view);
-    setItemAspectRatio(view, image);
+    const doc = image.closest(config.selector.doc);
+    setItemAspectRatio(doc, image);
   }
 }
 
-function setItemAspectRatio(view, image) {
-  if (!view.style.cssText.includes('--page-aspect-ratio')) {
+function setItemAspectRatio(doc, image) {
+  if (!doc.style.cssText.includes('--page-aspect-ratio')) {
     const aspectRatio = image.naturalWidth / image.naturalHeight;
-    view.style.setProperty('--page-aspect-ratio', aspectRatio);
+    doc.style.setProperty('--page-aspect-ratio', aspectRatio);
   }
 }
 
-function startImageObserver(view) {
+function startImageObserver(doc) {
   if (imageObserver) {
-    const images = Array.from(view.querySelectorAll('img[data-src]'));
+    const images = Array.from(doc.querySelectorAll('img[data-src]'));
     images.forEach(image => imageObserver.observe(image));
   }
 }
