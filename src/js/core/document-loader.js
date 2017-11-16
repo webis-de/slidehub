@@ -32,6 +32,11 @@ const DocumentLoader = {
 function createSlidehubContainer() {
   slidehubContainer = document.createElement('div');
   slidehubContainer.classList.add('slidehub-container');
+
+  if (config.highlightColor && config.highlightColor !== '') {
+    slidehubContainer.style.setProperty('--c-highlight', config.highlightColor);
+  }
+
   document.querySelector('[data-slidehub]').appendChild(slidehubContainer);
 }
 

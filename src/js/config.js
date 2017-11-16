@@ -11,6 +11,12 @@ export const config = {
   // Preserve aspect ratio of document items?
   preserveAspectRatio: true,
 
+  // Overrides the default highlight color
+  // Takes string values that represent a valid CSS color value; for example:
+  // 'transparent', 'tomato', '#f90', 'hsl(220, 50%, 40%)'
+  // Setting highlightColor to `null` will not override the default.
+  highlightColor: null,
+
   // Selectors for UI components
   selector: {
     view: '.doc-view',

@@ -2,6 +2,8 @@
 * Container for all documents
 */
 .slidehub-container {
+  --c-highlight: hsl(220, 50%, 40%);
+
   padding: var(--spacing);
 }
 
@@ -100,10 +102,6 @@
 * Highlighting
 */
 
-.doc-view.active .doc {
-  --highlight-color: hsl(220, 50%, 40%);
-}
-
 .doc-view.active .doc::before,
 .doc-view.active .doc__page.active::before {
   content: '';
@@ -127,17 +125,13 @@ properties on their pseudo elements.
 }
 
 .doc-view.active .doc::before {
-  background-color: var(--highlight-color);
+  background-color: hsl(220, 50%, 40%);
+  background-color: var(--c-highlight);
   opacity: 0.15;
 }
 
-.doc-view.active .doc__page.active {
-  border: inherit !important;
-  opacity: inherit !important;
-}
-
 .doc-view.active .doc__page.active::before {
-  border: 2px solid var(--highlight-color);
+  border: 2px solid hsl(220, 50%, 40%);
   opacity: 0.25;
 }
 
