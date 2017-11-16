@@ -96,7 +96,7 @@ function createDocument(docName, itemCount) {
   return new Promise((resolve, reject) => {
     let items = '';
     for (var i = 0; i < itemCount; i++) {
-      const source = `${config.assetPath}/${docName}-${i}.png`;
+      const source = `${config.assets.images}/${docName}-${i}.png`;
       items += `
         <div class="${config.selector.item.slice(1)}" data-page="${i + 1}">
           <img data-src="${source}" alt="page ${i + 1}">
@@ -104,7 +104,7 @@ function createDocument(docName, itemCount) {
       `;
     }
 
-    const docSource = `${config.assetPath}/${docName}`;
+    const docSource = `${config.assets.documents}/${docName}`;
 
     const metaSlide = `
       <div class="${config.selector.item.slice(1)}" data-page="0">
