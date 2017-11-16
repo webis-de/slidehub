@@ -4,15 +4,14 @@
 * Loads core modules and plugins.
 */
 
+import './lib/intersection-observer.js';
 import * as plugins from './plugins';
 import { ImageLoader, DocumentLoader, Modal, loadPlugin } from './core';
 
-export { initialize };
-
-function initialize() {
+(function() {
   loadCoreModules();
   loadPlugins();
-}
+})();
 
 function loadCoreModules() {
   ImageLoader.enable();

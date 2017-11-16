@@ -9,7 +9,4 @@ import './css/layout/main.css';
 import './css/layout/toolbox.css';
 import './css/layout/shortcut-table.css';
 
-import './js/lib/intersection-observer.js';
-import { initialize } from './js/app.js';
-
-initialize();
+import './js/app.js';
