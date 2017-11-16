@@ -100,17 +100,8 @@
 * Highlighting
 */
 
-/*
-Make sure that bug [1] doesn’t affect these elements when using custom
-properties on their pseudo elements.
-[1] developer.microsoft.com/en-us/microsoft-edge/platform/issues/11495448/
-*/
-.doc-view.active .doc,
-.doc-view.active .doc__page.active {
+.doc-view.active .doc {
   --highlight-color: hsl(220, 50%, 40%);
-
-  color: inherit !important;
-  background-color: transparent !important;
 }
 
 .doc-view.active .doc::before,
@@ -124,9 +115,25 @@ properties on their pseudo elements.
   left: 0;
 }
 
+/*
+Make sure that bug [1] doesn’t affect these elements when using custom
+properties on their pseudo elements.
+[1] developer.microsoft.com/en-us/microsoft-edge/platform/issues/11495448/
+*/
+.doc-view.active .doc {
+  color: inherit !important;
+  background-color: transparent !important;
+  opacity: inherit !important;
+}
+
 .doc-view.active .doc::before {
   background-color: var(--highlight-color);
   opacity: 0.15;
+}
+
+.doc-view.active .doc__page.active {
+  border: inherit !important;
+  opacity: inherit !important;
 }
 
 .doc-view.active .doc__page.active::before {
