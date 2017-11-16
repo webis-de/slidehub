@@ -1,7 +1,7 @@
 {
-  "name": "SlideHub",
+  "name": "slidehub",
   "version": "0.1.0",
-  "main": "slidehub.js",
+  "main": "app.bundle.js",
   "repository": "https://github.com/webis-de/slidehub",
   "license": "MIT",
   "scripts": {
@@ -10,14 +10,14 @@
   },
   "devDependencies": {
     "css-loader": "^0.28.7",
-    "extract-text-webpack-plugin": "^3.0.0",
+    "extract-text-webpack-plugin": "^3.0.2",
     "style-loader": "^0.18.2",
     "uglify-js": "git+https://github.com/mishoo/UglifyJS2.git#harmony-v2.8.22",
-    "uglifyjs-webpack-plugin": "^1.0.0-beta.2",
-    "webpack": "^3.5.6",
-    "webpack-merge": "^4.1.0"
+    "uglifyjs-webpack-plugin": "^1.0.1",
+    "webpack": "^3.8.1",
+    "webpack-merge": "^4.1.1"
   },
   "dependencies": {
-    "webpack-dev-server": "^2.7.1"
+    "webpack-dev-server": "^2.9.4"
   }
 }
