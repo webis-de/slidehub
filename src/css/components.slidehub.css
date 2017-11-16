@@ -96,6 +96,23 @@
   font-size: 1rem;
 }
 
+/*
+* Highlighting
+*/
+
+/*
+Make sure that bug [1] doesn’t affect these elements when using custom
+properties on their pseudo elements.
+[1] developer.microsoft.com/en-us/microsoft-edge/platform/issues/11495448/
+*/
+.doc-view.active .doc,
+.doc-view.active .doc__page.active {
+  --highlight-color: hsl(220, 50%, 40%);
+
+  color: inherit !important;
+  background-color: transparent !important;
+}
+
 .doc-view.active .doc::before,
 .doc-view.active .doc__page.active::before {
   content: '';
@@ -108,53 +125,26 @@
 }
 
 .doc-view.active .doc::before {
-  background-color: hsla(220, 50%, 40%, 0.15);
+  background-color: var(--highlight-color);
+  opacity: 0.15;
 }
 
 .doc-view.active .doc__page.active::before {
-  border: 2px solid hsla(220, 50%, 40%, 0.25);
+  border: 2px solid var(--highlight-color);
+  opacity: 0.25;
 }
 
+/*
+Custom properties don’t work on pseudo elements in Edge 15 [1].
+[1] developer.microsoft.com/en-us/microsoft-edge/platform/issues/11495448/
+In the future, the custom property-based values can be used.
+*/
 .doc-view.active .doc::before {
   z-index: 220;
-
-  /*
-  Custom properties don’t work on pseudo elements in Edge 15. See:
-  https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/11495448/
-  In the future, this can be uncommented:
-  */
   /* z-index: calc(var(--plane-document) + 20); */
 }
 
 .doc-view.active .doc__page.active::before {
   z-index: 230;
-
-  /*
-  Custom properties don’t work on pseudo elements in Edge 15. See:
-  https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/11495448/
-  In the future, this can be uncommented:
-  */
   /* z-index: calc(var(--plane-document) + 30); */
 }
-
-/* .dov-view {
-  background-color: var(--c-alt-light);
-}
-
-.doc-view:not(.active) {
-  padding-bottom: 8px;
-}
-
-.doc-view.active {
-  overflow-x: auto;
-  overflow-y: hidden;
-}
-
-.doc-view::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-.doc-view::-webkit-scrollbar-thumb {
-  background-color: var(--c-alt);
-} */
