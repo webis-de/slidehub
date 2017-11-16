@@ -33,9 +33,6 @@
   --c-alt: hsl(0, 0%, 50%);
   --c-alt-dark: hsl(0, 0%, 20%);
 }
-/*
-* Defaults
-*/
 *,
 *::before,
 *::after {
@@ -68,6 +65,50 @@ main {
 }
 
 /*
+* Tables
+*/
+table {
+  border-collapse: collapse;
+}
+
+table,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td {
+  margin: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+/*
+* Form elements
+*/
+fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+legend {
+  padding: 0;
+  border: 0;
+}
+
+button,
+input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  overflow: visible;
+  font: inherit;
+  border: 0;
+  padding: 0;
+}
+/*
 * Basic appearance & typography
 */
 html {
@@ -95,32 +136,6 @@ ol,
 dl,
 figure {
   margin-bottom: 1.5rem;
-}
-
-:focus {
-  outline: 2px solid var(--c-focus);
-}
-
-a:focus {
-  outline-offset: 2px;
-}
-
-a {
-  color: hsl(220, 50%, 40%);
-  color: var(--c-accent);
-  text-decoration: none;
-}
-
-a:visited {
-  color: hsl(220, 50%, 30%);
-  color: var(--c-accent-dark);
-}
-
-a:hover,
-a:active {
-  text-decoration: underline;
-  /* Improve visibility for focused links */
-  outline: none;
 }
 
 abbr[title] {
@@ -169,23 +184,6 @@ figure > * {
 /*
 * Table
 */
-table {
-  border-collapse: collapse;
-}
-
-table,
-tbody,
-tfoot,
-thead,
-tr,
-th,
-td {
-  margin: 0;
-  border: 0;
-  font-size: 100%;
-  font: inherit;
-  vertical-align: baseline;
-}
 
 tr:not(:last-child) {
   border-bottom: 1px solid var(--c-alt-light);
@@ -217,79 +215,31 @@ kbd {
   box-shadow: 0 1px var(--c-alt-dark);
   text-transform: capitalize;
 }
-
-/*
-* Utility
-*/
-
-/*
-* as per: https://github.com/h5bp/html5-boilerplate
-*
-* Hide only visually, but have it available for screen readers:
-* https://snook.ca/archives/html_and_css/hiding-content-for-accessibility
-*
-* 1. For long content, line feeds are not interpreted as spaces and small width
-*    causes content to wrap 1 word per line:
-*    https://medium.com/@jessebeach/beware-smushed-off-screen-accessible-text-5952a4c2cbfe
-*/
-.visually-hidden {
-  position: absolute;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  -webkit-clip-path: inset(50%);
-  clip-path: inset(50%);
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  border: 0;
-  white-space: nowrap; /* 1 */
+:focus {
+  outline: 2px solid var(--c-focus);
 }
 
-/*
-* Extends the .visuallyhidden class to allow the element
-* to be focusable when navigated to via the keyboard:
-* https://www.drupal.org/node/897638
-*/
-.visually-hidden.focusable:active,
-.visually-hidden.focusable:focus {
-  position: static;
-  overflow: visible;
-  clip: auto;
-  -webkit-clip-path: none;
-  clip-path: none;
-  width: auto;
-  height: auto;
-  margin: 0;
-  white-space: inherit;
-}
-/*
-* Resets
-*/
-fieldset {
-  margin: 0;
-  padding: 0;
-  border: 0;
+a:focus {
+  outline-offset: 2px;
 }
 
-legend {
-  padding: 0;
-  border: 0;
+a {
+  color: hsl(220, 50%, 40%);
+  color: var(--c-accent);
+  text-decoration: none;
 }
 
-button,
-input {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  overflow: visible;
-  font: inherit;
-  border: 0;
-  padding: 0;
+a:visited {
+  color: hsl(220, 50%, 30%);
+  color: var(--c-accent-dark);
 }
 
-/*
-* Basic Styling
-*/
+a:hover,
+a:active {
+  text-decoration: underline;
+  /* Improve visibility for focused links */
+  outline: none;
+}
 input,
 button {
   color: #222;
@@ -417,6 +367,31 @@ button:disabled:focus {
 [aria-checked='true']:disabled .state--true,
 [aria-checked='false']:disabled .state--false {
   background-color: var(--c-alt-light);
+}
+.shortcut-table-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.shortcut-table {
+  margin: var(--spacing);
+}
+
+.shortcut-table__input {
+  text-align: right;
+  min-width: 10em;
+}
+
+.shortcut-table__action {
+  text-align: left;
+}
+
+.shortcut-group:not(:last-child) {
+  margin-bottom: calc(var(--spacing) / 2);
+}
+
+.shortcut-group > kbd {
+  display: inline-block;
 }
 .modal {
   position: fixed;
@@ -563,6 +538,23 @@ button:disabled:focus {
   font-size: 1rem;
 }
 
+/*
+* Highlighting
+*/
+
+/*
+Make sure that bug [1] doesn’t affect these elements when using custom
+properties on their pseudo elements.
+[1] developer.microsoft.com/en-us/microsoft-edge/platform/issues/11495448/
+*/
+.doc-view.active .doc,
+.doc-view.active .doc__page.active {
+  --highlight-color: hsl(220, 50%, 40%);
+
+  color: inherit !important;
+  background-color: transparent !important;
+}
+
 .doc-view.active .doc::before,
 .doc-view.active .doc__page.active::before {
   content: '';
@@ -575,56 +567,29 @@ button:disabled:focus {
 }
 
 .doc-view.active .doc::before {
-  background-color: hsla(220, 50%, 40%, 0.15);
+  background-color: var(--highlight-color);
+  opacity: 0.15;
 }
 
 .doc-view.active .doc__page.active::before {
-  border: 2px solid hsla(220, 50%, 40%, 0.25);
+  border: 2px solid var(--highlight-color);
+  opacity: 0.25;
 }
 
+/*
+Custom properties don’t work on pseudo elements in Edge 15 [1].
+[1] developer.microsoft.com/en-us/microsoft-edge/platform/issues/11495448/
+In the future, the custom property-based values can be used.
+*/
 .doc-view.active .doc::before {
   z-index: 220;
-
-  /*
-  Custom properties don’t work on pseudo elements in Edge 15. See:
-  https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/11495448/
-  In the future, this can be uncommented:
-  */
   /* z-index: calc(var(--plane-document) + 20); */
 }
 
 .doc-view.active .doc__page.active::before {
   z-index: 230;
-
-  /*
-  Custom properties don’t work on pseudo elements in Edge 15. See:
-  https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/11495448/
-  In the future, this can be uncommented:
-  */
   /* z-index: calc(var(--plane-document) + 30); */
 }
-
-/* .dov-view {
-  background-color: var(--c-alt-light);
-}
-
-.doc-view:not(.active) {
-  padding-bottom: 8px;
-}
-
-.doc-view.active {
-  overflow-x: auto;
-  overflow-y: hidden;
-}
-
-.doc-view::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-.doc-view::-webkit-scrollbar-thumb {
-  background-color: var(--c-alt);
-} */
 :root {
   --toolbox-height: 48px;
 }
@@ -665,30 +630,47 @@ button:disabled:focus {
   margin-bottom: 0;
   font-size: 1rem;
 }
-.shortcut-table-wrapper {
-  display: flex;
-  flex-wrap: wrap;
+/*
+* as per: https://github.com/h5bp/html5-boilerplate
+*
+* Hide only visually, but have it available for screen readers:
+* https://snook.ca/archives/html_and_css/hiding-content-for-accessibility
+*
+* 1. For long content, line feeds are not interpreted as spaces and small width
+*    causes content to wrap 1 word per line:
+*    https://medium.com/@jessebeach/beware-smushed-off-screen-accessible-text-5952a4c2cbfe
+*/
+.visually-hidden {
+  position: absolute;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  -webkit-clip-path: inset(50%);
+  clip-path: inset(50%);
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  white-space: nowrap; /* 1 */
 }
 
-.shortcut-table {
-  margin: var(--spacing);
+/*
+* Extends the .visuallyhidden class to allow the element
+* to be focusable when navigated to via the keyboard:
+* https://www.drupal.org/node/897638
+*/
+.visually-hidden.focusable:active,
+.visually-hidden.focusable:focus {
+  position: static;
+  overflow: visible;
+  clip: auto;
+  -webkit-clip-path: none;
+  clip-path: none;
+  width: auto;
+  height: auto;
+  margin: 0;
+  white-space: inherit;
 }
 
-.shortcut-table__input {
-  text-align: right;
-  min-width: 10em;
-}
-
-.shortcut-table__action {
-  text-align: left;
-}
-
-.shortcut-group:not(:last-child) {
-  margin-bottom: calc(var(--spacing) / 2);
-}
-
-.shortcut-group > kbd {
-  display: inline-block;
-}
 
 /*# sourceMappingURL=app.bundle.css.map*/
