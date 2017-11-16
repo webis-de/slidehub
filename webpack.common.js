@@ -11,7 +11,7 @@ module.exports = {
         exclude: /node_modules/,
         use: ExtractTextPlugin.extract({
           loader: 'css-loader',
-          options: { sourceMap: true }
+          options: { sourceMap: true, minimize: true }
         })
       }
     ]
