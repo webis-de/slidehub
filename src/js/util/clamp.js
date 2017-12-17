@@ -1,3 +1,5 @@
+export { clamp };
+
 /**
  * Clamps the given value between the min and max boundaries
  * Returns value if min <= value <= max.
@@ -9,6 +11,6 @@
  * @param {number} max
  * @return {number}
  */
-export function clamp(value, min, max) {
+function clamp(value, min, max) {
   return Math.max(min, Math.min(value, max));
 }
