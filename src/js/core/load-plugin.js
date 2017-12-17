@@ -1,13 +1,22 @@
-/*
-* Loads optional plugins
-*/
+/**
+ * Plugin Loader.
+ */
 
 export { loadPlugin };
 
 /**
- * Loads a plugin.
+ * @typedef {object} SlidehubPlugin
+ * @property {function(): void} enable
+ * @property {function(): void} disable
+ * @property {string} name
+ * @property {string} description
+ * @property {boolean} enabled
+ */
+
+/**
+ * Loads a plugin and potentially enables it.
  *
- * @param {*} plugin
+ * @param {SlidehubPlugin} plugin
  */
 function loadPlugin(plugin) {
   if (plugin.enabled) {
@@ -17,24 +26,42 @@ function loadPlugin(plugin) {
   registerPlugin(plugin);
 }
 
+const pluginRegistry = new Map();
+
 /**
  * Registers a new plugin.
  *
- * @param {*} plugin
+ * @param {SlidehubPlugin} plugin
  */
 function registerPlugin(plugin) {
+  const button = createToggleButton(plugin);
+
+  if (button) {
+    pluginRegistry.set(plugin.name, plugin);
+
+    button.addEventListener('click', toggleButton);
+  }
+}
+
+/**
+ * Creates a feature toggle button in the user interface.
+ *
+ * @param {SlidehubPlugin} plugin
+ * @returns {Element|null}
+ */
+function createToggleButton(plugin) {
   const fieldset = document.querySelector('.features-fieldset');
 
   if (!fieldset) {
-    return;
+    return null;
   }
 
   const toggleButtonMarkup = `
     <div class="form-group form-group--switch">
-      <span class="form-label" id="feature-${plugin.name}">${plugin.description}</span>
-      <button role="switch" aria-checked="false" aria-labelledby="feature-${
+      <span class="form-label" id="${plugin.name}-label">${plugin.description}</span>
+      <button role="switch" aria-checked="false" aria-labelledby="${
         plugin.name
-      }" data-feature="${plugin.name}">
+      }-label" data-feature="${plugin.name}">
         <span class="state state--true" aria-label="on"></span>
         <span class="state state--false" aria-label="off"></span>
       </button>
@@ -44,46 +71,44 @@ function registerPlugin(plugin) {
   fieldset.insertAdjacentHTML('beforeend', toggleButtonMarkup);
 
   const button = fieldset.querySelector(`[data-feature="${plugin.name}"]`);
-  const stateAttr = button.hasAttribute('aria-pressed') ? 'aria-pressed' : 'aria-checked';
-  if (plugin.enabled) {
-    button.setAttribute(stateAttr, 'true');
-  } else {
-    button.setAttribute(stateAttr, 'false');
-  }
+  button.setAttribute('aria-checked', plugin.enabled.toString());
 
-  button.addEventListener('click', event => toggle(event.currentTarget, plugin));
+  return button;
 }
 
 /**
  * Toggles a toggle button and triggers its associated action.
  *
- * @param {HTMLElement} button
- * @param {*} plugin
+ * @param {MouseEvent} event
  */
-function toggle(button, plugin) {
-  const stateAttr = button.hasAttribute('aria-pressed') ? 'aria-pressed' : 'aria-checked';
-  const isPressed = button.getAttribute(stateAttr) === 'true';
-  button.setAttribute(stateAttr, String(!isPressed));
+function toggleButton(event) {
+  const button = event.currentTarget;
 
-  triggerButtonAction(button, stateAttr, plugin);
+  if (button instanceof HTMLElement) {
+    const plugin = pluginRegistry.get(button.dataset.feature);
+    const isPressed = button.getAttribute('aria-checked') === 'true';
+    button.setAttribute('aria-checked', String(!isPressed));
+
+    triggerButtonAction(button, 'aria-checked', plugin);
+  }
 }
 
 /**
  * Triggers the associated action of a toggle button.
  *
  * @param {HTMLElement} button
- * @param {string} stateAttr
- * @param {*} plugin
+ * @param {'aria-checked'|'aria-pressed'} stateAttr
+ * @param {SlidehubPlugin} plugin
  */
 function triggerButtonAction(button, stateAttr, plugin) {
   switch (true) {
     case button.hasAttribute('data-feature'):
       if (button.getAttribute(stateAttr) === 'true') {
         plugin.enable();
-        console.info(`Enabled ${plugin.name}.`);
+        console.info('Enabled', plugin.name);
       } else {
         plugin.disable();
-        console.info(`Disabled ${plugin.name}.`);
+        console.info('Disabled', plugin.name);
       }
       break;
 
