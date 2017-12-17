@@ -1,5 +1,9 @@
+/**
+ * Keyboard Navigation.
+ */
+
 import { listener } from '../util';
-import { navigateItem, setActiveDocument, getItemCount } from '../core/item-navigation';
+import { navigateItem, getItemCount } from '../core/item-navigation';
 import { navigateDocument } from '../core/document-navigation';
 
 export { KeyboardNavigationModule };
@@ -7,7 +11,7 @@ export { KeyboardNavigationModule };
 const KeyboardNavigationModule = {
   enabled: true,
   name: 'keyboard-navigation',
-  description: 'Navigate pages with keyboard',
+  description: 'Navigate documents and its pages with the keyboard',
   enable() {
     document.addEventListener('keydown', handleKeyboardInput, listener.active);
   },
@@ -16,6 +20,11 @@ const KeyboardNavigationModule = {
   }
 };
 
+/**
+ * Handles keyboard interactions with documents and items.
+ *
+ * @param {KeyboardEvent} event
+ */
 function handleKeyboardInput(event) {
   if (event.keyCode in controlKeyNames) {
     event.preventDefault();
