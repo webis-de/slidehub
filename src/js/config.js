@@ -1,4 +1,33 @@
-export const config = {
+export { config };
+
+/**
+ * @typedef Config
+ * @type {object}
+ * @property {ConfigPropertyAssets} assets
+ * @property {boolean} metaSlide
+ * @property {boolean} preserveAspectRatio
+ * @property {string|null} highlightColor
+ * @property {ConfigPropertySelector} selector
+ *
+ * @typedef ConfigPropertyAssets
+ * @type {object}
+ * @property {string} documents
+ * @property {string} images
+ *
+ * @typedef ConfigPropertySelector
+ * @type {object}
+ * @property {string} doc
+ * @property {string} scrollbox
+ * @property {string} itemContainer
+ * @property {string} item
+ */
+
+/**
+ * Global configuration object.
+ *
+ * @type {Config}
+ */
+const config = {
   // Location of the data directory containing PDF/PNG assets
   assets: {
     documents: 'https://www.uni-weimar.de/medien/webis/tmp/slides/data',
