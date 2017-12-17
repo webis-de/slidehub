@@ -1,15 +1,17 @@
-/*
-* Modal window
-*
-* Based on ideas from “The Incredible Accessible Modal Window” by Greg Kraus
-* https://github.com/gdkraus/accessible-modal-dialog
-*/
+/**
+ * Modal window.
+ *
+ * Based on ideas from “The Incredible Accessible Modal Window” by Greg Kraus.
+ * https://github.com/gdkraus/accessible-modal-dialog
+ */
 
 import { listener } from '../util';
 
+export { Modal };
+
 let lastFocusedElement;
 
-export const Modal = {
+const Modal = {
   enable() {
     document.addEventListener('DOMContentLoaded', function() {
       const modalOpenButtons = Array.from(document.querySelectorAll('button[data-target-modal]'));
@@ -33,6 +35,11 @@ export const Modal = {
   }
 };
 
+/**
+ * Opens the modal.
+ *
+ * @param {Element} modal
+ */
 function openModal(modal) {
   if (modal === null) {
     return;
@@ -44,14 +51,29 @@ function openModal(modal) {
   document.body.setAttribute('aria-hidden', 'true');
   modal.setAttribute('aria-hidden', 'false');
 
-  getFocusableElements(modal)[0].focus();
+  moveFocusToModal(modal);
 
   // Setup event listeners
-  document.addEventListener('keydown', event => closeOnEscape(event, modal), listener.passive);
+  document.addEventListener('keydown', closeOnEscape, listener.passive);
   modal.addEventListener('keydown', trapTabKey, listener.active);
   modal.addEventListener('click', closeOnBackground, listener.passive);
 }
 
+/**
+ * Move focus to the first focusable element inside the modal.
+ *
+ * @param {Element} modal
+ */
+function moveFocusToModal(modal) {
+  const focusable = getFocusableElements(modal);
+  focusable[0].focus();
+}
+
+/**
+ * Closes the modal.
+ *
+ * @param {Element} modal
+ */
 function closeModal(modal) {
   if (modal === null) {
     return;
@@ -61,7 +83,7 @@ function closeModal(modal) {
   modal.setAttribute('aria-hidden', 'true');
 
   // Clean up event listeners
-  document.removeEventListener('keydown', event => closeOnEscape(event, modal), listener.passive);
+  document.removeEventListener('keydown', closeOnEscape, listener.passive);
   modal.removeEventListener('keydown', trapTabKey, listener.active);
   modal.removeEventListener('click', closeOnBackground, listener.passive);
 
@@ -69,22 +91,34 @@ function closeModal(modal) {
   lastFocusedElement.focus();
 }
 
+/**
+ * Closes the modal when clicking on the background.
+ *
+ * @param {MouseEvent} event
+ */
 function closeOnBackground(event) {
-  const modal = event.currentTarget;
-  if (event.target === modal) {
+  const modal = document.querySelector('.modal[aria-hidden="false"]');
+  if (modal === event.target) {
     closeModal(modal);
   }
 }
 
-function closeOnEscape(event, modal) {
+/**
+ * Closes the modal when pressing the <kbd>Esc</kbd>.
+ *
+ * @param {KeyboardEvent} event
+ */
+function closeOnEscape(event) {
   if (event.keyCode === 27) {
-    closeModal(modal);
+    closeModal(document.querySelector('.modal[aria-hidden="false"]'));
   }
 }
 
-/*
-* Make it impossible to focus an element outside the modal
-*/
+/**
+ * Make it impossible to focus an element outside the modal
+ *
+ * @param {KeyboardEvent} event
+ */
 function trapTabKey(event) {
   if (event.keyCode !== 9) {
     return;
@@ -112,9 +146,15 @@ function trapTabKey(event) {
   }
 }
 
-const focusableElementsSelector =
-  'a[href], input:not(:disabled), textarea:not(:disabled), button:not(:disabled), [tabindex]';
-
+/**
+ * Selects all focusable elements currently present in the DOM/
+ *
+ * @param {Element|document} ancestor
+ * @returns {Array}
+ */
 function getFocusableElements(ancestor = document) {
   return Array.from(ancestor.querySelectorAll(focusableElementsSelector));
 }
+
+const focusableElementsSelector =
+  'a[href], input:not(:disabled), textarea:not(:disabled), button:not(:disabled), [tabindex]';

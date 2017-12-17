@@ -5,9 +5,11 @@ export { navigateDocument, getActiveDocument, setActiveDocument };
 
 let activeDocument;
 
-/*
-Navigates through documents in a certain direction.
-*/
+/**
+ * Navigates through documents in a certain direction.
+ *
+ * @param {number} direction
+ */
 function navigateDocument(direction) {
   const targetDoc = getTargetDoc(direction);
 
@@ -26,21 +28,26 @@ function navigateDocument(direction) {
   }
 }
 
+/**
+ * Finds the target document given a navigation distance.
+ *
+ * @param {number} distance
+ * @returns {HTMLElement}
+ */
 function getTargetDoc(distance) {
   const docs = getDocuments();
   const currentIndex = getDocumentPos();
   const targetIndex = clamp(currentIndex + distance, 0, docs.length - 1);
-  return docs[targetIndex];
+  return docs.item(targetIndex);
 }
 
-function getDocumentPos() {
-  return Array.from(getDocuments()).indexOf(getActiveDocument());
-}
-
-function getDocuments() {
-  return getActiveDocument().parentElement.children;
-}
-
+/**
+ * Returns an object containing vertical offsets for an element with the
+ * viewport.
+ *
+ * @param {HTMLElement} element
+ * @returns {object}
+ */
 function getVerticalOffsets(element) {
   const docEl = document.documentElement;
   return {
@@ -49,6 +56,29 @@ function getVerticalOffsets(element) {
   };
 }
 
+/**
+ * Finds the position of the currently active document.
+ *
+ * @returns {number}
+ */
+function getDocumentPos() {
+  return Array.from(getDocuments()).indexOf(getActiveDocument());
+}
+
+/**
+ * Returns all SlideHub documents as a HTMLCollection.
+ *
+ * @returns {HTMLCollection}
+ */
+function getDocuments() {
+  return getActiveDocument().parentElement.children;
+}
+
+/**
+ * Returns the currently active document.
+ *
+ * @returns {Element}
+ */
 function getActiveDocument() {
   if (!activeDocument) {
     activeDocument = document.querySelector(config.selector.doc);
@@ -57,6 +87,11 @@ function getActiveDocument() {
   return activeDocument;
 }
 
+/**
+ * Sets a new active document.
+ *
+ * @param {HTMLElement} doc
+ */
 function setActiveDocument(doc) {
   // Remove active class from currently active document
   if (activeDocument) {

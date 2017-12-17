@@ -6,6 +6,11 @@ export { navigateItem, getActiveItem, setActiveItem, getItemCount, determineItem
 
 let itemWidth;
 
+/**
+ * Main handler for item navigation.
+ *
+ * @param {number} distance
+ */
 function navigateItem(distance) {
   if (!itemsAligned()) {
     alignItems(distance);
@@ -27,6 +32,11 @@ function navigateItem(distance) {
   setScrollPos(getScrollPos() + distance);
 }
 
+/**
+ * Returns true if items are aligned within a document, false otherwise.
+ *
+ * @returns {boolean}
+ */
 function itemsAligned() {
   if (getScrollPos() % itemWidth === 0) {
     return true;
@@ -35,88 +45,148 @@ function itemsAligned() {
   return false;
 }
 
+/**
+ * Aligns items to the grid.
+ *
+ * @param {number} distance
+ */
 function alignItems(distance) {
   const currentScrollPos = getScrollPos();
-  const lastItemIndex = getItemCount() - 1;
-  const maxScrollPos = lastItemIndex - getFullyVisibleItems(getActiveDocument());
+  const lastItemPos = getItemCount() - 1;
+  const maxScrollPos = lastItemPos - getFullyVisibleItems(getActiveDocument());
   const alignedScrollPos = clamp(Math.round(currentScrollPos), 0, maxScrollPos);
+
   setScrollPos(alignedScrollPos);
 }
 
-// TO DO refactor see document-navigation.js#getTargetDoc
+/**
+ * TO DO refactor see document-navigation.js#getTargetDoc
+ *
+ * Determines the new active item.
+ *
+ * @param {number} distance
+ */
 function updateActiveItem(distance) {
+  const currentPos = getActiveItemPos();
+  const targetPos = clamp(currentPos + distance, 0, getItemCount() - 1);
+
   const items = getItems();
-  const currentIndex = getItemPos();
-  const targetIndex = clamp(currentIndex + distance, 0, items.length - 1);
-  setActiveItem(items[targetIndex]);
+  setActiveItem(items.item(targetPos));
 }
 
+/**
+ * Returns true if all items are visible within a document, false otherwise.
+ *
+ * @returns {boolean}
+ */
 function allItemsVisible() {
   const activeDoc = getActiveDocument();
-  const numItems = getItemCount();
-  if (numItems <= getFullyVisibleItems(activeDoc)) {
-    return true;
-  }
+
+  return getItemCount() <= getFullyVisibleItems(activeDoc);
 }
 
-/*
-Tests whether a document’s active item is completely in view (i.e. the item
-is completely visible and not occluded).
-*/
+/**
+ * Tests whether a documents’ active item is completely in view (i.e. the item
+ * is completely visible and not occluded).
+ *
+ * @returns {boolean}
+ */
 function activeItemInView() {
   const docRect = getActiveDocument().getBoundingClientRect();
   const itemRect = getActiveItem().getBoundingClientRect();
 
-  if (
+  return (
     docRect.left <= itemRect.left &&
     itemRect.right <= docRect.right &&
     docRect.top <= itemRect.top &&
     itemRect.bottom <= docRect.bottom
-  ) {
-    return true;
-  }
-
-  return false;
+  );
 }
 
-function getFullyVisibleItems() {
-  const activeDoc = getActiveDocument();
-  const docWidth = getFloatPropertyValue(activeDoc, 'width');
+/**
+ * Calculates the number of items that would be fully visible.
+ *
+ * @param {Element} doc
+ * @returns {number}
+ */
+function getFullyVisibleItems(doc) {
+  const docWidth = getFloatPropertyValue(doc, 'width');
   return Math.floor(docWidth / itemWidth);
 }
 
+/**
+ * Returns the current scroll position.
+ *
+ * @returns {number}
+ */
 function getScrollPos() {
   return getScrollbox().scrollLeft / itemWidth;
 }
 
+/**
+ * Sets a new scroll position.
+ *
+ * @param {number} itemPos
+ */
 function setScrollPos(itemPos) {
-  const maxPos = getItems().length - getFullyVisibleItems(getActiveDocument());
+  const maxPos = getItemCount() - getFullyVisibleItems(getActiveDocument());
   itemPos = clamp(itemPos, 0, maxPos);
 
   getScrollbox().scrollLeft = itemPos * itemWidth;
 }
 
+/**
+ * Returns the scrollbox for the currently active document.
+ *
+ * @returns {Element}
+ */
 function getScrollbox() {
   return getActiveDocument().querySelector(config.selector.scrollbox);
 }
 
+/**
+ * Returns all items as an HTMLCollection.
+ *
+ * @returns {HTMLCollection}
+ */
 function getItems() {
   return getActiveItem().parentElement.children;
 }
 
+/**
+ * Returns the number of items.
+ *
+ * @returns {number}
+ */
 function getItemCount() {
-  return getItems().length;
+  return getActiveItem().parentElement.childElementCount;
 }
 
-function getItemPos() {
+/**
+ * Returns the position of the currently active item.
+ *
+ * @returns {number}
+ */
+function getActiveItemPos() {
   return Array.from(getItems()).indexOf(getActiveItem());
 }
 
+/**
+ * Returns the currently active item.
+ *
+ * @returns {Element}
+ */
 function getActiveItem() {
   const activeDoc = getActiveDocument();
+
   return activeDoc.querySelector(`${config.selector.item}.active`);
 }
 
+/**
+ * Set a new active item.
+ *
+ * @param {Element} targetItem
+ */
 function setActiveItem(targetItem) {
   const activeItem = getActiveItem();
   if (activeItem) {
@@ -127,7 +197,10 @@ function setActiveItem(targetItem) {
   document.activeElement.blur();
 }
 
-function determineItemWidth(newItemWidth) {
+/**
+ * Computes the item width. Must only be called once.
+ */
+function determineItemWidth() {
   const itemSample = document.querySelector(config.selector.item);
   itemWidth = getOuterWidth(itemSample);
   Object.freeze(itemWidth);

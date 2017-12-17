@@ -2,7 +2,14 @@
 * Loads optional plugins
 */
 
-export function loadPlugin(plugin) {
+export { loadPlugin };
+
+/**
+ * Loads a plugin.
+ *
+ * @param {*} plugin
+ */
+function loadPlugin(plugin) {
   if (plugin.enabled) {
     plugin.enable();
   }
@@ -10,6 +17,11 @@ export function loadPlugin(plugin) {
   registerPlugin(plugin);
 }
 
+/**
+ * Registers a new plugin.
+ *
+ * @param {*} plugin
+ */
 function registerPlugin(plugin) {
   const fieldset = document.querySelector('.features-fieldset');
 
@@ -20,7 +32,9 @@ function registerPlugin(plugin) {
   const toggleButtonMarkup = `
     <div class="form-group form-group--switch">
       <span class="form-label" id="feature-${plugin.name}">${plugin.description}</span>
-      <button role="switch" aria-checked="false" aria-labelledby="feature-${plugin.name}" data-feature="${plugin.name}">
+      <button role="switch" aria-checked="false" aria-labelledby="feature-${
+        plugin.name
+      }" data-feature="${plugin.name}">
         <span class="state state--true" aria-label="on"></span>
         <span class="state state--false" aria-label="off"></span>
       </button>
@@ -40,6 +54,12 @@ function registerPlugin(plugin) {
   button.addEventListener('click', event => toggle(event.currentTarget, plugin));
 }
 
+/**
+ * Toggles a toggle button and triggers its associated action.
+ *
+ * @param {HTMLElement} button
+ * @param {*} plugin
+ */
 function toggle(button, plugin) {
   const stateAttr = button.hasAttribute('aria-pressed') ? 'aria-pressed' : 'aria-checked';
   const isPressed = button.getAttribute(stateAttr) === 'true';
@@ -48,6 +68,13 @@ function toggle(button, plugin) {
   triggerButtonAction(button, stateAttr, plugin);
 }
 
+/**
+ * Triggers the associated action of a toggle button.
+ *
+ * @param {HTMLElement} button
+ * @param {string} stateAttr
+ * @param {*} plugin
+ */
 function triggerButtonAction(button, stateAttr, plugin) {
   switch (true) {
     case button.hasAttribute('data-feature'):

@@ -1,6 +1,6 @@
-/*
-* Loads document images when needed (i.e. lazy-loading).
-*/
+/**
+ * Loads document images when needed (i.e. lazy-loading).
+ */
 
 import { config } from '../config';
 
@@ -14,18 +14,16 @@ const observerOptions = {
 
 const ImageLoader = {
   enable() {
-    initialize();
+    imageObserver = new IntersectionObserver(imageLoadHandler, observerOptions);
   }
 };
 
-/*
-* Observes documents in order to load their item images only when
-* they’re visible.
-*/
-function initialize() {
-  imageObserver = new IntersectionObserver(imageLoadHandler, observerOptions);
-}
-
+/**
+ * Handles lazy-loading document images.
+ *
+ * @param {*} entries
+ * @param {IntersectionObserver} observer
+ */
 function imageLoadHandler(entries, observer) {
   for (const entry of entries) {
     if (entry.isIntersecting) {
@@ -41,20 +39,37 @@ function imageLoadHandler(entries, observer) {
   }
 }
 
+/**
+ * Plain wrapper for triggering certain actions once an image has loaded.
+ *
+ * @param {HTMLImageElement} image
+ */
 function handleItemImageLoaded(image) {
   if (config.preserveAspectRatio) {
-    const doc = image.closest(config.selector.doc);
-    setItemAspectRatio(doc, image);
+    setItemAspectRatio(image);
   }
 }
 
-function setItemAspectRatio(doc, image) {
-  if (!doc.style.cssText.includes('--page-aspect-ratio')) {
+/**
+ * Calculates the aspect ratio of an image and stores it in the DOM as a
+ * custom CSS property.
+ *
+ * @param {HTMLImageElement} image
+ */
+function setItemAspectRatio(image) {
+  const doc = image.closest(config.selector.doc);
+
+  if (doc && !doc.style.cssText.includes('--page-aspect-ratio')) {
     const aspectRatio = image.naturalWidth / image.naturalHeight;
-    doc.style.setProperty('--page-aspect-ratio', aspectRatio);
+    doc.style.setProperty('--page-aspect-ratio', aspectRatio.toString());
   }
 }
 
+/**
+ * Starts the image observer on all lazy-loading images.
+ *
+ * @param {HTMLElement} doc
+ */
 function startImageObserver(doc) {
   if (imageObserver) {
     const images = Array.from(doc.querySelectorAll('img[data-src]'));
