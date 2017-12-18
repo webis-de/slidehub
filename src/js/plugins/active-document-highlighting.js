@@ -16,41 +16,17 @@ const ActiveDocumentHighlighting = {
   name: 'highlight-active-document',
   description: 'Highlight the active document on hover',
   enable() {
-    document.addEventListener('touchstart', setTouched, listener.passive);
-    document.addEventListener('mouseup', resetTouched, listener.passive);
     document.addEventListener('mousemove', handleHighlightOnHover, listener.passive);
   },
   disable() {
-    document.removeEventListener('touchstart', setTouched, listener.passive);
-    document.removeEventListener('mouseup', resetTouched, listener.passive);
     document.removeEventListener('mousemove', handleHighlightOnHover, listener.passive);
   }
 };
-
-let touched = false;
-
-/**
- * Sets the touched state to true.
- */
-function setTouched() {
-  touched = true;
-}
-
-/**
- * Sets the touched state to false.
- */
-function resetTouched() {
-  touched = false;
-}
 
 /**
  * @param {MouseEvent} event
  */
 function handleHighlightOnHover(event) {
-  if (touched) {
-    return;
-  }
-
   if (event.target instanceof Element) {
     const doc = event.target.closest(config.selector.doc);
     if (doc) {
