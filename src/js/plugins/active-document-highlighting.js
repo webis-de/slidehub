@@ -9,12 +9,12 @@ import { config } from '../config';
 import { setActiveItem } from '../core/item-navigation';
 import { setActiveDocument } from '../core/document-navigation';
 
-export { ActivationOnHover };
+export { ActiveDocumentHighlighting };
 
-const ActivationOnHover = {
+const ActiveDocumentHighlighting = {
   enabled: true,
-  name: 'activation-on-hover',
-  description: 'Highlights the active document on hover',
+  name: 'highlight-active-document',
+  description: 'Highlight the active document on hover',
   enable() {
     document.addEventListener('touchstart', setTouched, listener.passive);
     document.addEventListener('mouseup', resetTouched, listener.passive);
