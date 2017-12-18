@@ -90,7 +90,7 @@ function getActiveDocument() {
 /**
  * Sets a new active document.
  *
- * @param {HTMLElement} doc
+ * @param {Element} doc
  */
 function setActiveDocument(doc) {
   // Remove active class from currently active document
@@ -101,5 +101,7 @@ function setActiveDocument(doc) {
   // Set new active document
   activeDocument = doc;
   activeDocument.classList.add('active');
-  document.activeElement.blur();
+  if (document.activeElement instanceof HTMLElement) {
+    document.activeElement.blur();
+  }
 }

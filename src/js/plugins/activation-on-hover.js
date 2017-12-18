@@ -51,13 +51,15 @@ function handleHighlightOnHover(event) {
     return;
   }
 
-  const doc = event.target.closest(config.selector.doc);
-  if (doc) {
-    setActiveDocument(doc);
+  if (event.target instanceof Element) {
+    const doc = event.target.closest(config.selector.doc);
+    if (doc) {
+      setActiveDocument(doc);
 
-    const item = event.target.closest(config.selector.item);
-    if (item) {
-      setActiveItem(item);
+      const item = event.target.closest(config.selector.item);
+      if (item) {
+        setActiveItem(item);
+      }
     }
   }
 }
