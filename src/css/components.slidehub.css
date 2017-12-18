@@ -60,6 +60,8 @@
   width: var(--page-width);
   height: var(--page-height);
   position: relative;
+  display: flex;
+  align-items: center;
 
   outline: var(--border-width) solid var(--c-alt-light);
 
