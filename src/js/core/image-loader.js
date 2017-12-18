@@ -59,7 +59,7 @@ function handleItemImageLoaded(image) {
 function setItemAspectRatio(image) {
   const doc = image.closest(config.selector.doc);
 
-  if (doc && !doc.style.cssText.includes('--page-aspect-ratio')) {
+  if (doc && doc instanceof HTMLElement && !doc.style.cssText.includes('--page-aspect-ratio')) {
     const aspectRatio = image.naturalWidth / image.naturalHeight;
     doc.style.setProperty('--page-aspect-ratio', aspectRatio.toString());
   }
