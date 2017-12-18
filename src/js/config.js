@@ -38,7 +38,7 @@ const config = {
   metaSlide: true,
 
   // Preserve aspect ratio of document items?
-  preserveAspectRatio: true,
+  preserveAspectRatio: false,
 
   // Overrides the default highlight color
   // Takes string values that represent a valid CSS color value; for example:
