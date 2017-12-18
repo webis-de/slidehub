@@ -14,10 +14,20 @@ try {
     }
   });
 
-  window.addEventListener('test', null, opts);
-} catch (event) {}
+  window.addEventListener('testPassive', null, opts);
+  window.removeEventListener('testPassive', null, opts);
+} catch (e) {}
 
-// Stores the third argument for `addEventListener` for both cases
+/**
+ * @typedef {object} AddEventListenerOptionsObject
+ * @property {boolean|AddEventListenerOptions} active
+ * @property {boolean|AddEventListenerOptions} passive
+ */
+
+/**
+ * Stores the third argument for `addEventListener` for both cases
+ * @type {AddEventListenerOptionsObject}
+ */
 const listener = {
   active: supportsPassive ? { passive: false } : false,
   passive: supportsPassive ? { passive: true } : false
