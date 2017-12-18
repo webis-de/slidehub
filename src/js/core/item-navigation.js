@@ -60,8 +60,6 @@ function alignItems(distance) {
 }
 
 /**
- * TO DO refactor see document-navigation.js#getTargetDoc
- *
  * Determines the new active item.
  *
  * @param {number} distance
