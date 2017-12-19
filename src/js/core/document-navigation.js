@@ -36,9 +36,9 @@ function navigateDocument(direction) {
  */
 function getTargetDoc(distance) {
   const currentIndex = getDocumentPos();
+  const docs = getDocuments();
   const targetIndex = clamp(currentIndex + distance, 0, docs.length - 1);
 
-  const docs = getDocuments();
   return docs.item(targetIndex);
 }
 
