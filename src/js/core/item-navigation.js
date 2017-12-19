@@ -11,8 +11,6 @@ export {
   storeScrollboxWidthInDOM
 };
 
-let itemWidth;
-
 /**
  * Main handler for item navigation.
  *
@@ -20,6 +18,9 @@ let itemWidth;
  */
 function navigateItem(distance) {
   storeVisibleItemsInDOM(numberOfVisibleItems());
+
+  if (!itemPositionIsAligned()) {
+    setItemPos(Math.round(getItemPos()));
   }
 
   updateActiveItem(distance);
@@ -29,12 +30,22 @@ function navigateItem(distance) {
     return;
   }
 
-  // If the active item is already inside the view, we’re done here.
-  if (activeItemInView()) {
+  const currentScrollPos = getItemPos();
+  const newItemPos = calculateNewItemPos(getItemPos() + distance);
+
+  // Nothing to gain, current position is already the destination.
+  if (currentScrollPos === newItemPos) {
     return;
   }
 
-  setScrollPos(getScrollPos() + distance);
+  // If the active item is already inside the view, we’re done here.
+  // When an item can be moved to the first column, this behavior is disabled
+  // as I prefer keeping the active item in the first column in this case.
+  if (!config.allowLastPageInFirstColumn && activeItemInView()) {
+    return;
+  }
+
+  setItemPos(newItemPos);
 }
 
 /**
@@ -42,27 +53,12 @@ function navigateItem(distance) {
  *
  * @returns {boolean}
  */
-function itemsAligned() {
-  if (getScrollbox().scrollLeft % itemWidth === 0) {
+function itemPositionIsAligned() {
+  if (getItemPos() % 1 === 0) {
     return true;
   }
 
   return false;
-}
-
-/**
- * Aligns items to the grid.
- *
- * @param {number} distance
- */
-function alignItems(distance) {
-  const currentScrollPos = getScrollPos();
-  const lastItemPos = getItemCount() - 1;
-  const numberOfVisibleItems = numberOfVisibleElements(getActiveDocument(), itemWidth);
-  const maxScrollPos = lastItemPos - numberOfVisibleItems;
-  const alignedScrollPos = clamp(Math.round(currentScrollPos), 0, maxScrollPos);
-
-  setScrollPos(alignedScrollPos);
 }
 
 /**
@@ -85,9 +81,7 @@ function updateActiveItem(distance) {
  */
 function allItemsVisible() {
   const activeDoc = getActiveDocument();
-  const numberOfVisibleItems = numberOfVisibleElements(activeDoc, itemWidth);
-
-  return getItemCount() <= numberOfVisibleItems;
+  return getItemCount() <= numberOfVisibleItems();
 }
 
 /**
@@ -109,26 +103,35 @@ function activeItemInView() {
 }
 
 /**
- * Returns the current scroll position.
+ * Returns the current item position.
  *
  * @returns {number}
  */
-function getScrollPos() {
+function getItemPos() {
   return getScrollbox().scrollLeft / itemWidth;
 }
 
 /**
- * Sets a new scroll position.
+ * Sets a new item position.
  *
  * @param {number} itemPos
  */
-function setScrollPos(itemPos) {
-  const numberOfVisibleItems = numberOfVisibleElements(getActiveDocument(), itemWidth);
-  const invalidItemPositions = config.allowLastPageInFirstColumn ? 1 : numberOfVisibleItems;
-  const maxPos = getItemCount() - invalidItemPositions;
-  itemPos = clamp(itemPos, 0, maxPos);
+function setItemPos(itemPos) {
+  const newItemPos = calculateNewItemPos(itemPos);
+  getScrollbox().scrollLeft = newItemPos * itemWidth;
+}
 
-  getScrollbox().scrollLeft = itemPos * itemWidth;
+/**
+ *
+ * @param {number} itemPos
+ * @returns {number}
+ */
+function calculateNewItemPos(itemPos) {
+  const visibleItems = numberOfVisibleItems();
+  const invalidItemPositions = config.allowLastPageInFirstColumn ? 1 : visibleItems;
+  const maxPos = getItemCount() - invalidItemPositions;
+
+  return clamp(itemPos, 0, maxPos);
 }
 
 /**
@@ -196,12 +199,23 @@ function setActiveItem(targetItem) {
   }
 }
 
+let itemWidth;
+
 /**
  * Computes the item width. Must only be called once.
  */
 function storeItemOuterWidth(itemOuterWidth) {
   itemWidth = itemOuterWidth;
   Object.freeze(itemWidth);
+}
+
+/**
+ * Wrapper for {@link numberOfVisibleElements}.
+ *
+ * @returns {number}
+ */
+function numberOfVisibleItems() {
+  return numberOfVisibleElements(getActiveDocument(), itemWidth);
 }
 
 /**
