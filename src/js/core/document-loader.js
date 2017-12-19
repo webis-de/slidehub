@@ -13,8 +13,7 @@ import { LinkedMap, getFloatPropertyValue } from '../util';
 export { DocumentLoader };
 
 /**
- * @typedef Store
- * @type {object}
+ * @typedef {object} Store
  * @property {LinkedMap} documents
  * @property {IterableIterator} prevIterator
  * @property {IterableIterator} nextIterator
@@ -22,13 +21,17 @@ export { DocumentLoader };
  * @property {number} batchSize
  * @property {StorePropertyClasses} classes
  *
- * @typedef StorePropertyClasses
- * @type {object}
+ * @typedef {object} StorePropertyClasses
  * @property {string} slidehub
  * @property {string} doc
  * @property {string} scrollbox
  * @property {string} itemContainer
  * @property {string} item
+ *
+ * @typedef {object} DocumentData
+ * @property {string} name
+ * @property {number} itemCount
+ * @property {boolean} loaded
  */
 
 /**
@@ -271,7 +274,7 @@ function loadDocument(iteratorResult, insertPosition) {
 /**
  * Inserts document markup into the DOM.
  *
- * @param {*} documentData
+ * @param {DocumentData} documentData
  */
 function insertDocument(documentData) {
   const innerDocumentMarkup = createDocumentMarkup(documentData);
@@ -307,7 +310,7 @@ function storeItemOuterWidthInDOM(slidehubContainer, doc) {
  * - A file named documentData.name exists on the document assets path
  * - The document’s item images are on the image assets path
  *
- * @param {*} documentData
+ * @param {DocumentData} documentData
  * @return {string}
  */
 function createDocumentMarkup(documentData) {
