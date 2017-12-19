@@ -172,18 +172,21 @@ function getActiveItem() {
 }
 
 /**
- * Set a new active item.
+ * Sets a new active item.
  *
  * @param {Element} targetItem
  */
 function setActiveItem(targetItem) {
+  const itemContainer = targetItem.parentElement;
   const activeItem = getActiveItem();
-  if (activeItem) {
+  if (activeItem && itemContainer.contains(activeItem)) {
     activeItem.classList.remove('active');
   }
 
   targetItem.classList.add('active');
+  if (document.activeElement instanceof HTMLElement) {
   document.activeElement.blur();
+}
 }
 
 /**
