@@ -3,19 +3,25 @@
 */
 .slidehub-container {
   --c-highlight: hsl(220, 50%, 40%);
+  --page-aspect-ratio: 1.25;
+  --page-width: 200px;
+  --page-height: calc(var(--page-width) / var(--page-aspect-ratio));
+  --border-width: 1px;
+  --visible-pages: 1;
 
   padding: var(--spacing);
+}
+
+@media only screen and (min-width: 600px) {
+  .slidehub-container {
+    --page-width: 300px;
+  }
 }
 
 /*
 * Document
 */
 .doc {
-  --page-aspect-ratio: 1.25;
-  --page-width: 200px;
-  --page-height: calc(var(--page-width) / var(--page-aspect-ratio));
-  --border-width: 1px;
-
   width: 100%;
   height: var(--page-height);
   box-sizing: content-box;
@@ -25,12 +31,6 @@
   overflow: hidden;
   border: var(--border-width) solid var(--c-alt-light);
   margin: calc(-1 * var(--border-width));
-}
-
-@media only screen and (min-width: 600px) {
-  .doc {
-    --page-width: 300px;
-  }
 }
 
 .doc.active {
@@ -53,6 +53,7 @@
 .page-container {
   /* Clears floated .page elements */
   display: flow-root;
+  width: calc(var(--visible-pages) * var(--pages) * var(--page-outer-width));
 }
 
 .page {
@@ -69,7 +70,7 @@
   background-color: #fff;
 }
 
-.page:not(:last-child) {
+.page {
   margin-right: var(--border-width);
 }
 
@@ -96,6 +97,10 @@
   margin-bottom: 0;
   font-weight: normal;
   font-size: 1rem;
+}
+
+.dummy-page {
+  width: calc(var(--visible-pages) * var(--page-width));
 }
 
 /*

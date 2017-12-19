@@ -1,8 +1,8 @@
 import { config } from '../config';
-import { clamp, getFloatPropertyValue, getOuterWidth, numberOfVisibleElements } from '../util';
+import { clamp, getFloatPropertyValue, numberOfVisibleElements } from '../util';
 import { getActiveDocument, setActiveDocument } from './document-navigation';
 
-export { navigateItem, getActiveItem, setActiveItem, getItemCount, determineItemWidth };
+export { navigateItem, getActiveItem, setActiveItem, getItemCount, storeItemOuterWidth };
 
 let itemWidth;
 
@@ -28,7 +28,6 @@ function navigateItem(distance) {
     return;
   }
 
-  // console.log('> View needs update');
   setScrollPos(getScrollPos() + distance);
 }
 
@@ -190,8 +189,7 @@ function setActiveItem(targetItem) {
 /**
  * Computes the item width. Must only be called once.
  */
-function determineItemWidth() {
-  const itemSample = document.querySelector(config.selector.item);
-  itemWidth = getOuterWidth(itemSample);
+function storeItemOuterWidth(itemOuterWidth) {
+  itemWidth = itemOuterWidth;
   Object.freeze(itemWidth);
 }

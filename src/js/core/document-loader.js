@@ -7,8 +7,8 @@
 import { config } from '../config';
 import { startImageObserver } from './image-loader';
 import { setActiveDocument } from './document-navigation';
-import { setActiveItem, determineItemWidth } from './item-navigation';
-import { LinkedMap, clamp, getOuterWidth, getFloatPropertyValue } from '../util';
+import { setActiveItem, storeItemOuterWidth } from './item-navigation';
+import { LinkedMap, getFloatPropertyValue } from '../util';
 
 export { DocumentLoader };
 
@@ -62,16 +62,13 @@ const DocumentLoader = {
   enable() {
     store.documents = parseDocumentsData(documentsData);
 
-    // --- debug fragment --- remove in production
-    // window.docs = store.documents;
-    // window.loadDoc = loadDocument;
-    // ---
-
     document.addEventListener('DOMContentLoaded', function() {
       const slidehubContainer = createSlidehubContainer();
       insertDocumentFrames(slidehubContainer);
 
-      loadTargetDocument();
+      const targetDoc = loadTargetDocument();
+
+      storeItemOuterWidthInDOM(slidehubContainer, targetDoc);
 
       // Load one batch in both directions
       loadBatch(store.nextIterator, 'beforeend', store.batchSize);
@@ -134,13 +131,14 @@ function createSlidehubContainer() {
 function insertDocumentFrames(slidehubContainer) {
   let documentFramesMarkup = '';
 
-  for (const documentName of store.documents.keys()) {
-    const documentSource = `${config.assets.documents}/${documentName}`;
+  for (const documentData of store.documents.values()) {
+    const documentSource = `${config.assets.documents}/${documentData.name}`;
     documentFramesMarkup += `
       <div
         class="${store.classes.doc}"
-        id="${documentName}"
+        id="${documentData.name}"
         data-doc-source="${documentSource}"
+        style="--pages: ${documentData.itemCount + (config.metaSlide ? 1 : 0)}"
       >
       </div>
     `;
@@ -214,7 +212,6 @@ function loadInitialDocument(iteratorResult) {
   const initialDocument = loadDocument(iteratorResult, 'beforeend');
 
   setActiveDocument(initialDocument);
-  determineItemWidth();
 
   return initialDocument;
 }
@@ -261,7 +258,6 @@ function loadDocument(iteratorResult, insertPosition) {
 
   const doc = insertDocument(documentData);
 
-  setItemContainerWidth(doc.querySelector(config.selector.itemContainer));
   setActiveItem(doc.querySelector(config.selector.item));
   startImageObserver(doc);
 
@@ -283,6 +279,27 @@ function insertDocument(documentData) {
   doc.insertAdjacentHTML('beforeend', innerDocumentMarkup);
 
   return doc;
+}
+
+/**
+ * Computes and stores the outer width of items in the DOM in the form on a
+ * custom property. This way, it is accessible from within CSS.
+ *
+ * TO DO: Check for box-sizing value and compute accordingly.
+ *
+ * @param {HTMLElement} slidehubContainer
+ * @param {HTMLElement} doc
+ */
+function storeItemOuterWidthInDOM(slidehubContainer, doc) {
+  const item = doc.querySelector(config.selector.item);
+  const width = getFloatPropertyValue(item, 'width');
+  const marginLeft = getFloatPropertyValue(item, 'margin-left');
+  const marginRight = getFloatPropertyValue(item, 'margin-right');
+  const itemOuterWidth = marginLeft + width + marginRight;
+
+  storeItemOuterWidth(itemOuterWidth);
+
+  slidehubContainer.style.setProperty('--page-outer-width', itemOuterWidth + 'px');
 }
 
 /**
@@ -325,37 +342,6 @@ function createDocumentMarkup(documentData) {
       </div>
     </div>
   `;
-}
-
-/**
- * Set the width of an element based on the total width of its children.
- * Assumes box-sizing being set to `border-box`. That is, horizontal margins
- * and border width do contribute to the result.
- *
- * @param {HTMLElement} element
- */
-function setItemContainerWidth(element) {
-  const elementWidth =
-    getFloatPropertyValue(element, 'margin-left') +
-    getFloatPropertyValue(element, 'border-left-width') +
-    getOuterChildrenWidth(element) +
-    getFloatPropertyValue(element, 'border-right-width') +
-    getFloatPropertyValue(element, 'margin-right');
-
-  element.style.setProperty('width', elementWidth + 'px');
-}
-
-/**
- * Computes the total outer width of an element by accumulating its children’s
- * horizontal dimension property values (i.e. margin-left, width, margin-right)
- *
- * @param {HTMLElement} element
- * @return {number}
- */
-function getOuterChildrenWidth(element) {
-  return Array.from(element.children).reduce((sum, child) => {
-    return sum + getOuterWidth(child);
-  }, 0);
 }
 
 /**
