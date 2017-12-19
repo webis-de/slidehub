@@ -1,8 +1,15 @@
 import { config } from '../config';
-import { clamp, getFloatPropertyValue, numberOfVisibleElements } from '../util';
+import { clamp, getFloatPropertyValue, numberOfVisibleElements, getOuterWidth } from '../util';
 import { getActiveDocument, setActiveDocument } from './document-navigation';
 
-export { navigateItem, getActiveItem, setActiveItem, getItemCount, storeItemOuterWidth };
+export {
+  navigateItem,
+  getActiveItem,
+  setActiveItem,
+  getItemCount,
+  storeItemOuterWidth,
+  storeScrollboxWidthInDOM
+};
 
 let itemWidth;
 
@@ -12,8 +19,7 @@ let itemWidth;
  * @param {number} distance
  */
 function navigateItem(distance) {
-  if (!itemsAligned()) {
-    alignItems(distance);
+  storeVisibleItemsInDOM(numberOfVisibleItems());
   }
 
   updateActiveItem(distance);
@@ -196,4 +202,29 @@ function setActiveItem(targetItem) {
 function storeItemOuterWidth(itemOuterWidth) {
   itemWidth = itemOuterWidth;
   Object.freeze(itemWidth);
+}
+
+/**
+ * Stores the number of visible items in the DOM in order to expose the value
+ * to the CSS.
+ *
+ * @param {number} visibleItems
+ */
+function storeVisibleItemsInDOM(visibleItems) {
+  const slidehubContainer = document.querySelector(config.selector.slidehub);
+  slidehubContainer.style.setProperty('--visible-pages', visibleItems.toString());
+}
+
+let storedScrollboxWidth;
+
+function storeScrollboxWidthInDOM() {
+  const scrollbox = document.querySelector(config.selector.scrollbox);
+  const scrollboxWidth = getOuterWidth(scrollbox);
+
+  if (storedScrollboxWidth !== scrollboxWidth) {
+    storedScrollboxWidth = scrollboxWidth;
+
+    const slidehubContainer = document.querySelector(config.selector.slidehub);
+    slidehubContainer.style.setProperty('--scrollbox-width', scrollboxWidth + 'px');
+  }
 }

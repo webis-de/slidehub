@@ -17,20 +17,5 @@ export { numberOfVisibleElements };
  */
 function numberOfVisibleElements(parentElement, childElementWidth) {
   const parentElementWidth = getFloatPropertyValue(parentElement, 'width');
-  const numberOfVisibleElements = Math.floor(parentElementWidth / childElementWidth);
-
-  storeVisibleItemsInDOM(numberOfVisibleElements);
-
-  return numberOfVisibleElements;
-}
-
-/**
- * Stores the number of visible items in the DOM in order to expose the value
- * to the CSS.
- *
- * @param {number} numberOfVisibleItems
- */
-function storeVisibleItemsInDOM(numberOfVisibleItems) {
-  const slidehubContainer = document.querySelector(config.selector.slidehub);
-  slidehubContainer.style.setProperty('--visible-pages', numberOfVisibleItems.toString());
+  return Math.floor(parentElementWidth / childElementWidth);
 }

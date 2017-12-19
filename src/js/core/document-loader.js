@@ -7,8 +7,8 @@
 import { config } from '../config';
 import { startImageObserver } from './image-loader';
 import { setActiveDocument } from './document-navigation';
-import { setActiveItem, storeItemOuterWidth } from './item-navigation';
-import { LinkedMap, getFloatPropertyValue } from '../util';
+import { setActiveItem, storeItemOuterWidth, storeScrollboxWidthInDOM } from './item-navigation';
+import { LinkedMap, getFloatPropertyValue, getOuterWidth } from '../util';
 
 export { DocumentLoader };
 
@@ -70,7 +70,7 @@ const DocumentLoader = {
       insertDocumentFrames(slidehubContainer);
 
       const targetDoc = loadTargetDocument();
-
+      storeScrollboxWidthInDOM();
       storeItemOuterWidthInDOM(slidehubContainer, targetDoc);
 
       // Load one batch in both directions
@@ -295,10 +295,7 @@ function insertDocument(documentData) {
  */
 function storeItemOuterWidthInDOM(slidehubContainer, doc) {
   const item = doc.querySelector(config.selector.item);
-  const width = getFloatPropertyValue(item, 'width');
-  const marginLeft = getFloatPropertyValue(item, 'margin-left');
-  const marginRight = getFloatPropertyValue(item, 'margin-right');
-  const itemOuterWidth = marginLeft + width + marginRight;
+  const itemOuterWidth = getOuterWidth(item);
 
   storeItemOuterWidth(itemOuterWidth);
 

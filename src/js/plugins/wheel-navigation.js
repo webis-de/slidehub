@@ -2,9 +2,9 @@
  * Wheel Navigation.
  */
 
-import { listener } from '../util';
+import { listener, getOuterWidth } from '../util';
 import { config } from '../config';
-import { navigateItem } from '../core/item-navigation';
+import { navigateItem, storeScrollboxWidthInDOM } from '../core/item-navigation';
 import { getActiveDocument, setActiveDocument } from '../core/document-navigation';
 
 export { WheelNavigation };
@@ -49,7 +49,7 @@ function handleWheelNavigation(event) {
 
   if (scrollingDirection === scrolling.horizontal) {
     setActiveDocument(doc);
-    console.log('Horizontal scrolling ...');
+    storeScrollboxWidthInDOM();
   }
 
   // When scrolling vertically, only trigger navigation when modifier is pressed

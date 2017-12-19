@@ -53,7 +53,9 @@
 .page-container {
   /* Clears floated .page elements */
   display: flow-root;
-  width: calc(var(--visible-pages) * var(--pages) * var(--page-outer-width));
+  width: calc(
+    var(--scrollbox-width) - var(--page-outer-width) + var(--pages) * var(--page-outer-width)
+  );
 }
 
 .page {
@@ -101,7 +103,8 @@
 }
 
 .dummy-page {
-  width: calc(var(--visible-pages) * var(--page-width));
+  width: calc(var(--scrollbox-width) - var(--page-outer-width));
+  margin-right: 0;
 }
 
 /*
