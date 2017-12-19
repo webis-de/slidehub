@@ -74,14 +74,14 @@
 
 .page {
   margin-right: var(--border-width);
-}
-
-.page > img {
-  display: block;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+
+.page > img {
+  display: block;
   pointer-events: none;
 
   /* Maintain aspect-ratio while filling the container */
