@@ -118,7 +118,7 @@ function getScrollPos() {
  */
 function setScrollPos(itemPos) {
   const numberOfVisibleItems = numberOfVisibleElements(getActiveDocument(), itemWidth);
-  const invalidItemPositions = config.allowLastPageInFirstColumn ? numberOfVisibleItems : 1;
+  const invalidItemPositions = config.allowLastPageInFirstColumn ? 1 : numberOfVisibleItems;
   const maxPos = getItemCount() - invalidItemPositions;
   itemPos = clamp(itemPos, 0, maxPos);
 

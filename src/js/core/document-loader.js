@@ -347,7 +347,7 @@ function createDocumentMarkup(documentData) {
       <div class="${store.classes.itemContainer}">
         ${config.metaSlide ? metaSlide : ''}
         ${items}
-        ${config.allowLastPageInFirstColumn ? dummyPage : ''}
+        ${dummyPage}
       </div>
     </div>
   `;
