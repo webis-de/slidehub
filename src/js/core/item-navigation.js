@@ -37,7 +37,7 @@ function navigateItem(distance) {
  * @returns {boolean}
  */
 function itemsAligned() {
-  if (getScrollPos() % itemWidth === 0) {
+  if (getScrollbox().scrollLeft % itemWidth === 0) {
     return true;
   }
 
