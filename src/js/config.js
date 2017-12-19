@@ -5,6 +5,7 @@ export { config };
  * @type {object}
  * @property {ConfigPropertyAssets} assets
  * @property {boolean} metaSlide
+ * @property {boolean} allowLastPageInFirstColumn
  * @property {boolean} preserveAspectRatio
  * @property {string|null} highlightColor
  * @property {ConfigPropertySelector} selector
@@ -37,6 +38,10 @@ const config = {
 
   // Create a meta slide for each document?
   metaSlide: true,
+
+  // Allows navigating pages so that the last page can be placed in the first
+  // column of a document container.
+  allowLastPageInFirstColumn: true,
 
   // Preserve aspect ratio of document items?
   preserveAspectRatio: false,

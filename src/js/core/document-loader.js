@@ -337,11 +337,17 @@ function createDocumentMarkup(documentData) {
     </div>
   `;
 
+  const dummyPage = `
+    <div class="${store.classes.item} dummy-page" aria-hidden="true" style="visibility: hidden;">
+    </div>
+  `;
+
   return `
     <div class="${store.classes.scrollbox}">
       <div class="${store.classes.itemContainer}">
         ${config.metaSlide ? metaSlide : ''}
         ${items}
+        ${config.allowLastPageInFirstColumn ? dummyPage : ''}
       </div>
     </div>
   `;

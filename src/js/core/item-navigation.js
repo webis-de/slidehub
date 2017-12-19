@@ -118,7 +118,8 @@ function getScrollPos() {
  */
 function setScrollPos(itemPos) {
   const numberOfVisibleItems = numberOfVisibleElements(getActiveDocument(), itemWidth);
-  const maxPos = getItemCount() - numberOfVisibleItems;
+  const invalidItemPositions = config.allowLastPageInFirstColumn ? numberOfVisibleItems : 1;
+  const maxPos = getItemCount() - invalidItemPositions;
   itemPos = clamp(itemPos, 0, maxPos);
 
   getScrollbox().scrollLeft = itemPos * itemWidth;
@@ -185,8 +186,8 @@ function setActiveItem(targetItem) {
 
   targetItem.classList.add('active');
   if (document.activeElement instanceof HTMLElement) {
-  document.activeElement.blur();
-}
+    document.activeElement.blur();
+  }
 }
 
 /**
