@@ -67,7 +67,8 @@ const DocumentLoader = {
     // ---
 
     document.addEventListener('DOMContentLoaded', function() {
-      createSlidehubContainer();
+      const slidehubContainer = createSlidehubContainer();
+      insertDocumentFrames(slidehubContainer);
 
       loadTargetDocument();
 
@@ -106,6 +107,8 @@ function parseDocumentsData(documentsData) {
  *
  * Requires an element with a custom attribute `data-slidehub`. A new <div> element
  * will be created inside of it. No existing markup will be changed or removed.
+ *
+ * @returns {HTMLElement}
  */
 function createSlidehubContainer() {
   const slidehubContainer = document.createElement('div');
@@ -119,7 +122,7 @@ function createSlidehubContainer() {
 
   document.querySelector('[data-slidehub]').appendChild(slidehubContainer);
 
-  insertDocumentFrames(slidehubContainer);
+  return slidehubContainer;
 }
 
 /**
@@ -149,6 +152,8 @@ function insertDocumentFrames(slidehubContainer) {
  * Starts off the document loading process. Determines which document should be
  * loaded and sets up two iterators. They will be used to load new documents
  * when needed.
+ *
+ * @returns {HTMLElement}
  */
 function loadTargetDocument() {
   const documentName = determineTargetDocument();
@@ -163,7 +168,8 @@ function loadTargetDocument() {
   // needs to be advanced manually, so it can’t be used to load that document
   // again.
   store.prevIterator.next();
-  loadInitialDocument(store.nextIterator.next());
+
+  return loadInitialDocument(store.nextIterator.next());
 }
 
 /**
