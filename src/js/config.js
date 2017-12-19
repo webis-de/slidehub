@@ -16,6 +16,7 @@ export { config };
  *
  * @typedef ConfigPropertySelector
  * @type {object}
+ * @property {string} slidehub
  * @property {string} doc
  * @property {string} scrollbox
  * @property {string} itemContainer
@@ -48,6 +49,7 @@ const config = {
 
   // Selectors for UI components
   selector: {
+    slidehub: '.slidehub-container',
     doc: '.doc',
     scrollbox: '.doc-scrollbox',
     itemContainer: '.page-container',

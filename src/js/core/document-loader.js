@@ -49,6 +49,7 @@ const store = {
   batchSize: 5,
 
   classes: {
+    slidehub: config.selector.slidehub.slice(1),
     doc: config.selector.doc.slice(1),
     scrollbox: config.selector.scrollbox.slice(1),
     itemContainer: config.selector.itemContainer.slice(1),
@@ -108,7 +109,7 @@ function parseDocumentsData(documentsData) {
  */
 function createSlidehubContainer() {
   const slidehubContainer = document.createElement('div');
-  slidehubContainer.classList.add('slidehub-container');
+  slidehubContainer.classList.add(store.classes.slidehub);
 
   // Expose highlight color override to the DOM as a CSS custom property.
   // This allows CSS to use inside of a rule declaration.
