@@ -90,6 +90,7 @@
 }
 
 .doc-meta {
+  align-self: flex-start;
   padding: calc(var(--spacing) / 2);
 }
 
