@@ -24,6 +24,7 @@ export { DocumentLoader };
  *
  * @typedef StorePropertyClasses
  * @type {object}
+ * @property {string} slidehub
  * @property {string} doc
  * @property {string} scrollbox
  * @property {string} itemContainer
