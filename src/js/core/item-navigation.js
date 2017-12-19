@@ -1,5 +1,5 @@
 import { config } from '../config';
-import { clamp, getFloatPropertyValue, getOuterWidth } from '../util';
+import { clamp, getFloatPropertyValue, getOuterWidth, numberOfVisibleElements } from '../util';
 import { getActiveDocument, setActiveDocument } from './document-navigation';
 
 export { navigateItem, getActiveItem, setActiveItem, getItemCount, determineItemWidth };
@@ -53,7 +53,8 @@ function itemsAligned() {
 function alignItems(distance) {
   const currentScrollPos = getScrollPos();
   const lastItemPos = getItemCount() - 1;
-  const maxScrollPos = lastItemPos - getFullyVisibleItems(getActiveDocument());
+  const numberOfVisibleItems = numberOfVisibleElements(getActiveDocument(), itemWidth);
+  const maxScrollPos = lastItemPos - numberOfVisibleItems;
   const alignedScrollPos = clamp(Math.round(currentScrollPos), 0, maxScrollPos);
 
   setScrollPos(alignedScrollPos);
@@ -79,8 +80,9 @@ function updateActiveItem(distance) {
  */
 function allItemsVisible() {
   const activeDoc = getActiveDocument();
+  const numberOfVisibleItems = numberOfVisibleElements(activeDoc, itemWidth);
 
-  return getItemCount() <= getFullyVisibleItems(activeDoc);
+  return getItemCount() <= numberOfVisibleItems;
 }
 
 /**
@@ -102,17 +104,6 @@ function activeItemInView() {
 }
 
 /**
- * Calculates the number of items that would be fully visible.
- *
- * @param {Element} doc
- * @returns {number}
- */
-function getFullyVisibleItems(doc) {
-  const docWidth = getFloatPropertyValue(doc, 'width');
-  return Math.floor(docWidth / itemWidth);
-}
-
-/**
  * Returns the current scroll position.
  *
  * @returns {number}
@@ -127,7 +118,8 @@ function getScrollPos() {
  * @param {number} itemPos
  */
 function setScrollPos(itemPos) {
-  const maxPos = getItemCount() - getFullyVisibleItems(getActiveDocument());
+  const numberOfVisibleItems = numberOfVisibleElements(getActiveDocument(), itemWidth);
+  const maxPos = getItemCount() - numberOfVisibleItems;
   itemPos = clamp(itemPos, 0, maxPos);
 
   getScrollbox().scrollLeft = itemPos * itemWidth;
@@ -145,10 +137,10 @@ function getScrollbox() {
 /**
  * Returns all items as an HTMLCollection.
  *
- * @returns {HTMLCollection}
+ * @returns {NodeListOf<Element>}
  */
 function getItems() {
-  return getActiveItem().parentElement.children;
+  return getActiveItem().parentElement.querySelectorAll('[data-page]');
 }
 
 /**
@@ -157,7 +149,7 @@ function getItems() {
  * @returns {number}
  */
 function getItemCount() {
-  return getActiveItem().parentElement.childElementCount;
+  return getItems().length;
 }
 
 /**
