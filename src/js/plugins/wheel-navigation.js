@@ -2,23 +2,24 @@
  * Wheel Navigation.
  */
 
-import { listener, getOuterWidth } from '../util';
 import { config } from '../config';
-import { navigateItem, exposeScrollboxWidth } from '../core/item-navigation';
-import { getSelectedDocument } from '../core/document-navigation';
+import { listener } from '../util';
+import { navigateItemInDocument, exposeScrollboxWidth } from '../core/item-navigation';
 
 export { WheelNavigation };
 
 const WheelNavigation = {
   enabled: true,
-  name: 'item-navigation',
-  description: 'Navigate pages with the mouse wheel by holding down Shift',
+  name: 'wheel-navigation',
+  description: 'Navigate pages with Shift + Mouse Wheel',
   enable() {
     enableModifier();
+    document.addEventListener('mousemove', storeCurrentDocument, listener.passive);
     document.addEventListener('wheel', handleWheelNavigation, listener.active);
   },
   disable() {
     disableModifier();
+    document.removeEventListener('mousemove', storeCurrentDocument);
     document.removeEventListener('wheel', handleWheelNavigation, listener.active);
   }
 };
@@ -57,18 +58,13 @@ function handleWheelNavigation(event) {
     event.preventDefault();
 
     const delta = event[scrollingDirection.delta];
-    navigateItem(doc, Math.sign(delta));
+    navigateItemInDocument(doc, Math.sign(delta));
   }
 }
 
 /**
  * Modifier keys.
  */
-
-// Maps key codes to key names
-const modifierKeyNames = {
-  16: 'shiftKey'
-};
 
 /**
  * Wrapper for enabling all event listeners related to modifier handling.
@@ -88,16 +84,23 @@ function disableModifier() {
   window.removeEventListener('blur', onModifierBlur, listener.passive);
 }
 
+let currentDocument;
+
+/**
+ * @param {MouseEvent} event
+ */
+function storeCurrentDocument(event) {
+  currentDocument = event.target.closest(config.selector.doc);
+}
+
 /**
  * Displays a special cursor when the modifier is pressed.
  *
  * @param {KeyboardEvent} event
  */
 function onModifierDown(event) {
-  const modifierKey = modifierKeyNames[event.keyCode];
-  if (modifierKey === 'shiftKey') {
-    const doc = getSelectedDocument().querySelector(config.selector.itemContainer);
-    doc.style.setProperty('cursor', 'ew-resize');
+  if (currentDocument && event.keyCode === 16) {
+    currentDocument.style.setProperty('cursor', 'ew-resize');
   }
 }
 
@@ -107,10 +110,8 @@ function onModifierDown(event) {
  * @param {KeyboardEvent} event
  */
 function onModifierUp(event) {
-  const modifierKey = modifierKeyNames[event.keyCode];
-  if (modifierKey === 'shiftKey') {
-    const doc = getSelectedDocument().querySelector(config.selector.itemContainer);
-    doc.style.setProperty('cursor', 'auto');
+  if (currentDocument && event.keyCode === 16) {
+    currentDocument.style.setProperty('cursor', 'auto');
   }
 }
 
@@ -118,6 +119,7 @@ function onModifierUp(event) {
  * Removes the special cursor when the user somehow leaves the page.
  */
 function onModifierBlur() {
-  const doc = getSelectedDocument().querySelector(config.selector.itemContainer);
-  doc.style.setProperty('cursor', 'auto');
+  if (currentDocument) {
+    currentDocument.style.setProperty('cursor', 'auto');
+  }
 }
