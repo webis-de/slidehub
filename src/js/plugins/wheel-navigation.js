@@ -5,7 +5,7 @@
 import { listener, getOuterWidth } from '../util';
 import { config } from '../config';
 import { navigateItem, storeScrollboxWidthInDOM } from '../core/item-navigation';
-import { getActiveDocument, setActiveDocument } from '../core/document-navigation';
+import { getSelectedDocument } from '../core/document-navigation';
 
 export { WheelNavigation };
 
@@ -48,19 +48,16 @@ function handleWheelNavigation(event) {
   const scrollingDirection = ratio < 1 ? scrolling.vertical : scrolling.horizontal;
 
   if (scrollingDirection === scrolling.horizontal) {
-    setActiveDocument(doc);
     storeScrollboxWidthInDOM();
   }
 
   // When scrolling vertically, only trigger navigation when modifier is pressed
   if (scrollingDirection === scrolling.vertical && event.shiftKey) {
-    setActiveDocument(doc);
-
     // Prevent vertical scrolling
     event.preventDefault();
 
     const delta = event[scrollingDirection.delta];
-    navigateItem(Math.sign(delta));
+    navigateItem(doc, Math.sign(delta));
   }
 }
 
@@ -99,7 +96,7 @@ function disableModifier() {
 function onModifierDown(event) {
   const modifierKey = modifierKeyNames[event.keyCode];
   if (modifierKey === 'shiftKey') {
-    const doc = getActiveDocument().querySelector(config.selector.itemContainer);
+    const doc = getSelectedDocument().querySelector(config.selector.itemContainer);
     doc.style.setProperty('cursor', 'ew-resize');
   }
 }
@@ -112,7 +109,7 @@ function onModifierDown(event) {
 function onModifierUp(event) {
   const modifierKey = modifierKeyNames[event.keyCode];
   if (modifierKey === 'shiftKey') {
-    const doc = getActiveDocument().querySelector(config.selector.itemContainer);
+    const doc = getSelectedDocument().querySelector(config.selector.itemContainer);
     doc.style.setProperty('cursor', 'auto');
   }
 }
@@ -121,6 +118,6 @@ function onModifierUp(event) {
  * Removes the special cursor when the user somehow leaves the page.
  */
 function onModifierBlur() {
-  const doc = getActiveDocument().querySelector(config.selector.itemContainer);
+  const doc = getSelectedDocument().querySelector(config.selector.itemContainer);
   doc.style.setProperty('cursor', 'auto');
 }

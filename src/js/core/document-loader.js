@@ -6,7 +6,7 @@
 
 import { config } from '../config';
 import { startImageObserver } from './image-loader';
-import { setActiveDocument } from './document-navigation';
+import { selectDocument } from './document-navigation';
 import { setActiveItem, storeItemOuterWidth, storeScrollboxWidthInDOM } from './item-navigation';
 import { LinkedMap, getFloatPropertyValue, getOuterWidth } from '../util';
 
@@ -214,7 +214,7 @@ function getFragmentIdentifier(url) {
 function loadInitialDocument(iteratorResult) {
   const initialDocument = loadDocument(iteratorResult, 'beforeend');
 
-  setActiveDocument(initialDocument);
+  selectDocument(initialDocument);
 
   return initialDocument;
 }
@@ -261,7 +261,7 @@ function loadDocument(iteratorResult, insertPosition) {
 
   const doc = insertDocument(documentData);
 
-  setActiveItem(doc.querySelector(config.selector.item));
+  setActiveItem(doc, doc.querySelector(config.selector.item));
   startImageObserver(doc);
 
   store.observer.observe(doc);

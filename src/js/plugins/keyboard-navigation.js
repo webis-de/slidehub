@@ -4,7 +4,7 @@
 
 import { listener } from '../util';
 import { navigateItem, getItemCount } from '../core/item-navigation';
-import { navigateDocument } from '../core/document-navigation';
+import { navigateDocument, getSelectedDocument } from '../core/document-navigation';
 
 export { KeyboardNavigationModule };
 
@@ -59,13 +59,15 @@ const controlKey = Object.freeze({
   homeKey: {
     direction: -1,
     trigger: function() {
-      navigateItem(this.direction * getItemCount());
+      const selectedDocument = getSelectedDocument();
+      navigateItem(selectedDocument, this.direction * getItemCount(selectedDocument));
     }
   },
   endKey: {
     direction: 1,
     trigger: function() {
-      navigateItem(this.direction * getItemCount());
+      const selectedDocument = getSelectedDocument();
+      navigateItem(selectedDocument, this.direction * getItemCount(selectedDocument));
     }
   },
   pageUp: {
@@ -83,13 +85,15 @@ const controlKey = Object.freeze({
   arrowLeft: {
     direction: -1,
     trigger: function(event) {
-      navigateItem(this.direction * (event.shiftKey ? 3 : 1));
+      const selectedDocument = getSelectedDocument();
+      navigateItem(selectedDocument, this.direction * (event.shiftKey ? 3 : 1));
     }
   },
   arrowRight: {
     direction: 1,
     trigger: function(event) {
-      navigateItem(this.direction * (event.shiftKey ? 3 : 1));
+      const selectedDocument = getSelectedDocument();
+      navigateItem(selectedDocument, this.direction * (event.shiftKey ? 3 : 1));
     }
   },
   arrowUp: {

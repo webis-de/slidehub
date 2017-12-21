@@ -1,6 +1,6 @@
 import { config } from '../config';
-import { clamp, getFloatPropertyValue, numberOfVisibleElements, getOuterWidth } from '../util';
-import { getActiveDocument, setActiveDocument } from './document-navigation';
+import { clamp, numberOfVisibleElements, getOuterWidth } from '../util';
+import { getSelectedDocument } from './document-navigation';
 
 export {
   navigateItem,
@@ -14,24 +14,25 @@ export {
 /**
  * Main handler for item navigation.
  *
+ * @param {Element} doc
  * @param {number} distance
  */
-function navigateItem(distance) {
-  storeVisibleItemsInDOM(numberOfVisibleItems());
+function navigateItem(doc, distance) {
+  exposeCustomProperty('--visible-pages', numberOfVisibleItems(doc));
 
-  if (!itemPositionIsAligned()) {
-    setItemPos(Math.round(getItemPos()));
+  if (!itemPositionIsAligned(doc)) {
+    setItemPos(doc, Math.round(getItemPos(doc)));
   }
 
-  updateActiveItem(distance);
+  updateActiveItem(doc, distance);
 
   // If all items are already visible, we’re done here.
-  if (allItemsVisible()) {
+  if (allItemsVisible(doc)) {
     return;
   }
 
-  const currentScrollPos = getItemPos();
-  const newItemPos = calculateNewItemPos(getItemPos() + distance);
+  const currentScrollPos = getItemPos(doc);
+  const newItemPos = calculateNewItemPos(doc, getItemPos(doc) + distance);
 
   // Nothing to gain, current position is already the destination.
   if (currentScrollPos === newItemPos) {
@@ -41,20 +42,21 @@ function navigateItem(distance) {
   // If the active item is already inside the view, we’re done here.
   // When an item can be moved to the first column, this behavior is disabled
   // as I prefer keeping the active item in the first column in this case.
-  if (!config.allowLastPageInFirstColumn && activeItemInView()) {
+  if (!config.allowLastPageInFirstColumn && activeItemInView(doc)) {
     return;
   }
 
-  setItemPos(newItemPos);
+  setItemPos(doc, newItemPos);
 }
 
 /**
  * Returns true if items are aligned within a document, false otherwise.
  *
+ * @param {Element} doc
  * @returns {boolean}
  */
-function itemPositionIsAligned() {
-  if (getItemPos() % 1 === 0) {
+function itemPositionIsAligned(doc) {
+  if (getItemPos(doc) % 1 === 0) {
     return true;
   }
 
@@ -64,35 +66,38 @@ function itemPositionIsAligned() {
 /**
  * Determines the new active item.
  *
+ * @param {Element} doc
  * @param {number} distance
  */
-function updateActiveItem(distance) {
-  const currentPos = getActiveItemPos();
-  const targetPos = clamp(currentPos + distance, 0, getItemCount() - 1);
+function updateActiveItem(doc, distance) {
+  const currentPos = getActiveItemPos(doc);
+  const targetPos = clamp(currentPos + distance, 0, getItemCount(doc) - 1);
 
-  const items = getItems();
-  setActiveItem(items.item(targetPos));
+  const items = getItems(doc);
+  setActiveItem(doc, items.item(targetPos));
 }
 
 /**
  * Returns true if all items are visible within a document, false otherwise.
  *
+ * @param {Element} doc
  * @returns {boolean}
  */
-function allItemsVisible() {
-  const activeDoc = getActiveDocument();
-  return getItemCount() <= numberOfVisibleItems();
+function allItemsVisible(doc) {
+  const activeDoc = getSelectedDocument();
+  return getItemCount(doc) <= numberOfVisibleItems(doc);
 }
 
 /**
  * Tests whether a documents’ active item is completely in view (i.e. the item
  * is completely visible and not occluded).
  *
+ * @param {Element} doc
  * @returns {boolean}
  */
-function activeItemInView() {
-  const docRect = getActiveDocument().getBoundingClientRect();
-  const itemRect = getActiveItem().getBoundingClientRect();
+function activeItemInView(doc) {
+  const docRect = getSelectedDocument().getBoundingClientRect();
+  const itemRect = getActiveItem(doc).getBoundingClientRect();
 
   return (
     docRect.left <= itemRect.left &&
@@ -105,31 +110,34 @@ function activeItemInView() {
 /**
  * Returns the current item position.
  *
+ * @param {Element} doc
  * @returns {number}
  */
-function getItemPos() {
-  return getScrollbox().scrollLeft / itemWidth;
+function getItemPos(doc) {
+  return getScrollbox(doc).scrollLeft / itemWidth;
 }
 
 /**
  * Sets a new item position.
  *
+ * @param {Element} doc
  * @param {number} itemPos
  */
-function setItemPos(itemPos) {
-  const newItemPos = calculateNewItemPos(itemPos);
-  getScrollbox().scrollLeft = newItemPos * itemWidth;
+function setItemPos(doc, itemPos) {
+  const newItemPos = calculateNewItemPos(doc, itemPos);
+  getScrollbox(doc).scrollLeft = newItemPos * itemWidth;
 }
 
 /**
  *
+ * @param {Element} doc
  * @param {number} itemPos
  * @returns {number}
  */
-function calculateNewItemPos(itemPos) {
-  const visibleItems = numberOfVisibleItems();
+function calculateNewItemPos(doc, itemPos) {
+  const visibleItems = numberOfVisibleItems(doc);
   const invalidItemPositions = config.allowLastPageInFirstColumn ? 1 : visibleItems;
-  const maxPos = getItemCount() - invalidItemPositions;
+  const maxPos = getItemCount(doc) - invalidItemPositions;
 
   return clamp(itemPos, 0, maxPos);
 }
@@ -137,58 +145,62 @@ function calculateNewItemPos(itemPos) {
 /**
  * Returns the scrollbox for the currently active document.
  *
+ * @param {Element} doc
  * @returns {Element}
  */
-function getScrollbox() {
-  return getActiveDocument().querySelector(config.selector.scrollbox);
+function getScrollbox(doc) {
+  return doc.querySelector(config.selector.scrollbox);
 }
 
 /**
  * Returns all items as an HTMLCollection.
  *
+ * @param {Element} doc
  * @returns {NodeListOf<Element>}
  */
-function getItems() {
-  return getActiveItem().parentElement.querySelectorAll('[data-page]');
+function getItems(doc) {
+  return doc.parentElement.querySelectorAll('[data-page]');
 }
 
 /**
  * Returns the number of items.
  *
+ * @param {Element} doc
  * @returns {number}
  */
-function getItemCount() {
-  return getItems().length;
+function getItemCount(doc) {
+  return getItems(doc).length;
 }
 
 /**
  * Returns the position of the currently active item.
  *
+ * @param {Element} doc
  * @returns {number}
  */
-function getActiveItemPos() {
-  return Array.from(getItems()).indexOf(getActiveItem());
+function getActiveItemPos(doc) {
+  return Array.from(getItems(doc)).indexOf(getActiveItem(doc));
 }
 
 /**
  * Returns the currently active item.
  *
+ * @param {Element} doc
  * @returns {Element}
  */
-function getActiveItem() {
-  const activeDoc = getActiveDocument();
-
-  return activeDoc.querySelector(`${config.selector.item}.active`);
+function getActiveItem(doc) {
+  return doc.querySelector(`${config.selector.item}.active`);
 }
 
 /**
  * Sets a new active item.
  *
+ * @param {Element} doc
  * @param {Element} targetItem
  */
-function setActiveItem(targetItem) {
+function setActiveItem(doc, targetItem) {
   const itemContainer = targetItem.parentElement;
-  const activeItem = getActiveItem();
+  const activeItem = getActiveItem(doc);
   if (activeItem && itemContainer.contains(activeItem)) {
     activeItem.classList.remove('active');
   }
@@ -212,21 +224,23 @@ function storeItemOuterWidth(itemOuterWidth) {
 /**
  * Wrapper for {@link numberOfVisibleElements}.
  *
+ * @param {Element} doc
  * @returns {number}
  */
-function numberOfVisibleItems() {
-  return numberOfVisibleElements(getActiveDocument(), itemWidth);
+function numberOfVisibleItems(doc) {
+  return numberOfVisibleElements(doc, itemWidth);
 }
 
 /**
- * Stores the number of visible items in the DOM in order to expose the value
- * to the CSS.
+ * Exposes data to the DOM node which represents the Slidehub container. This
+ * allows accessing the data from CSS.
  *
- * @param {number} visibleItems
+ * @param {string} propertyName
+ * @param {string} value
  */
-function storeVisibleItemsInDOM(visibleItems) {
+function exposeCustomProperty(propertyName, value) {
   const slidehubContainer = document.querySelector(config.selector.slidehub);
-  slidehubContainer.style.setProperty('--visible-pages', visibleItems.toString());
+  slidehubContainer.style.setProperty(propertyName, value);
 }
 
 let storedScrollboxWidth;

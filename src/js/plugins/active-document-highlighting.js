@@ -7,19 +7,19 @@
 import { listener } from '../util';
 import { config } from '../config';
 import { setActiveItem } from '../core/item-navigation';
-import { setActiveDocument } from '../core/document-navigation';
+import { selectDocument } from '../core/document-navigation';
 
 export { ActiveDocumentHighlighting };
 
 const ActiveDocumentHighlighting = {
-  enabled: true,
+  enabled: false,
   name: 'highlight-active-document',
   description: 'Highlight the active document on hover',
   enable() {
     document.addEventListener('mousemove', handleHighlightOnHover, listener.passive);
   },
   disable() {
-    document.removeEventListener('mousemove', handleHighlightOnHover, listener.passive);
+    document.removeEventListener('mousemove', handleHighlightOnHover);
   }
 };
 
@@ -30,11 +30,11 @@ function handleHighlightOnHover(event) {
   if (event.target instanceof Element) {
     const doc = event.target.closest(config.selector.doc);
     if (doc) {
-      setActiveDocument(doc);
+      selectDocument(doc);
 
       const item = event.target.closest(config.selector.item);
       if (item) {
-        setActiveItem(item);
+        setActiveItem(doc, item);
       }
     }
   }

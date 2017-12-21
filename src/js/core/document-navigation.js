@@ -1,7 +1,7 @@
 import { clamp } from '../util';
 import { config } from '../config';
 
-export { navigateDocument, getActiveDocument, setActiveDocument };
+export { navigateDocument, getSelectedDocument, selectDocument };
 
 let activeDocument;
 
@@ -17,7 +17,7 @@ function navigateDocument(direction) {
     return;
   }
 
-  setActiveDocument(targetDoc);
+  selectDocument(targetDoc);
 
   const offset = getVerticalOffsets(targetDoc);
   const extraPart = targetDoc.clientHeight / 2;
@@ -63,7 +63,7 @@ function getVerticalOffsets(element) {
  * @returns {number}
  */
 function getDocumentPos() {
-  return Array.from(getDocuments()).indexOf(getActiveDocument());
+  return Array.from(getDocuments()).indexOf(getSelectedDocument());
 }
 
 /**
@@ -72,7 +72,7 @@ function getDocumentPos() {
  * @returns {HTMLCollection}
  */
 function getDocuments() {
-  return getActiveDocument().parentElement.children;
+  return getSelectedDocument().parentElement.children;
 }
 
 /**
@@ -80,7 +80,7 @@ function getDocuments() {
  *
  * @returns {Element}
  */
-function getActiveDocument() {
+function getSelectedDocument() {
   if (!activeDocument) {
     activeDocument = document.querySelector(config.selector.doc);
   }
@@ -93,7 +93,7 @@ function getActiveDocument() {
  *
  * @param {Element} doc
  */
-function setActiveDocument(doc) {
+function selectDocument(doc) {
   // Remove active class from currently active document
   if (activeDocument) {
     activeDocument.classList.remove('active');
