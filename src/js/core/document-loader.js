@@ -7,7 +7,7 @@
 import { config } from '../config';
 import { startImageObserver } from './image-loader';
 import { selectDocument } from './document-navigation';
-import { setActiveItem, storeItemOuterWidth, storeScrollboxWidthInDOM } from './item-navigation';
+import { setActiveItem, storeItemOuterWidth, exposeScrollboxWidth } from './item-navigation';
 import { LinkedMap, getFloatPropertyValue, getOuterWidth } from '../util';
 
 export { DocumentLoader };
@@ -70,7 +70,7 @@ const DocumentLoader = {
       insertDocumentFrames(slidehubContainer);
 
       const targetDoc = loadTargetDocument();
-      storeScrollboxWidthInDOM();
+      exposeScrollboxWidth();
       storeItemOuterWidthInDOM(slidehubContainer, targetDoc);
 
       // Load one batch in both directions

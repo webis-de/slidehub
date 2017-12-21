@@ -4,7 +4,7 @@
 
 import { listener, getOuterWidth } from '../util';
 import { config } from '../config';
-import { navigateItem, storeScrollboxWidthInDOM } from '../core/item-navigation';
+import { navigateItem, exposeScrollboxWidth } from '../core/item-navigation';
 import { getSelectedDocument } from '../core/document-navigation';
 
 export { WheelNavigation };
@@ -48,7 +48,7 @@ function handleWheelNavigation(event) {
   const scrollingDirection = ratio < 1 ? scrolling.vertical : scrolling.horizontal;
 
   if (scrollingDirection === scrolling.horizontal) {
-    storeScrollboxWidthInDOM();
+    exposeScrollboxWidth();
   }
 
   // When scrolling vertically, only trigger navigation when modifier is pressed

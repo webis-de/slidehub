@@ -8,7 +8,7 @@ export {
   setActiveItem,
   getItemCount,
   storeItemOuterWidth,
-  storeScrollboxWidthInDOM
+  exposeScrollboxWidth
 };
 
 /**
@@ -19,7 +19,7 @@ export {
  */
 function navigateItem(doc, distance) {
   exposeCustomProperty('--visible-pages', numberOfVisibleItems(doc));
-  storeScrollboxWidthInDOM();
+  exposeScrollboxWidth();
 
   if (!itemPositionIsAligned(doc)) {
     setItemPos(doc, Math.round(getItemPos(doc)));
@@ -253,7 +253,7 @@ function exposeCustomProperty(propertyName, value) {
  * state varialbe private to this function. Otherwise, when storing it outside
  * the function, it would be exposed to the whole module.
  */
-const storeScrollboxWidthInDOM = (function() {
+const exposeScrollboxWidth = (function() {
   // State variable. Will be kept alive so that further calls to this function
   // can re-use its value.
   let storedScrollboxWidth;
