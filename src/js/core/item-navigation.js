@@ -4,6 +4,7 @@ import { getSelectedDocument } from './document-navigation';
 
 export {
   navigateItem,
+  navigateItemInDocument,
   navigateItemToBoundary,
   getActiveItem,
   setActiveItem,
@@ -18,7 +19,7 @@ export {
  * @param {number} distance
  * @public
  */
-function navigateItem(doc, distance) {
+function navigateItemInDocument(doc, distance) {
   exposeCustomProperty('--visible-pages', numberOfVisibleItems(doc));
   exposeScrollboxWidth();
 
@@ -52,12 +53,20 @@ function navigateItem(doc, distance) {
 }
 
 /**
- * @param {Element} doc
+ * @param {number} distance
+ * @public
+ */
+function navigateItem(distance) {
+  navigateItemInDocument(getSelectedDocument(), distance);
+}
+
+/**
  * @param {number} direction
  * @public
  */
-function navigateItemToBoundary(doc, direction) {
-  navigateItem(doc, direction * getItemCount(doc));
+function navigateItemToBoundary(direction) {
+  const doc = getSelectedDocument();
+  navigateItemInDocument(doc, direction * getItemCount(doc));
 }
 
 /**
