@@ -1,8 +1,7 @@
 export { config };
 
 /**
- * @typedef Config
- * @type {object}
+ * @typedef {object} Config
  * @property {ConfigPropertyAssets} assets
  * @property {boolean} metaSlide
  * @property {boolean} allowLastPageInFirstColumn
@@ -10,13 +9,11 @@ export { config };
  * @property {string|null} highlightColor
  * @property {ConfigPropertySelector} selector
  *
- * @typedef ConfigPropertyAssets
- * @type {object}
+ * @typedef {object} ConfigPropertyAssets
  * @property {string} documents
  * @property {string} images
  *
- * @typedef ConfigPropertySelector
- * @type {object}
+ * @typedef {object} ConfigPropertySelector
  * @property {string} slidehub
  * @property {string} doc
  * @property {string} scrollbox
