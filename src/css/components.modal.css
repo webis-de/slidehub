@@ -24,6 +24,9 @@
   padding: calc(var(--spacing) * 2);
   box-shadow: 0 0 10px #000;
   background-color: var(--c-background);
+  max-height: 100vh;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
 }
 
 .modal__close {
