@@ -4,9 +4,9 @@ import { getSelectedDocument } from './document-navigation';
 
 export {
   navigateItem,
+  navigateItemToBoundary,
   getActiveItem,
   setActiveItem,
-  getItemCount,
   storeItemOuterWidth,
   exposeScrollboxWidth
 };
@@ -16,6 +16,7 @@ export {
  *
  * @param {Element} doc
  * @param {number} distance
+ * @public
  */
 function navigateItem(doc, distance) {
   exposeCustomProperty('--visible-pages', numberOfVisibleItems(doc));
@@ -48,6 +49,15 @@ function navigateItem(doc, distance) {
   }
 
   setItemPos(doc, newItemPos);
+}
+
+/**
+ * @param {Element} doc
+ * @param {number} direction
+ * @public
+ */
+function navigateItemToBoundary(doc, direction) {
+  navigateItem(doc, direction * getItemCount(doc));
 }
 
 /**

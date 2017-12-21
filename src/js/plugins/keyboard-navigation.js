@@ -3,7 +3,7 @@
  */
 
 import { listener } from '../util';
-import { navigateItem, getItemCount } from '../core/item-navigation';
+import { navigateItem, navigateItemToBoundary } from '../core/item-navigation';
 import { navigateDocument, getSelectedDocument } from '../core/document-navigation';
 
 export { KeyboardNavigationModule };
@@ -33,13 +33,13 @@ function handleKeyboardInput(event) {
   }
 }
 
-/*
-* Maps key codes to key names.
-* It’s used within keyboard-related event handlers in order to work with the
-* keys’ names instead of key codes.
-*
-* Removing an entry here disables its application-related interactions
-*/
+/**
+ * Maps key codes to key names.
+ * It’s used within keyboard-related event handlers in order to work with the
+ * keys’ names instead of key codes.
+ *
+ * Removing an entry here disables its application-related interactions
+ */
 const controlKeyNames = Object.freeze({
   33: 'pageUp',
   34: 'pageDown',
@@ -51,23 +51,29 @@ const controlKeyNames = Object.freeze({
   40: 'arrowDown'
 });
 
-/*
-* Maps control keys to a trigger function that is executed when the key is
-* pressed.
-*/
+/**
+ * Maps control keys to a trigger function that is executed when the key is
+ * pressed.
+ *
+ * @typedef {object} ControlKeyObject
+ * @property {number} direction
+ * @property {function(): void} trigger
+ *
+ * @type {Object.<string, ControlKeyObject>}
+ */
 const controlKey = Object.freeze({
   homeKey: {
     direction: -1,
     trigger: function() {
       const selectedDocument = getSelectedDocument();
-      navigateItem(selectedDocument, this.direction * getItemCount(selectedDocument));
+      navigateItemToBoundary(selectedDocument, this.direction);
     }
   },
   endKey: {
     direction: 1,
     trigger: function() {
       const selectedDocument = getSelectedDocument();
-      navigateItem(selectedDocument, this.direction * getItemCount(selectedDocument));
+      navigateItemToBoundary(selectedDocument, this.direction);
     }
   },
   pageUp: {
