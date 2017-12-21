@@ -19,6 +19,7 @@ export {
  */
 function navigateItem(doc, distance) {
   exposeCustomProperty('--visible-pages', numberOfVisibleItems(doc));
+  storeScrollboxWidthInDOM();
 
   if (!itemPositionIsAligned(doc)) {
     setItemPos(doc, Math.round(getItemPos(doc)));
@@ -243,16 +244,29 @@ function exposeCustomProperty(propertyName, value) {
   slidehubContainer.style.setProperty(propertyName, value);
 }
 
-let storedScrollboxWidth;
+/**
+ * Exposes the current width of the first scrollbox to the DOM.
+ *
+ * This function is a closure. It is instanciated once, creating a state
+ * variable and keeping it alive. Also, an inner function is returned by the
+ * function which uses the state variable. The purpose for this is keeping the
+ * state varialbe private to this function. Otherwise, when storing it outside
+ * the function, it would be exposed to the whole module.
+ */
+const storeScrollboxWidthInDOM = (function() {
+  // State variable. Will be kept alive so that further calls to this function
+  // can re-use its value.
+  let storedScrollboxWidth;
 
-function storeScrollboxWidthInDOM() {
-  const scrollbox = document.querySelector(config.selector.scrollbox);
-  const scrollboxWidth = getOuterWidth(scrollbox);
+  return function() {
+    const scrollbox = document.querySelector(config.selector.scrollbox);
+    const scrollboxWidth = getOuterWidth(scrollbox);
 
-  if (storedScrollboxWidth !== scrollboxWidth) {
-    storedScrollboxWidth = scrollboxWidth;
+    if (storedScrollboxWidth !== scrollboxWidth) {
+      storedScrollboxWidth = scrollboxWidth;
+      console.log(storedScrollboxWidth);
 
-    const slidehubContainer = document.querySelector(config.selector.slidehub);
-    slidehubContainer.style.setProperty('--scrollbox-width', scrollboxWidth + 'px');
-  }
-}
+      exposeCustomProperty('--scrollbox-width', scrollboxWidth + 'px');
+    }
+  };
+})();
