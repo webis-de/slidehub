@@ -7,7 +7,7 @@
 
 import { config } from '../config';
 import { listener } from '../util';
-import { getActiveItem } from '../core/item-navigation';
+import { getSelectedItem } from '../core/item-navigation';
 import { getSelectedDocument } from '../core/document-navigation';
 
 export { ItemLinking };
@@ -69,16 +69,15 @@ function handleOpenIntent(targetElement, openInNewTab) {
 }
 
 /**
- * Opens the document source for the current active document in the browser.
+ * Opens the document source for the current selected document in the browser.
  *
  * @param {boolean} openInNewTab
  */
 function openDocumentSource(openInNewTab) {
-  const activeDoc = getSelectedDocument();
-  const docSource = activeDoc.dataset.docSource;
-  const itemIndex = getActiveItem(activeDoc).dataset.page;
+  const selectedDocument = getSelectedDocument();
+  const itemIndex = getSelectedItem(selectedDocument).dataset.page;
   const fragment = itemIndex !== '0' ? `#page=${itemIndex}` : '';
-  const itemSource = docSource + fragment;
+  const itemSource = selectedDocument.dataset.docSource + fragment;
 
   if (openInNewTab) {
     window.open(itemSource);

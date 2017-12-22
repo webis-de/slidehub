@@ -7,7 +7,7 @@
 import { config } from '../config';
 import { startImageObserver } from './image-loader';
 import { selectDocument } from './document-navigation';
-import { setActiveItem, storeItemOuterWidth, exposeScrollboxWidth } from './item-navigation';
+import { selectItem, storeItemOuterWidth, exposeScrollboxWidth } from './item-navigation';
 import { LinkedMap, getFloatPropertyValue, getOuterWidth } from '../util';
 
 export { DocumentLoader };
@@ -261,7 +261,7 @@ function loadDocument(iteratorResult, insertPosition) {
 
   const doc = insertDocument(documentData);
 
-  setActiveItem(doc, doc.querySelector(config.selector.item));
+  selectItem(doc, doc.querySelector(config.selector.item));
   startImageObserver(doc);
 
   store.observer.observe(doc);

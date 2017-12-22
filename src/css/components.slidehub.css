@@ -33,13 +33,13 @@
   margin: calc(-1 * var(--border-width));
 }
 
-.doc.active {
+.doc.selected {
   --c-text: #000;
   --c-accent: hsl(220, 100%, 15%);
   --c-accent-dark: hsl(220, 100%, 5%);
 
   /*
-  Elevate the active document above other document. This is used to make its
+  Elevate the selected document above other document. This is used to make its
   border visible when negative margins are used to collapse the border
   widths.
   */
@@ -111,8 +111,8 @@
 * Highlighting
 */
 
-.doc.active .page-container::before,
-.doc.active .page.active::before {
+.doc.selected .page-container::before,
+.doc.selected .page.selected::before {
   content: '';
   pointer-events: none;
   position: absolute;
@@ -127,19 +127,19 @@ Make sure that bug [1] doesn’t affect these elements when using custom
 properties on their pseudo elements.
 [1] developer.microsoft.com/en-us/microsoft-edge/platform/issues/11495448/
 */
-.doc.active .page-container {
+.doc.selected .page-container {
   color: inherit !important;
   background-color: transparent !important;
   opacity: inherit !important;
 }
 
-.doc.active .page-container::before {
+.doc.selected .page-container::before {
   background-color: hsl(220, 50%, 40%);
   background-color: var(--c-highlight);
   opacity: 0.15;
 }
 
-.doc.active .page.active::before {
+.doc.selected .page.selected::before {
   border: 2px solid hsl(220, 50%, 40%);
   opacity: 0.25;
 }
@@ -149,12 +149,12 @@ Custom properties don’t work on pseudo elements in Edge 15 [1].
 [1] developer.microsoft.com/en-us/microsoft-edge/platform/issues/11495448/
 In the future, the custom property-based values can be used.
 */
-.doc.active .page-container::before {
+.doc.selected .page-container::before {
   z-index: 220;
   /* z-index: calc(var(--plane-document) + 20); */
 }
 
-.doc.active .page.active::before {
+.doc.selected .page.selected::before {
   z-index: 230;
   /* z-index: calc(var(--plane-document) + 30); */
 }

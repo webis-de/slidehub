@@ -6,8 +6,8 @@ export {
   navigateItem,
   navigateItemInDocument,
   navigateItemToBoundary,
-  getActiveItem,
-  setActiveItem,
+  getSelectedItem,
+  selectItem,
   storeItemOuterWidth,
   exposeScrollboxWidth
 };
@@ -27,7 +27,7 @@ function navigateItemInDocument(doc, distance) {
     setItemPos(doc, Math.round(getItemPos(doc)));
   }
 
-  updateActiveItem(doc, distance);
+  updateSelectedItem(doc, distance);
 
   // If all items are already visible, we’re done here.
   if (allItemsVisible(doc)) {
@@ -42,10 +42,10 @@ function navigateItemInDocument(doc, distance) {
     return;
   }
 
-  // If the active item is already inside the view, we’re done here.
+  // If the selected item is already inside the view, we’re done here.
   // When an item can be moved to the first column, this behavior is disabled
-  // as I prefer keeping the active item in the first column in this case.
-  if (!config.allowLastPageInFirstColumn && activeItemInView(doc)) {
+  // as I prefer keeping the selected item in the first column in this case.
+  if (!config.allowLastPageInFirstColumn && selectedItemInView(doc)) {
     return;
   }
 
@@ -84,17 +84,17 @@ function itemPositionIsAligned(doc) {
 }
 
 /**
- * Determines the new active item.
+ * Determines the new item that should be selected.
  *
  * @param {Element} doc
  * @param {number} distance
  */
-function updateActiveItem(doc, distance) {
-  const currentPos = getActiveItemPos(doc);
+function updateSelectedItem(doc, distance) {
+  const currentPos = getSelectedItemPos(doc);
   const targetPos = clamp(currentPos + distance, 0, getItemCount(doc) - 1);
 
   const items = getItems(doc);
-  setActiveItem(doc, items.item(targetPos));
+  selectItem(doc, items.item(targetPos));
 }
 
 /**
@@ -104,20 +104,19 @@ function updateActiveItem(doc, distance) {
  * @returns {boolean}
  */
 function allItemsVisible(doc) {
-  const activeDoc = getSelectedDocument();
   return getItemCount(doc) <= numberOfVisibleItems(doc);
 }
 
 /**
- * Tests whether a documents’ active item is completely in view (i.e. the item
+ * Tests whether a documents’ selected item is completely in view (i.e. the item
  * is completely visible and not occluded).
  *
  * @param {Element} doc
  * @returns {boolean}
  */
-function activeItemInView(doc) {
+function selectedItemInView(doc) {
   const docRect = getSelectedDocument().getBoundingClientRect();
-  const itemRect = getActiveItem(doc).getBoundingClientRect();
+  const itemRect = getSelectedItem(doc).getBoundingClientRect();
 
   return (
     docRect.left <= itemRect.left &&
@@ -163,7 +162,7 @@ function calculateNewItemPos(doc, itemPos) {
 }
 
 /**
- * Returns the scrollbox for the currently active document.
+ * Returns the scrollbox for of a certain document.
  *
  * @param {Element} doc
  * @returns {Element}
@@ -193,39 +192,42 @@ function getItemCount(doc) {
 }
 
 /**
- * Returns the position of the currently active item.
+ * Returns the position of the currently selected item.
  *
  * @param {Element} doc
  * @returns {number}
  */
-function getActiveItemPos(doc) {
-  return Array.from(getItems(doc)).indexOf(getActiveItem(doc));
+function getSelectedItemPos(doc) {
+  return Array.from(getItems(doc)).indexOf(getSelectedItem(doc));
 }
 
+const selectClassName = 'selected';
+
 /**
- * Returns the currently active item.
+ * Returns the currently selected item.
  *
  * @param {Element} doc
  * @returns {Element}
  */
-function getActiveItem(doc) {
-  return doc.querySelector(`${config.selector.item}.active`);
+function getSelectedItem(doc) {
+  return doc.querySelector(`${config.selector.item}.${selectClassName}`);
 }
 
 /**
- * Sets a new active item.
+ * Sets a new selected item.
  *
  * @param {Element} doc
  * @param {Element} targetItem
  */
-function setActiveItem(doc, targetItem) {
+function selectItem(doc, targetItem) {
   const itemContainer = targetItem.parentElement;
-  const activeItem = getActiveItem(doc);
-  if (activeItem && itemContainer.contains(activeItem)) {
-    activeItem.classList.remove('active');
+  const selectedItem = getSelectedItem(doc);
+  if (selectedItem && itemContainer.contains(selectedItem)) {
+    selectedItem.classList.remove(selectClassName);
   }
 
-  targetItem.classList.add('active');
+  targetItem.classList.add(selectClassName);
+
   if (document.activeElement instanceof HTMLElement) {
     document.activeElement.blur();
   }
@@ -283,7 +285,6 @@ const exposeScrollboxWidth = (function() {
 
     if (storedScrollboxWidth !== scrollboxWidth) {
       storedScrollboxWidth = scrollboxWidth;
-      console.log(storedScrollboxWidth);
 
       exposeCustomProperty('--scrollbox-width', scrollboxWidth + 'px');
     }
