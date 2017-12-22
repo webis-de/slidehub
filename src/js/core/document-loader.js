@@ -115,10 +115,14 @@ function createSlidehubContainer() {
   const slidehubContainer = document.createElement('div');
   slidehubContainer.classList.add(store.classes.slidehub);
 
-  // Expose highlight color override to the DOM as a CSS custom property.
+  // Expose select/highlight color overrides to the DOM.
   // This allows CSS to use inside of a rule declaration.
   if (config.selectColor && config.selectColor !== '') {
     slidehubContainer.style.setProperty('--c-selected', config.selectColor);
+  }
+
+  if (config.highlightColor && config.highlightColor !== '') {
+    slidehubContainer.style.setProperty('--c-highlighted', config.highlightColor);
   }
 
   document.querySelector('[data-slidehub]').appendChild(slidehubContainer);
