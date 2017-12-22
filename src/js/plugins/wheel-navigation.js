@@ -90,7 +90,9 @@ let currentDocument;
  * @param {MouseEvent} event
  */
 function storeCurrentDocument(event) {
-  currentDocument = event.target.closest(config.selector.doc);
+  if (event.target instanceof Element) {
+    currentDocument = event.target.closest(config.selector.doc);
+  }
 }
 
 /**
