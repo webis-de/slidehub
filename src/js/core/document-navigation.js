@@ -3,8 +3,6 @@ import { config } from '../config';
 
 export { navigateDocument, getSelectedDocument, selectDocument };
 
-let activeDocument;
-
 /**
  * Navigates through documents in a certain direction.
  *
@@ -58,7 +56,7 @@ function getVerticalOffsets(element) {
 }
 
 /**
- * Finds the position of the currently active document.
+ * Finds the position of the currently selected document.
  *
  * @returns {number}
  */
@@ -75,33 +73,32 @@ function getDocuments() {
   return getSelectedDocument().parentElement.children;
 }
 
+const selectClassName = 'selected';
+
 /**
- * Returns the currently active document.
+ * Returns the currently selected document.
  *
  * @returns {Element}
  */
 function getSelectedDocument() {
-  if (!activeDocument) {
-    activeDocument = document.querySelector(config.selector.doc);
-  }
-
-  return activeDocument;
+  return document.querySelector(`${config.selector.doc}.${selectClassName}`);
 }
 
 /**
- * Sets a new active document.
+ * Sets a new selected document.
  *
  * @param {Element} doc
  */
 function selectDocument(doc) {
-  // Remove active class from currently active document
-  if (activeDocument) {
-    activeDocument.classList.remove('active');
+  const selectedDocument = getSelectedDocument();
+  // Remove selected class from currently selected document
+  if (selectedDocument) {
+    selectedDocument.classList.remove(selectClassName);
   }
 
-  // Set new active document
-  activeDocument = doc;
-  activeDocument.classList.add('active');
+  // Set new selected document
+  doc.classList.add(selectClassName);
+
   if (document.activeElement instanceof HTMLElement) {
     document.activeElement.blur();
   }
