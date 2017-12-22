@@ -2,7 +2,7 @@
 * Container for all documents
 */
 .slidehub-container {
-  --c-highlight: hsl(220, 50%, 40%);
+  --c-selected: hsl(220, 50%, 40%);
   --page-aspect-ratio: 1.25;
   --page-width: 200px;
   --page-height: calc(var(--page-width) / var(--page-aspect-ratio));
@@ -108,7 +108,7 @@
 }
 
 /*
-* Highlighting
+* Selected Documents & Pages
 */
 
 .doc.selected .page-container::before,
@@ -135,7 +135,7 @@ properties on their pseudo elements.
 
 .doc.selected .page-container::before {
   background-color: hsl(220, 50%, 40%);
-  background-color: var(--c-highlight);
+  background-color: var(--c-selected);
   opacity: 0.15;
 }
 

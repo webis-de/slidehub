@@ -6,6 +6,7 @@ export { config };
  * @property {boolean} metaSlide
  * @property {boolean} allowLastPageInFirstColumn
  * @property {boolean} preserveAspectRatio
+ * @property {string|null} selectColor
  * @property {string|null} highlightColor
  * @property {ConfigPropertySelector} selector
  *
@@ -43,10 +44,13 @@ const config = {
   // Preserve aspect ratio of document items?
   preserveAspectRatio: false,
 
-  // Overrides the default highlight color
+  // Overrides the default select color
   // Takes string values that represent a valid CSS color value; for example:
   // 'transparent', 'tomato', '#f90', 'hsl(220, 50%, 40%)'
-  // Setting highlightColor to `null` will not override the default.
+  // Setting `null` uses the default color.
+  selectColor: null,
+
+  // Overrides the default highlight color.
   highlightColor: null,
 
   // Selectors for UI components
