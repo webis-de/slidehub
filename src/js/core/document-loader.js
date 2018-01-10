@@ -162,7 +162,11 @@ function insertDocumentFrames(slidehubContainer) {
  * @returns {HTMLElement}
  */
 function loadTargetDocument() {
-  const documentName = determineTargetDocument();
+  const fragmentIdentifier = getFragmentIdentifier(window.location.toString());
+
+  const documentName = store.documents.has(fragmentIdentifier)
+    ? fragmentIdentifier
+    : store.documents.keys().next().value;
 
   // Obtain two iterators as pointers for which documents need to be
   // loaded next.
@@ -175,22 +179,7 @@ function loadTargetDocument() {
   // again.
   store.prevIterator.next();
 
-  return loadInitialDocument(store.nextIterator.next());
-}
-
-/**
- * Finds the name for the initial document that should be loaded.
- *
- * @return {string}
- */
-function determineTargetDocument() {
-  const fragmentIdentifier = getFragmentIdentifier(window.location.toString());
-  if (store.documents.has(fragmentIdentifier)) {
-    return fragmentIdentifier;
-  }
-
-  // Return key to first entry
-  return store.documents.keys().next().value;
+  return loadInitialDocument(store.nextIterator.next(), store.documents.has(fragmentIdentifier));
 }
 
 /**
@@ -213,12 +202,19 @@ function getFragmentIdentifier(url) {
  * Manages loading the very first Slidehub document.
  *
  * @param {IteratorResult} iteratorResult
+ * @param {boolean} centerDocumentInView
  * @returns {HTMLElement}
  */
-function loadInitialDocument(iteratorResult) {
+function loadInitialDocument(iteratorResult, centerDocumentInView) {
   const initialDocument = loadDocument(iteratorResult, 'beforeend');
 
   selectDocument(initialDocument);
+
+  if (centerDocumentInView) {
+    const documentHeight = getFloatPropertyValue(initialDocument, 'height');
+
+    setTimeout(() => window.scrollBy(0, -(window.innerHeight / 2 - documentHeight / 2)), 200);
+  }
 
   return initialDocument;
 }
