@@ -3,7 +3,7 @@
 */
 .slidehub-container {
   --c-selected: hsl(220, 50%, 40%);
-  --c-highlighted: hsl(0, 0%, 75%);
+  --c-highlighted: hsl(0, 0%, 65%);
   --page-aspect-ratio: 1.25;
   --page-width: 200px;
   --page-height: calc(var(--page-width) / var(--page-aspect-ratio));
@@ -161,9 +161,13 @@ In the future, the custom property-based values can be used.
 /*
 * Selected & Highlighted Pages
 */
+.doc.selected .page,
+.doc.highlighted .page {
+  border: inherit !important;
+}
 
 .doc.selected .page.selected::before,
-.doc.highlighted .page.highlighted::before {
+.doc.highlighted .page.highlighted:not(.selected)::before {
   content: '';
   pointer-events: none;
   position: absolute;
@@ -174,16 +178,20 @@ In the future, the custom property-based values can be used.
 }
 
 .doc.selected .page.selected::before,
-.doc.highlighted .page.highlighted::before {
+.doc.highlighted .page.highlighted:not(.selected)::before {
   opacity: 0.25;
   z-index: 230;
   /* z-index: calc(var(--plane-document) + 30); */
 }
 
 .doc.selected .page.selected::before {
-  border: 2px solid hsl(220, 50%, 40%);
+  border: 2px solid;
+  border-color: hsl(220, 50%, 40%);
+  border-color: var(--c-selected);
 }
 
-.doc.highlighted .page.highlighted::before {
+.doc.highlighted .page.highlighted:not(.selected)::before {
   border: 2px solid hsl(0, 0%, 75%);
+  border-color: hsl(0, 0%, 75%);
+  border-color: var(--c-highlighted);
 }
