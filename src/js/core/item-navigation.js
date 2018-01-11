@@ -180,7 +180,7 @@ function getScrollbox(doc) {
  * @returns {NodeListOf<Element>}
  */
 function getItems(doc) {
-  return doc.parentElement.querySelectorAll('[data-page]');
+  return doc.querySelectorAll('[data-page]');
 }
 
 /**
