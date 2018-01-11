@@ -2,27 +2,27 @@
  * Wheel Navigation.
  */
 
-import { config } from '../config';
-import { listener } from '../util';
+import { listener } from '../util/passive-event-listener';
 import { navigateItemInDocument, exposeScrollboxWidth } from '../core/item-navigation';
+import { getHighlightedDocument } from '../core/document-navigation';
 
-export { WheelNavigation };
+export { WheelInteraction, initWheelInteraction };
 
-const WheelNavigation = {
-  enabled: true,
-  name: 'wheel-navigation',
+const WheelInteraction = {
+  name: 'wheel-interaction',
   description: 'Navigate pages with Shift + Mouse Wheel',
   enable() {
     enableModifier();
-    document.addEventListener('mousemove', storeCurrentDocument, listener.passive);
-    document.addEventListener('wheel', handleWheelNavigation, listener.active);
-  },
-  disable() {
-    disableModifier();
-    document.removeEventListener('mousemove', storeCurrentDocument);
-    document.removeEventListener('wheel', handleWheelNavigation, listener.active);
   }
 };
+
+/**
+ *
+ * @param {Element} doc
+ */
+function initWheelInteraction(doc) {
+  doc.addEventListener('wheel', handleWheelNavigation, listener.active);
+}
 
 const scrolling = {
   vertical: {
@@ -40,7 +40,8 @@ const scrolling = {
  */
 function handleWheelNavigation(event) {
   // Don’t handle scrolling on elements that are not inside a document
-  const doc = event.target.closest(config.selector.doc);
+  // const doc = event.target.closest(config.selector.doc);
+  const doc = event.currentTarget;
   if (doc === null) {
     return;
   }
@@ -76,33 +77,14 @@ function enableModifier() {
 }
 
 /**
- * Wrapper for disabling all event listeners related to modifier handling.
- */
-function disableModifier() {
-  document.removeEventListener('keydown', onModifierDown, listener.passive);
-  document.removeEventListener('keyup', onModifierUp, listener.passive);
-  window.removeEventListener('blur', onModifierBlur, listener.passive);
-}
-
-let currentDocument;
-
-/**
- * @param {MouseEvent} event
- */
-function storeCurrentDocument(event) {
-  if (event.target instanceof Element) {
-    currentDocument = event.target.closest(config.selector.doc);
-  }
-}
-
-/**
  * Displays a special cursor when the modifier is pressed.
  *
  * @param {KeyboardEvent} event
  */
 function onModifierDown(event) {
-  if (currentDocument && event.keyCode === 16) {
-    currentDocument.style.setProperty('cursor', 'ew-resize');
+  const doc = getHighlightedDocument();
+  if (doc && event.keyCode === 16) {
+    doc.style.setProperty('cursor', 'ew-resize');
   }
 }
 
@@ -112,8 +94,9 @@ function onModifierDown(event) {
  * @param {KeyboardEvent} event
  */
 function onModifierUp(event) {
-  if (currentDocument && event.keyCode === 16) {
-    currentDocument.style.setProperty('cursor', 'auto');
+  const doc = getHighlightedDocument();
+  if (doc && event.keyCode === 16) {
+    doc.style.setProperty('cursor', 'auto');
   }
 }
 
@@ -121,7 +104,8 @@ function onModifierUp(event) {
  * Removes the special cursor when the user somehow leaves the page.
  */
 function onModifierBlur() {
-  if (currentDocument) {
-    currentDocument.style.setProperty('cursor', 'auto');
+  const doc = getHighlightedDocument();
+  if (doc) {
+    doc.style.setProperty('cursor', 'auto');
   }
 }

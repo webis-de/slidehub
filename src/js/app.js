@@ -6,7 +6,7 @@
 
 import './lib/intersection-observer.js';
 import * as plugins from './plugins';
-import { ImageLoader, DocumentLoader, Modal, loadPlugin } from './core';
+import { loadPlugin, ImageLoader, DocumentLoader, Modal, WheelInteraction } from './core';
 
 /**
  * An Immediately Invoked Function Expression, called like that because it’s
@@ -26,6 +26,7 @@ function loadCoreModules() {
   ImageLoader.enable();
   DocumentLoader.enable();
   Modal.enable();
+  WheelInteraction.enable();
 }
 
 /**
