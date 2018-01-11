@@ -4,9 +4,16 @@
  * Loads core modules and plugins.
  */
 
-import './lib/intersection-observer.js';
+import './lib/intersection-observer';
 import * as plugins from './plugins';
-import { loadPlugin, ImageLoader, DocumentLoader, Modal, WheelInteraction } from './core';
+import {
+  loadPlugin,
+  DocumentLoader,
+  ImageLoader,
+  KeyboardInteraction,
+  Modal,
+  WheelInteraction
+} from './core';
 
 /**
  * An Immediately Invoked Function Expression, called like that because it’s
@@ -26,6 +33,7 @@ function loadCoreModules() {
   ImageLoader.enable();
   DocumentLoader.enable();
   Modal.enable();
+  KeyboardInteraction.enable();
   WheelInteraction.enable();
 }
 

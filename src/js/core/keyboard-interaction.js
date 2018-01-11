@@ -2,21 +2,17 @@
  * Keyboard Navigation.
  */
 
-import { listener } from '../util';
+import { listener } from '../util/passive-event-listener';
 import { navigateItem, navigateItemToBoundary } from '../core/item-navigation';
 import { navigateDocument } from '../core/document-navigation';
 
-export { KeyboardNavigationModule };
+export { KeyboardInteraction };
 
-const KeyboardNavigationModule = {
-  enabled: true,
-  name: 'keyboard-navigation',
+const KeyboardInteraction = {
+  name: 'keyboard-interaction',
   description: 'Navigate documents and its pages with the keyboard',
   enable() {
     document.addEventListener('keydown', handleKeyboardInput, listener.active);
-  },
-  disable() {
-    document.removeEventListener('keydown', handleKeyboardInput, listener.active);
   }
 };
 
