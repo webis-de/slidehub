@@ -5,10 +5,9 @@
  * or double-clicking with a pointer device.
  */
 
-import { config } from '../config';
-import { listener } from '../util';
-import { getSelectedItem } from '../core/item-navigation';
-import { getSelectedDocument } from '../core/document-navigation';
+import { listener } from '../util/passive-event-listener';
+import { getSelectedItem, getHighlightedItem } from '../core/item-navigation';
+import { getSelectedDocument, getHighlightedDocument } from '../core/document-navigation';
 
 export { ItemLinking };
 
@@ -21,8 +20,8 @@ const ItemLinking = {
     document.addEventListener('dblclick', handleDoubleClick, listener.passive);
   },
   disable() {
-    document.removeEventListener('keydown', handleKeyDown, listener.passive);
-    document.removeEventListener('dblclick', handleDoubleClick, listener.passive);
+    document.removeEventListener('keydown', handleKeyDown);
+    document.removeEventListener('dblclick', handleDoubleClick);
   }
 };
 
@@ -35,7 +34,9 @@ function handleKeyDown(event) {
   }
 
   const openInNewTab = event.ctrlKey;
-  handleOpenIntent(event.target, openInNewTab);
+  const doc = getSelectedDocument();
+  const item = getSelectedItem(doc);
+  handleOpenIntent(doc, item, openInNewTab);
 }
 
 /**
@@ -46,38 +47,41 @@ function handleDoubleClick(event) {
     return;
   }
 
-  const doc = event.target.closest(config.selector.doc);
-  if (doc) {
+  const doc = getHighlightedDocument();
+  const item = getHighlightedItem(doc);
+  if (item) {
     const openInNewTab = true;
-    handleOpenIntent(event.target, openInNewTab);
+    handleOpenIntent(doc, item, openInNewTab);
   }
 }
 
 /**
  *
- * @param {HTMLElement} targetElement
+ * @param {HTMLElement} doc
+ * @param {HTMLElement} item
  * @param {boolean} openInNewTab
  */
-function handleOpenIntent(targetElement, openInNewTab) {
+function handleOpenIntent(doc, item, openInNewTab) {
   // Focusable elements have a default behavior (e.g. activating a link)
   // That behavior shall not be altered/extended.
-  if (isInteractive(targetElement)) {
+  if (isInteractive(item)) {
     return;
   }
 
-  openDocumentSource(openInNewTab);
+  openDocumentSource(doc, item, openInNewTab);
 }
 
 /**
  * Opens the document source for the current selected document in the browser.
  *
+ * @param {HTMLElement} doc
+ * @param {HTMLElement} item
  * @param {boolean} openInNewTab
  */
-function openDocumentSource(openInNewTab) {
-  const selectedDocument = getSelectedDocument();
-  const itemIndex = getSelectedItem(selectedDocument).dataset.page;
+function openDocumentSource(doc, item, openInNewTab) {
+  const itemIndex = item.dataset.page;
   const fragment = itemIndex !== '0' ? `#page=${itemIndex}` : '';
-  const itemSource = selectedDocument.dataset.docSource + fragment;
+  const itemSource = doc.dataset.docSource + fragment;
 
   if (openInNewTab) {
     window.open(itemSource);
