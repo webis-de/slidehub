@@ -8,6 +8,8 @@ export {
   navigateItemToBoundary,
   getSelectedItem,
   selectItem,
+  getHighlightedItem,
+  highlightItem,
   storeItemOuterWidth,
   exposeScrollboxWidth
 };
@@ -227,6 +229,38 @@ function selectItem(doc, targetItem) {
   }
 
   targetItem.classList.add(selectClassName);
+
+  if (document.activeElement instanceof HTMLElement) {
+    document.activeElement.blur();
+  }
+}
+
+const highlightClassName = 'highlighted';
+
+/**
+ * Returns the currently highlighted item.
+ *
+ * @param {Element} doc
+ * @returns {Element}
+ */
+function getHighlightedItem(doc) {
+  return doc.querySelector(`${config.selector.item}.${highlightClassName}`);
+}
+
+/**
+ * Sets a new highlighted item.
+ *
+ * @param {Element} doc
+ * @param {Element} targetItem
+ */
+function highlightItem(doc, targetItem) {
+  const itemContainer = targetItem.parentElement;
+  const highlightedItem = getHighlightedItem(doc);
+  if (highlightedItem && itemContainer.contains(highlightedItem)) {
+    highlightedItem.classList.remove(highlightClassName);
+  }
+
+  targetItem.classList.add(highlightClassName);
 
   if (document.activeElement instanceof HTMLElement) {
     document.activeElement.blur();

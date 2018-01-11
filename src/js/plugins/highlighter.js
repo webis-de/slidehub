@@ -6,6 +6,8 @@
 
 import { config } from '../config';
 import { listener } from '../util';
+import { highlightDocument } from '../core/document-navigation';
+import { highlightItem } from '../core/item-navigation';
 
 export { Highlighter };
 
@@ -20,8 +22,6 @@ const Highlighter = {
     document.removeEventListener('mousemove', handleHighlightOnHover);
   }
 };
-
-const highlightClassName = 'highlighted';
 
 /**
  * @param {MouseEvent} event
@@ -38,33 +38,4 @@ function handleHighlightOnHover(event) {
       }
     }
   }
-}
-
-/**
- * Adds a highlight class to the document under the cursor.
- *
- * @param {Element} doc
- */
-function highlightDocument(doc) {
-  const currentHighlight = document.querySelector(`${config.selector.doc}.${highlightClassName}`);
-  if (currentHighlight) {
-    currentHighlight.classList.remove(highlightClassName);
-  }
-
-  doc.classList.add(highlightClassName);
-}
-
-/**
- * Adds a highlight class to the item under the cursor.
- *
- * @param {Element} doc
- * @param {Element} item
- */
-function highlightItem(doc, item) {
-  const currentHighlight = doc.querySelector(`${config.selector.item}.${highlightClassName}`);
-  if (currentHighlight) {
-    currentHighlight.classList.remove(highlightClassName);
-  }
-
-  item.classList.add(highlightClassName);
 }

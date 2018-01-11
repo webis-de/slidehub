@@ -1,7 +1,13 @@
 import { clamp } from '../util';
 import { config } from '../config';
 
-export { navigateDocument, getSelectedDocument, selectDocument };
+export {
+  navigateDocument,
+  getSelectedDocument,
+  selectDocument,
+  getHighlightedDocument,
+  highlightDocument
+};
 
 /**
  * Navigates through documents in a certain direction.
@@ -98,6 +104,37 @@ function selectDocument(doc) {
 
   // Set new selected document
   doc.classList.add(selectClassName);
+
+  if (document.activeElement instanceof HTMLElement) {
+    document.activeElement.blur();
+  }
+}
+
+const highlightClassName = 'highlighted';
+
+/**
+ * Returns the currently highlighted document.
+ *
+ * @returns {Element}
+ */
+function getHighlightedDocument() {
+  return document.querySelector(`${config.selector.doc}.${highlightClassName}`);
+}
+
+/**
+ * Sets a new highlighted document.
+ *
+ * @param {Element} doc
+ */
+function highlightDocument(doc) {
+  const highlightedDocument = getHighlightedDocument();
+  // Remove highlighted class from currently highlighted document
+  if (highlightedDocument) {
+    highlightedDocument.classList.remove(highlightClassName);
+  }
+
+  // Set new highlighted document
+  doc.classList.add(highlightClassName);
 
   if (document.activeElement instanceof HTMLElement) {
     document.activeElement.blur();
