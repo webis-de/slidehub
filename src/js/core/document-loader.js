@@ -9,7 +9,7 @@ import { startImageObserver } from './image-loader';
 import { selectDocument } from './document-navigation';
 import { selectItem, storeItemOuterWidth, exposeScrollboxWidth } from './item-navigation';
 import { LinkedMap, getFloatPropertyValue, getOuterWidth } from '../util';
-import { initWheelInteraction } from './wheel-interaction';
+import { initMouseInteraction } from './mouse-interaction';
 
 export { DocumentLoader };
 
@@ -264,7 +264,7 @@ function loadDocument(iteratorResult, insertPosition) {
 
   selectItem(doc, doc.querySelector(config.selector.item));
   startImageObserver(doc);
-  initWheelInteraction(doc);
+  initMouseInteraction(doc);
 
   store.observer.observe(doc);
 

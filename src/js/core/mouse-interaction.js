@@ -2,14 +2,15 @@
  * Wheel Navigation.
  */
 
+import { config } from '../config';
 import { listener } from '../util/passive-event-listener';
-import { navigateItemInDocument, exposeScrollboxWidth } from '../core/item-navigation';
-import { getHighlightedDocument } from '../core/document-navigation';
+import { navigateItemInDocument, exposeScrollboxWidth, selectItem } from '../core/item-navigation';
+import { getHighlightedDocument, selectDocument } from '../core/document-navigation';
 
-export { WheelInteraction, initWheelInteraction };
+export { MouseInteraction, initMouseInteraction };
 
-const WheelInteraction = {
-  name: 'wheel-interaction',
+const MouseInteraction = {
+  name: 'mouse-interaction',
   description: 'Navigate pages with Shift + Mouse Wheel',
   enable() {
     enableModifier();
@@ -20,8 +21,9 @@ const WheelInteraction = {
  *
  * @param {Element} doc
  */
-function initWheelInteraction(doc) {
-  doc.addEventListener('wheel', handleWheelNavigation, listener.active);
+function initMouseInteraction(doc) {
+  doc.addEventListener('wheel', handleWheelInteraction, listener.active);
+  doc.addEventListener('click', handleClickSelection, listener.passive);
 }
 
 const scrolling = {
@@ -38,7 +40,7 @@ const scrolling = {
  *
  * @param {WheelEvent} event
  */
-function handleWheelNavigation(event) {
+function handleWheelInteraction(event) {
   // Don’t handle scrolling on elements that are not inside a document
   // const doc = event.target.closest(config.selector.doc);
   const doc = event.currentTarget;
@@ -60,6 +62,18 @@ function handleWheelNavigation(event) {
 
     const delta = event[scrollingDirection.delta];
     navigateItemInDocument(doc, Math.sign(delta));
+  }
+}
+
+function handleClickSelection(event) {
+  const doc = event.currentTarget;
+  if (doc) {
+    selectDocument(doc);
+
+    const item = event.target.closest(config.selector.item);
+    if (item) {
+      selectItem(doc, item);
+    }
   }
 }
 

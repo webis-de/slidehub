@@ -12,7 +12,7 @@ import {
   ImageLoader,
   KeyboardInteraction,
   Modal,
-  WheelInteraction
+  MouseInteraction
 } from './core';
 
 /**
@@ -34,7 +34,7 @@ function loadCoreModules() {
   DocumentLoader.enable();
   Modal.enable();
   KeyboardInteraction.enable();
-  WheelInteraction.enable();
+  MouseInteraction.enable();
 }
 
 /**
