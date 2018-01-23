@@ -4,7 +4,7 @@
 
 import { config } from '../config';
 import { listener } from '../util/passive-event-listener';
-import { navigateItemInDocument, exposeScrollboxWidth, selectItem } from '../core/item-navigation';
+import { navigateItemInDocument, selectItem } from '../core/item-navigation';
 import { getHighlightedDocument, selectDocument } from '../core/document-navigation';
 
 export { MouseInteraction, initMouseInteraction };
@@ -50,10 +50,6 @@ function handleWheelInteraction(event) {
 
   const ratio = Math.abs(event.deltaX / event.deltaY);
   const scrollingDirection = ratio < 1 ? scrolling.vertical : scrolling.horizontal;
-
-  if (scrollingDirection === scrolling.horizontal) {
-    exposeScrollboxWidth();
-  }
 
   // When scrolling vertically, only trigger navigation when modifier is pressed
   if (scrollingDirection === scrolling.vertical && event.shiftKey) {

@@ -1,4 +1,3 @@
-import { config } from '../config';
 import { getFloatPropertyValue } from '.';
 
 export { numberOfVisibleElements };
