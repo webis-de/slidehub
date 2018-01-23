@@ -6,9 +6,7 @@
   --c-highlighted: hsl(0, 0%, 65%);
   --page-aspect-ratio: 1.25;
   --page-width: 200px;
-  --page-height: calc(var(--page-width) / var(--page-aspect-ratio));
   --border-width: 1px;
-  --visible-pages: 1;
 
   padding: var(--spacing);
 }
@@ -23,6 +21,9 @@
 * Document
 */
 .doc {
+  --pages: 1;
+  --page-height: calc(var(--page-width) / var(--page-aspect-ratio));
+
   width: 100%;
   height: var(--page-height);
   box-sizing: content-box;
