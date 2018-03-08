@@ -42,7 +42,8 @@ function imageLoadHandler(entries, observer) {
  */
 function loadImage(image) {
   if (!image.dataset.src) {
-    console.error('Couldn’t load image due to missing data-src attribute.', img);
+    console.error('Couldn’t load image due to missing data-src attribute.', image);
+    return;
   }
 
   image.setAttribute('src', image.dataset.src);
