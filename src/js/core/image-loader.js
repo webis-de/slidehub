@@ -9,12 +9,14 @@ export { ImageLoader, startImageObserver };
 let imageObserver;
 
 const observerOptions = {
-  rootMargin: `500px 1000px`
+  rootMargin: '500px 1000px'
 };
 
 const ImageLoader = {
   enable() {
-    imageObserver = new IntersectionObserver(imageLoadHandler, observerOptions);
+    if ('IntersectionObserver' in window) {
+      imageObserver = new IntersectionObserver(imageLoadHandler, observerOptions);
+    }
   }
 };
 
@@ -27,16 +29,25 @@ const ImageLoader = {
 function imageLoadHandler(entries, observer) {
   for (const entry of entries) {
     if (entry.isIntersecting) {
-      const image = entry.target;
-      image.setAttribute('src', image.getAttribute('data-src'));
-      image.removeAttribute('data-src');
-
-      image.addEventListener('load', () => handleItemImageLoaded(image));
-
-      // Unobserve the current target because no further action is required
-      observer.unobserve(image);
+      loadImage(entry.target);
+      observer.unobserve(entry.target);
     }
   }
+}
+
+/**
+ * Replaces the data-src attribute with the src attribute, causing the browser to load the image.
+ *
+ * @param {HTMLImageElement} image
+ */
+function loadImage(image) {
+  if (!image.dataset.src) {
+    console.error('Couldn’t load image due to missing data-src attribute.', img);
+  }
+
+  image.setAttribute('src', image.dataset.src);
+  image.removeAttribute('data-src');
+  image.addEventListener('load', () => handleItemImageLoaded(image));
 }
 
 /**
@@ -59,7 +70,7 @@ function handleItemImageLoaded(image) {
 function setItemAspectRatio(image) {
   const doc = image.closest(config.selector.doc);
 
-  if (doc && doc instanceof HTMLElement && !doc.style.cssText.includes('--page-aspect-ratio')) {
+  if (doc && !doc.style.cssText.includes('--page-aspect-ratio')) {
     const aspectRatio = image.naturalWidth / image.naturalHeight;
     doc.style.setProperty('--page-aspect-ratio', aspectRatio.toString());
   }
@@ -71,8 +82,10 @@ function setItemAspectRatio(image) {
  * @param {HTMLElement} doc
  */
 function startImageObserver(doc) {
+  const images = Array.from(doc.querySelectorAll('img[data-src]'));
   if (imageObserver) {
-    const images = Array.from(doc.querySelectorAll('img[data-src]'));
     images.forEach(image => imageObserver.observe(image));
+  } else {
+    images.forEach(image => loadImage(image));
   }
 }
