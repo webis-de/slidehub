@@ -5,7 +5,7 @@
  */
 
 import { config } from '../config';
-import { listener } from '../util';
+import { listener } from '../util/passive-event-listener';
 import { highlightDocument } from '../core/document-navigation';
 import { highlightItem } from '../core/item-navigation';
 
