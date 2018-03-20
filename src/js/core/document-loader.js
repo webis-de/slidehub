@@ -4,6 +4,7 @@
  * Loads documents dynamically when needed.
  */
 
+import { documentsData } from '../documents-data';
 import { config } from '../config';
 import { startImageObserver } from './image-loader';
 import { selectDocument } from './document-navigation';
@@ -64,6 +65,10 @@ const store = {
 
 const DocumentLoader = {
   enable() {
+    if (config.staticContent) {
+      return;
+    }
+
     store.documents = parseDocumentsData(documentsData);
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -139,15 +144,12 @@ function insertDocumentFrames(slidehubContainer) {
 
   for (const documentData of store.documents.values()) {
     const documentSource = `${config.assets.documents}/${documentData.name}`;
-    documentFramesMarkup += `
-      <div
-        class="${store.classes.doc}"
-        id="${documentData.name}"
-        data-doc-source="${documentSource}"
-        style="--pages: ${documentData.itemCount + (config.metaSlide ? 1 : 0)}"
-      >
-      </div>
-    `;
+    documentFramesMarkup += `<div
+      class="${store.classes.doc}"
+      id="${documentData.name}"
+      data-doc-source="${documentSource}"
+      style="--pages: ${documentData.itemCount + (config.metaSlide ? 1 : 0)}"
+    ></div>`;
   }
 
   slidehubContainer.insertAdjacentHTML('beforeend', documentFramesMarkup);
@@ -298,40 +300,35 @@ function createDocumentMarkup(documentData) {
   let items = '';
   for (var i = 0; i < documentData.itemCount; i++) {
     const imageSource = `${config.assets.images}/${documentData.name}-${i}.png`;
-    items += `
-      <div class="${store.classes.item}" data-page="${i + 1}">
-        <img data-src="${imageSource}" alt="page ${i + 1}">
-      </div>
-    `;
+    items += `<div class="${store.classes.item}" data-page="${i + 1}">
+      <img data-src="${imageSource}" alt="page ${i + 1}">
+    </div>`;
   }
 
   const documentSource = `${config.assets.documents}/${documentData.name}`;
 
-  const metaSlide = `
-    <div class="${store.classes.item}" data-page="0">
-      <div class="doc-meta">
-        <h2 class="doc-meta__title">
-          <a href="${documentSource}">${documentData.name}</a>
-        </h2>
-        by author, ${documentData.itemCount} pages, 2018
-      </div>
+  const metaSlide = `<div class="${store.classes.item}" data-page="0">
+    <div class="doc-meta">
+      <h2 class="doc-meta__title">
+        <a href="${documentSource}">${documentData.name}</a>
+      </h2>
+      by author, ${documentData.itemCount} pages, 2018
     </div>
-  `;
+  </div>`;
 
-  const dummyPage = `
-    <div class="${store.classes.item} dummy-page" aria-hidden="true" style="visibility: hidden;">
-    </div>
-  `;
+  const dummyPage = `<div
+    class="${store.classes.item} dummy-page"
+    aria-hidden="true"
+    style="visibility: hidden;"
+  ></div>`;
 
-  return `
-    <div class="${store.classes.scrollbox}">
-      <div class="${store.classes.itemContainer}">
-        ${config.metaSlide ? metaSlide : ''}
-        ${items}
-        ${dummyPage}
-      </div>
+  return `<div class="${store.classes.scrollbox}">
+    <div class="${store.classes.itemContainer}">
+      ${config.metaSlide ? metaSlide : ''}
+      ${items}
+      ${dummyPage}
     </div>
-  `;
+  </div>`;
 }
 
 /**

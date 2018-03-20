@@ -3,6 +3,7 @@ export { config };
 /**
  * @typedef {object} Config
  * @property {ConfigPropertyAssets} assets
+ * @property {boolean} staticContent
  * @property {boolean} metaSlide
  * @property {boolean} allowLastPageInFirstColumn
  * @property {boolean} preserveAspectRatio
@@ -34,6 +35,9 @@ const config = {
     images: 'https://www.uni-weimar.de/medien/webis/tmp/slides/data'
   },
 
+  // If set to true, it is assumed that the document markup is already present.
+  staticContent: true,
+
   // Create a meta slide for each document?
   metaSlide: true,
 
@@ -44,7 +48,7 @@ const config = {
   // Preserve aspect ratio of document items?
   preserveAspectRatio: false,
 
-  // Overrides the default select color
+  // Overrides the default select color.
   // Takes string values that represent a valid CSS color value; for example:
   // 'transparent', 'tomato', '#f90', 'hsl(220, 50%, 40%)'
   // Setting `null` uses the default color.
