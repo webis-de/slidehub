@@ -1,6 +1,6 @@
-# SlideHub
+# Slidehub
 
-SlideHub ([demo website](http://test.webis.de/slidehub)) is a web-based presentation/lecture/talk slide explorer. Its goal is to provide quick access to a database of paged documents. The documents are represented as rows of a grid-like structure while each cell is a page.
+Slidehub ([demo website](http://test.webis.de/slidehub)) is a web-based presentation/lecture/talk slide explorer. Its goal is to provide quick access to a database of paged documents. The documents are represented as rows of a grid-like structure while each cell is a page.
 
 All documents are available as PDF files. In addition, all slides are available as images that act as a kind of preview for the actual documents’ page.
 
@@ -40,7 +40,7 @@ With a keyboard, the arrow keys allow navigating the pages within documents and 
 |---:|-----:|--------:|-------:|-------:|------:|
 | —  | 15   | 31      | 49     | 9.1    | 36    |
 
-SlideHub does not support Internet Explorer. All features listed below are not supported by Internet Explorer (unless a polyfill is provided). To achieve support for Internet Explorer 11, the JavaScript code needs to be transpiled to not use unsupported features (like promises). In addition, the CSS has to be written in a way to either not use custom properties at all or provide explicit fallbacks to property declarations using them.
+Slidehub does not support Internet Explorer. All features listed below are not supported by Internet Explorer (unless a polyfill is provided). To achieve support for Internet Explorer 11, the JavaScript code needs to be transpiled to not use unsupported features (like promises). In addition, the CSS has to be written in a way to either not use custom properties at all or provide explicit fallbacks to property declarations using them.
 
 I’d like to avoid Internet Explorer. It doesn’t have great support for [Flexbox](https://caniuse.com/#feat=flexbox). It only has [support for an old version](https://caniuse.com/#feat=css-grid) of the CSS grid specification. It also lacks support for a lot of [ECMAScript 6](https://kangax.github.io/compat-table/es6/) features.
 

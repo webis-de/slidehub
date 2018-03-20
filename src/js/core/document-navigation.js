@@ -71,7 +71,7 @@ function getDocumentPos() {
 }
 
 /**
- * Returns all SlideHub documents as a HTMLCollection.
+ * Returns all Slidehub documents as a HTMLCollection.
  *
  * @returns {HTMLCollection}
  */
