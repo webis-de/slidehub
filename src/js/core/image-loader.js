@@ -16,9 +16,18 @@ const ImageLoader = {
   enable() {
     if ('IntersectionObserver' in window) {
       imageObserver = new IntersectionObserver(imageLoadHandler, observerOptions);
+
+      document.addEventListener('DOMContentLoaded', () => {
+        observeExistingDocuments();
+      });
     }
   }
 };
+
+function observeExistingDocuments() {
+  const documents = Array.from(document.querySelectorAll(config.selector.doc));
+  documents.forEach(doc => startImageObserver(doc));
+}
 
 /**
  * Handles lazy-loading document images.

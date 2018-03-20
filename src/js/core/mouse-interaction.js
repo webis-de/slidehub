@@ -14,8 +14,17 @@ const MouseInteraction = {
   description: 'Navigate pages with Shift + Mouse Wheel',
   enable() {
     enableModifier();
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initExistingDocuments();
+    });
   }
 };
+
+function initExistingDocuments() {
+  const documents = Array.from(document.querySelectorAll(config.selector.doc));
+  documents.forEach(doc => initMouseInteraction(doc));
+}
 
 /**
  *
