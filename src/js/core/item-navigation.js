@@ -267,11 +267,10 @@ function highlightItem(doc, targetItem) {
 let itemWidth;
 
 /**
- * Computes the item width. Must only be called once.
+ * Sets the item width.
  */
 function storeItemOuterWidth(itemOuterWidth) {
   itemWidth = itemOuterWidth;
-  Object.freeze(itemWidth);
 }
 
 /**

@@ -7,8 +7,8 @@
 import { config } from '../config';
 import { startImageObserver } from './image-loader';
 import { selectDocument } from './document-navigation';
-import { numberOfVisibleItems, selectItem, storeItemOuterWidth } from './item-navigation';
-import { debounce, LinkedMap, getFloatPropertyValue, getOuterWidth } from '../util';
+import { selectItem } from './item-navigation';
+import { LinkedMap, getFloatPropertyValue } from '../util';
 import { initMouseInteraction } from './mouse-interaction';
 
 export { DocumentLoader };
@@ -70,16 +70,7 @@ const DocumentLoader = {
       const slidehubContainer = createSlidehubContainer();
       insertDocumentFrames(slidehubContainer);
 
-      const targetDoc = loadTargetDocument();
-      exposeScrollboxWidth();
-      // Recalculate the scrollbox width on resize.
-      window.addEventListener('resize', debounce(() => {
-        console.log('re-expose!');
-        exposeScrollboxWidth();
-        exposeNumberOfVisibleItems();
-      }, 200));
-
-      storeItemOuterWidthInDOM(slidehubContainer, targetDoc);
+      loadTargetDocument();
 
       // Load one batch in both directions
       loadBatch(store.nextIterator, 'beforeend', store.batchSize);
@@ -293,82 +284,6 @@ function insertDocument(documentData) {
   doc.insertAdjacentHTML('beforeend', innerDocumentMarkup);
 
   return doc;
-}
-
-/**
- * Computes and stores the outer width of items in the DOM in the form on a
- * custom property. This way, it is accessible from within CSS.
- *
- * TO DO: Check for box-sizing value and compute accordingly.
- *
- * @param {HTMLElement} slidehubContainer
- * @param {HTMLElement} doc
- */
-function storeItemOuterWidthInDOM(slidehubContainer, doc) {
-  const item = doc.querySelector(config.selector.item);
-  const itemOuterWidth = getOuterWidth(item);
-
-  storeItemOuterWidth(itemOuterWidth);
-
-  slidehubContainer.style.setProperty('--page-outer-width', itemOuterWidth + 'px');
-}
-
-/**
- * Exposes the current width of the first scrollbox to the DOM.
- *
- * This function is a closure. It is instanciated once, creating a state
- * variable and keeping it alive. Also, an inner function is returned by the
- * function which uses the state variable. The purpose for this is keeping the
- * state varialbe private to this function. Otherwise, when storing it outside
- * the function, it would be exposed to the whole module.
- */
-const exposeScrollboxWidth = (function () {
-  // State variable. Will be kept alive so that further calls to this function
-  // can re-use its value.
-  let storedScrollboxWidth;
-
-  return function () {
-    const scrollbox = document.querySelector(config.selector.scrollbox);
-    const scrollboxWidth = getOuterWidth(scrollbox);
-
-    if (storedScrollboxWidth !== scrollboxWidth) {
-      storedScrollboxWidth = scrollboxWidth;
-
-      exposeCustomProperty('--scrollbox-width', scrollboxWidth + 'px');
-    }
-  };
-})();
-
-/**
- * Exposes the current number of visible items in a document to the DOM.
- *
- * This function is a closure. See {@see exposeScrollboxWidth} for an explanation.
- */
-const exposeNumberOfVisibleItems = (function () {
-  let storedVisibleItems;
-
-  return function () {
-    const doc = document.querySelector(config.selector.doc);
-    const visibleItems = numberOfVisibleItems(doc);
-
-    if (storedVisibleItems !== visibleItems) {
-      storedVisibleItems = visibleItems;
-
-      exposeCustomProperty('--visible-pages', visibleItems);
-    }
-  };
-})();
-
-/**
- * Exposes data to the DOM node which represents the Slidehub container. This
- * allows accessing the data from CSS.
- *
- * @param {string} propertyName
- * @param {string} value
- */
-function exposeCustomProperty(propertyName, value) {
-  const slidehubContainer = document.querySelector(config.selector.slidehub);
-  slidehubContainer.style.setProperty(propertyName, value);
 }
 
 /**
