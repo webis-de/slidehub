@@ -36,7 +36,7 @@ const config = {
   },
 
   // If set to true, it is assumed that the document markup is already present.
-  staticContent: true,
+  staticContent: false,
 
   // Create a meta slide for each document?
   metaSlide: true,
