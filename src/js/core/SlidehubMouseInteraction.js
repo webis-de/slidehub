@@ -7,22 +7,15 @@ import { listener } from '../util/passive-event-listener';
 import { navigateItemInDocument, selectItem } from '../core/item-navigation';
 import { getHighlightedDocument, selectDocument } from '../core/document-navigation';
 
-export { MouseInteraction, initMouseInteraction };
+export { enableMouseInteraction };
 
-const MouseInteraction = {
-  name: 'mouse-interaction',
-  description: 'Navigate pages with Shift + Mouse Wheel',
-  enable() {
-    enableModifier();
+function enableMouseInteraction(slidehubNode) {
+  enableModifier();
+  initExistingDocuments(slidehubNode);
+}
 
-    document.addEventListener('DOMContentLoaded', () => {
-      initExistingDocuments();
-    });
-  }
-};
-
-function initExistingDocuments() {
-  const documents = Array.from(document.querySelectorAll(config.selector.doc));
+function initExistingDocuments(slidehubNode) {
+  const documents = Array.from(slidehubNode.querySelectorAll(config.selector.doc));
   documents.forEach(doc => initMouseInteraction(doc));
 }
 

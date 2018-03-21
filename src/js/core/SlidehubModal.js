@@ -5,35 +5,31 @@
  * https://github.com/gdkraus/accessible-modal-dialog
  */
 
-import { listener } from '../util';
+import { listener } from '../util/passive-event-listener';
 
-export { Modal };
+export { enableModals };
 
 let lastFocusedElement;
 
-const Modal = {
-  enable() {
-    document.addEventListener('DOMContentLoaded', function() {
-      const modalOpenButtons = Array.from(document.querySelectorAll('button[data-target-modal]'));
-      modalOpenButtons.forEach(button => {
-        button.removeAttribute('disabled');
-        button.addEventListener('click', event => {
-          const targetModalClass = event.currentTarget.dataset.targetModal;
-          const modal = document.querySelector(`.${targetModalClass}`);
-          openModal(modal);
-        });
-      });
-
-      const modalCloseButtons = Array.from(document.querySelectorAll('button[data-close-modal]'));
-      modalCloseButtons.forEach(button => {
-        button.addEventListener('click', event => {
-          const modal = event.currentTarget.closest('.modal');
-          closeModal(modal);
-        });
-      });
+function enableModals() {
+  const modalOpenButtons = Array.from(document.querySelectorAll('button[data-target-modal]'));
+  modalOpenButtons.forEach(button => {
+    button.removeAttribute('disabled');
+    button.addEventListener('click', event => {
+      const targetModalClass = event.currentTarget.dataset.targetModal;
+      const modal = document.querySelector(`.${targetModalClass}`);
+      openModal(modal);
     });
-  }
-};
+  });
+
+  const modalCloseButtons = Array.from(document.querySelectorAll('button[data-close-modal]'));
+  modalCloseButtons.forEach(button => {
+    button.addEventListener('click', event => {
+      const modal = event.currentTarget.closest('.modal');
+      closeModal(modal);
+    });
+  });
+}
 
 /**
  * Opens the modal.

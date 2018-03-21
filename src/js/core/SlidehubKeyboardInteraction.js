@@ -6,15 +6,11 @@ import { listener } from '../util/passive-event-listener';
 import { navigateItem, navigateItemToBoundary } from '../core/item-navigation';
 import { navigateDocument } from '../core/document-navigation';
 
-export { KeyboardInteraction };
+export { enableKeyboardInteraction };
 
-const KeyboardInteraction = {
-  name: 'keyboard-interaction',
-  description: 'Navigate documents and its pages with the keyboard',
-  enable() {
-    document.addEventListener('keydown', handleKeyboardInput, listener.active);
-  }
-};
+function enableKeyboardInteraction() {
+  document.addEventListener('keydown', handleKeyboardInput, listener.active);
+}
 
 /**
  * Handles keyboard interactions with documents and items.
@@ -60,49 +56,49 @@ const controlKeyNames = Object.freeze({
 const controlKey = Object.freeze({
   homeKey: {
     direction: -1,
-    trigger: function() {
+    trigger: function () {
       navigateItemToBoundary(this.direction);
     }
   },
   endKey: {
     direction: 1,
-    trigger: function() {
+    trigger: function () {
       navigateItemToBoundary(this.direction);
     }
   },
   pageUp: {
     direction: -1,
-    trigger: function() {
+    trigger: function () {
       navigateDocument(this.direction * 3);
     }
   },
   pageDown: {
     direction: 1,
-    trigger: function() {
+    trigger: function () {
       navigateDocument(this.direction * 3);
     }
   },
   arrowLeft: {
     direction: -1,
-    trigger: function(event) {
+    trigger: function (event) {
       navigateItem(this.direction * (event.shiftKey ? 3 : 1));
     }
   },
   arrowRight: {
     direction: 1,
-    trigger: function(event) {
+    trigger: function (event) {
       navigateItem(this.direction * (event.shiftKey ? 3 : 1));
     }
   },
   arrowUp: {
     direction: -1,
-    trigger: function(event) {
+    trigger: function (event) {
       navigateDocument(this.direction * (event.shiftKey ? 3 : 1));
     }
   },
   arrowDown: {
     direction: 1,
-    trigger: function(event) {
+    trigger: function (event) {
       navigateDocument(this.direction * (event.shiftKey ? 3 : 1));
     }
   }

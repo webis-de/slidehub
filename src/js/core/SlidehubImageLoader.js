@@ -4,29 +4,64 @@
 
 import { config } from '../config';
 
-export { ImageLoader, startImageObserver };
+export { loadImages };
 
 let imageObserver;
 
-const observerOptions = {
+const imageObserverOptions = {
   rootMargin: '500px 1000px'
 };
 
-const ImageLoader = {
-  enable() {
-    if ('IntersectionObserver' in window) {
-      imageObserver = new IntersectionObserver(imageLoadHandler, observerOptions);
-
-      document.addEventListener('DOMContentLoaded', () => {
-        observeExistingDocuments();
-      });
-    }
-  }
+const mutationObserverOptions = {
+  childList: true
 };
 
-function observeExistingDocuments() {
-  const documents = Array.from(document.querySelectorAll(config.selector.doc));
+/**
+ *
+ * @param {HTMLElement} slidehubNode
+ */
+function loadImages(slidehubNode) {
+  if ('IntersectionObserver' in window) {
+    imageObserver = new IntersectionObserver(imageLoadHandler, imageObserverOptions);
+
+    observeExistingDocuments(slidehubNode);
+    observeNewDocuments(slidehubNode);
+  } else {
+    const images = Array.from(slidehubNode.querySelectorAll('img[data-src]'));
+    images.forEach(image => loadImage(image));
+  }
+}
+
+/**
+ *
+ * @param {HTMLElement} slidehubNode
+ */
+function observeExistingDocuments(slidehubNode) {
+  const documents = Array.from(slidehubNode.querySelectorAll(config.selector.doc));
   documents.forEach(doc => startImageObserver(doc));
+}
+
+/**
+ *
+ * @param {HTMLElement} slidehubNode
+ */
+function observeNewDocuments(slidehubNode) {
+  const mutationObserver = new MutationObserver(mutationHandler);
+
+  const documents = Array.from(slidehubNode.querySelectorAll(config.selector.doc));
+  documents.forEach(doc => mutationObserver.observe(doc, mutationObserverOptions));
+}
+
+/**
+ *
+ * @param {*} mutationsList
+ */
+function mutationHandler(mutationsList) {
+  for (const mutation of mutationsList) {
+    if (mutation.addedNodes.length !== 0) {
+      startImageObserver(mutation.target);
+    }
+  }
 }
 
 /**
@@ -93,9 +128,5 @@ function setItemAspectRatio(image) {
  */
 function startImageObserver(doc) {
   const images = Array.from(doc.querySelectorAll('img[data-src]'));
-  if (imageObserver) {
-    images.forEach(image => imageObserver.observe(image));
-  } else {
-    images.forEach(image => loadImage(image));
-  }
+  images.forEach(image => imageObserver.observe(image));
 }

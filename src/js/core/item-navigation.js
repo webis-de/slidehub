@@ -103,6 +103,7 @@ function updateSelectedItem(doc, distance) {
  * @returns {boolean}
  */
 function allItemsVisible(doc) {
+  console.log(getScrollbox(doc).clientWidth, getScrollbox(doc).scrollWidth);
   return getItemCount(doc) <= numberOfVisibleItems(doc);
 }
 

@@ -6,13 +6,11 @@
 
 import { documentsData } from '../documents-data';
 import { config } from '../config';
-import { startImageObserver } from './image-loader';
 import { selectDocument } from './document-navigation';
 import { selectItem } from './item-navigation';
 import { LinkedMap, getFloatPropertyValue } from '../util';
-import { initMouseInteraction } from './mouse-interaction';
 
-export { DocumentLoader };
+export { buildDocuments };
 
 /**
  * @typedef {object} Store
@@ -24,7 +22,6 @@ export { DocumentLoader };
  * @property {StorePropertyClasses} classes
  *
  * @typedef {object} StorePropertyClasses
- * @property {string} slidehub
  * @property {string} doc
  * @property {string} scrollbox
  * @property {string} itemContainer
@@ -55,7 +52,6 @@ const store = {
   batchSize: 5,
 
   classes: {
-    slidehub: config.selector.slidehub.slice(1),
     doc: config.selector.doc.slice(1),
     scrollbox: config.selector.scrollbox.slice(1),
     itemContainer: config.selector.itemContainer.slice(1),
@@ -63,26 +59,17 @@ const store = {
   }
 };
 
-const DocumentLoader = {
-  enable() {
-    if (config.staticContent) {
-      return;
-    }
+function buildDocuments(slidehubNode) {
+  store.documents = parseDocumentsData(documentsData);
 
-    store.documents = parseDocumentsData(documentsData);
+  insertDocumentFrames(slidehubNode);
 
-    document.addEventListener('DOMContentLoaded', function () {
-      const slidehubContainer = createSlidehubContainer();
-      insertDocumentFrames(slidehubContainer);
+  loadTargetDocument();
 
-      loadTargetDocument();
-
-      // Load one batch in both directions
-      loadBatch(store.nextIterator, 'beforeend', store.batchSize);
-      loadBatch(store.prevIterator, 'afterbegin', store.batchSize);
-    });
-  }
-};
+  // Load one batch in both directions
+  loadBatch(store.nextIterator, 'beforeend', store.batchSize);
+  loadBatch(store.prevIterator, 'afterbegin', store.batchSize);
+}
 
 /**
  * Parses the initial document data into a more managable data structure.
@@ -105,33 +92,6 @@ function parseDocumentsData(documentsData) {
   });
 
   return documents;
-}
-
-/**
- * Hooks the Slidehub container element into the DOM.
- *
- * Requires an element with a custom attribute `data-slidehub`. A new <div> element
- * will be created inside of it. No existing markup will be changed or removed.
- *
- * @returns {HTMLElement}
- */
-function createSlidehubContainer() {
-  const slidehubContainer = document.createElement('div');
-  slidehubContainer.classList.add(store.classes.slidehub);
-
-  // Expose select/highlight color overrides to the DOM.
-  // This allows CSS to use inside of a rule declaration.
-  if (config.selectColor && config.selectColor !== '') {
-    slidehubContainer.style.setProperty('--c-selected', config.selectColor);
-  }
-
-  if (config.highlightColor && config.highlightColor !== '') {
-    slidehubContainer.style.setProperty('--c-highlighted', config.highlightColor);
-  }
-
-  document.querySelector('[data-slidehub]').appendChild(slidehubContainer);
-
-  return slidehubContainer;
 }
 
 /**
@@ -265,12 +225,11 @@ function loadDocument(iteratorResult, insertPosition) {
   const doc = insertDocument(documentData);
 
   selectItem(doc, doc.querySelector(config.selector.item));
-  startImageObserver(doc);
-  initMouseInteraction(doc);
 
   store.observer.observe(doc);
 
   documentData.loaded = true;
+  doc.setAttribute('data-loaded', '');
 
   return doc;
 }
@@ -307,7 +266,7 @@ function createDocumentMarkup(documentData) {
 
   const documentSource = `${config.assets.documents}/${documentData.name}`;
 
-  const metaSlide = `<div class="${store.classes.item}" data-page="0">
+  const metaSlide = `<div class="${store.classes.item} ${store.classes.item}--text" data-page="0">
     <div class="doc-meta">
       <h2 class="doc-meta__title">
         <a href="${documentSource}">${documentData.name}</a>
