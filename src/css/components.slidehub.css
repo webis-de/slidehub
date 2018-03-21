@@ -74,12 +74,15 @@
   background-color: #fff;
 }
 
-.page {
-  margin-right: var(--border-width);
+.page:not(.page--text) {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+
+.page {
+  margin-right: var(--border-width);
 }
 
 .page > img {
