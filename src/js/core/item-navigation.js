@@ -29,7 +29,7 @@ function navigateItemInDocument(doc, distance) {
   updateSelectedItem(doc, distance);
 
   // If all items are already visible, we’re done here.
-  if (allItemsVisible(doc)) {
+  if (!config.allowLastPageInFirstColumn && allItemsVisible(doc)) {
     return;
   }
 
