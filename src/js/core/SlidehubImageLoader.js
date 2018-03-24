@@ -1,68 +1,81 @@
+import { config } from '../config';
+
+export { SlidehubImageLoader };
+
 /**
  * Loads document images when needed (i.e. lazy-loading).
  */
+class SlidehubImageLoader {
+  constructor(slidehub) {
+    this.slidehub = slidehub;
+    this.imageObserver = null;
 
-import { config } from '../config';
+    if ('IntersectionObserver' in window) {
+      const imageObserverOptions = {
+        root: slidehub.node,
+        rootMargin: '500px 1000px'
+      };
 
-export { loadImages };
-
-let imageObserver;
-
-const imageObserverOptions = {
-  rootMargin: '500px 1000px'
-};
-
-const mutationObserverOptions = {
-  childList: true
-};
-
-/**
- *
- * @param {HTMLElement} slidehubNode
- */
-function loadImages(slidehubNode) {
-  if ('IntersectionObserver' in window) {
-    imageObserver = new IntersectionObserver(imageLoadHandler, imageObserverOptions);
-
-    observeExistingDocuments(slidehubNode);
-    observeNewDocuments(slidehubNode);
-  } else {
-    const images = Array.from(slidehubNode.querySelectorAll('img[data-src]'));
-    images.forEach(image => loadImage(image));
-  }
-}
-
-/**
- *
- * @param {HTMLElement} slidehubNode
- */
-function observeExistingDocuments(slidehubNode) {
-  const documents = Array.from(slidehubNode.querySelectorAll(config.selector.doc));
-  documents.forEach(doc => startImageObserver(doc));
-}
-
-/**
- *
- * @param {HTMLElement} slidehubNode
- */
-function observeNewDocuments(slidehubNode) {
-  const mutationObserver = new MutationObserver(mutationHandler);
-
-  const documents = Array.from(slidehubNode.querySelectorAll(config.selector.doc));
-  documents.forEach(doc => mutationObserver.observe(doc, mutationObserverOptions));
-}
-
-/**
- *
- * @param {*} mutationsList
- */
-function mutationHandler(mutationsList) {
-  for (const mutation of mutationsList) {
-    if (mutation.addedNodes.length !== 0) {
-      startImageObserver(mutation.target);
+      this.imageObserver = new IntersectionObserver(imageObservationHandler, imageObserverOptions);
     }
   }
-}
+
+  start() {
+    if (this.imageObserver) {
+      this.observeExistingDocuments();
+      // this.observeNewDocuments();
+    } else {
+      const images = Array.from(this.slidehub.node.querySelectorAll('img[data-src]'));
+      images.forEach(image => loadImage(image));
+    }
+  }
+
+  /**
+   *
+   */
+  observeExistingDocuments() {
+    const documentNodes = Array.from(this.slidehub.node.querySelectorAll(config.selector.doc));
+    documentNodes.forEach(docNode => this.startImageObserver(docNode));
+    // this.slidehub.documents.forEach(doc => this.startImageObserver(doc.node));
+  }
+
+  /**
+   * Starts the image observer on all lazy-loading images.
+   *
+   * @param {HTMLElement} docNode
+   */
+  startImageObserver(docNode) {
+    const images = Array.from(docNode.querySelectorAll('img[data-src]'));
+    images.forEach(image => this.imageObserver.observe(image));
+  }
+
+  /**
+   *
+   */
+  observeNewDocuments() {
+    const mutationObserverOptions = {
+      childList: true
+    };
+
+    const mutationObserver = new MutationObserver(this.mutationHandler.bind(this));
+
+    this.slidehub.documents.forEach(doc => {
+      mutationObserver.observe(doc.node, mutationObserverOptions);
+    });
+  }
+
+  /**
+   *
+   * @param {*} mutationsList
+   */
+  mutationHandler(mutationsList) {
+    for (const mutation of mutationsList) {
+      if (mutation.addedNodes.length !== 0) {
+        this.startImageObserver(mutation.target);
+      }
+    }
+  }
+};
 
 /**
  * Handles lazy-loading document images.
@@ -70,7 +83,7 @@ function mutationHandler(mutationsList) {
  * @param {*} entries
  * @param {IntersectionObserver} observer
  */
-function imageLoadHandler(entries, observer) {
+function imageObservationHandler(entries, observer) {
   for (const entry of entries) {
     if (entry.isIntersecting) {
       loadImage(entry.target);
@@ -113,20 +126,10 @@ function handleItemImageLoaded(image) {
  * @param {HTMLImageElement} image
  */
 function setItemAspectRatio(image) {
-  const doc = image.closest(config.selector.doc);
+  const docNode = image.closest(config.selector.doc);
 
-  if (doc && !doc.style.cssText.includes('--page-aspect-ratio')) {
+  if (docNode && !docNode.style.cssText.includes('--page-aspect-ratio')) {
     const aspectRatio = image.naturalWidth / image.naturalHeight;
-    doc.style.setProperty('--page-aspect-ratio', aspectRatio.toString());
+    docNode.style.setProperty('--page-aspect-ratio', aspectRatio.toString());
   }
-}
-
-/**
- * Starts the image observer on all lazy-loading images.
- *
- * @param {HTMLElement} doc
- */
-function startImageObserver(doc) {
-  const images = Array.from(doc.querySelectorAll('img[data-src]'));
-  images.forEach(image => imageObserver.observe(image));
 }

@@ -1,6 +1,6 @@
 export { getOuterWidth };
 
-import { getFloatPropertyValue } from '.';
+import { getFloatPropertyValue } from './get-float-property-value';
 
 /**
  *

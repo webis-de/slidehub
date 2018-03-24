@@ -1,38 +1,8 @@
-/**
- * Keyboard Navigation.
- */
-
 import { listener } from '../util/passive-event-listener';
-import { navigateItem, navigateItemToBoundary } from '../core/item-navigation';
-import { navigateDocument } from '../core/document-navigation';
 
-export { enableKeyboardInteraction };
+export { SlidehubKeyboardInteraction };
 
-function enableKeyboardInteraction() {
-  document.addEventListener('keydown', handleKeyboardInput, listener.active);
-}
-
-/**
- * Handles keyboard interactions with documents and items.
- *
- * @param {KeyboardEvent} event
- */
-function handleKeyboardInput(event) {
-  if (event.keyCode in controlKeyNames) {
-    event.preventDefault();
-    const keyName = controlKeyNames[event.keyCode];
-    controlKey[keyName].trigger(event);
-  }
-}
-
-/**
- * Maps key codes to key names.
- * It’s used within keyboard-related event handlers in order to work with the
- * keys’ names instead of key codes.
- *
- * Removing an entry here disables its application-related interactions
- */
-const controlKeyNames = Object.freeze({
+const controlKeyNames = {
   33: 'pageUp',
   34: 'pageDown',
   35: 'endKey',
@@ -41,65 +11,77 @@ const controlKeyNames = Object.freeze({
   38: 'arrowUp',
   39: 'arrowRight',
   40: 'arrowDown'
-});
+};
 
 /**
- * Maps control keys to a trigger function that is executed when the key is
- * pressed.
- *
- * @typedef {object} ControlKeyObject
- * @property {number} direction
- * @property {function(): void} trigger
- *
- * @type {Object.<string, ControlKeyObject>}
+ * Keyboard Interaction.
  */
-const controlKey = Object.freeze({
-  homeKey: {
-    direction: -1,
-    trigger: function () {
-      navigateItemToBoundary(this.direction);
-    }
-  },
-  endKey: {
-    direction: 1,
-    trigger: function () {
-      navigateItemToBoundary(this.direction);
-    }
-  },
-  pageUp: {
-    direction: -1,
-    trigger: function () {
-      navigateDocument(this.direction * 3);
-    }
-  },
-  pageDown: {
-    direction: 1,
-    trigger: function () {
-      navigateDocument(this.direction * 3);
-    }
-  },
-  arrowLeft: {
-    direction: -1,
-    trigger: function (event) {
-      navigateItem(this.direction * (event.shiftKey ? 3 : 1));
-    }
-  },
-  arrowRight: {
-    direction: 1,
-    trigger: function (event) {
-      navigateItem(this.direction * (event.shiftKey ? 3 : 1));
-    }
-  },
-  arrowUp: {
-    direction: -1,
-    trigger: function (event) {
-      navigateDocument(this.direction * (event.shiftKey ? 3 : 1));
-    }
-  },
-  arrowDown: {
-    direction: 1,
-    trigger: function (event) {
-      navigateDocument(this.direction * (event.shiftKey ? 3 : 1));
+class SlidehubKeyboardInteraction {
+  constructor(slidehub) {
+    this.slidehub = slidehub;
+
+    this.controlKey = {
+      homeKey: {
+        trigger: () => {
+          this.slidehub.selectedDocument.navigateItem.left(
+            this.slidehub.selectedDocument.itemCount()
+          );
+        }
+      },
+      endKey: {
+        trigger: () => {
+          this.slidehub.selectedDocument.navigateItem.right(
+            this.slidehub.selectedDocument.itemCount()
+          );
+        }
+      },
+      arrowLeft: {
+        trigger: event => {
+          this.slidehub.selectedDocument.navigateItem.left(event.shiftKey ? 3 : 1);
+        }
+      },
+      arrowRight: {
+        trigger: event => {
+          this.slidehub.selectedDocument.navigateItem.right(event.shiftKey ? 3 : 1);
+        }
+      },
+      arrowUp: {
+        trigger: event => {
+          this.slidehub.navigateDocument.up(event.shiftKey ? 3 : 1);
+        }
+      },
+      arrowDown: {
+        trigger: event => {
+          this.slidehub.navigateDocument.down(event.shiftKey ? 3 : 1);
+        }
+      },
+      pageUp: {
+        trigger: () => {
+          this.slidehub.navigateDocument.up(3);
+        }
+      },
+      pageDown: {
+        trigger: () => {
+          this.slidehub.navigateDocument.down(3);
+        }
+      }
+    };
+  }
+
+  start() {
+    document.addEventListener('keydown', this.handleKeyboardInput.bind(this), listener.active);
+  }
+
+  /**
+   * Handles keyboard interactions with documents and items.
+   *
+   * @param {KeyboardEvent} event
+   */
+  handleKeyboardInput(event) {
+    if (event.keyCode in controlKeyNames) {
+      event.preventDefault();
+      const keyName = controlKeyNames[event.keyCode];
+      this.controlKey[keyName].trigger(event);
     }
   }
-});
+};

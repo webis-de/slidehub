@@ -1,13 +1,13 @@
+import { listener } from '../util/passive-event-listener';
+
+export { enableModals };
+
 /**
  * Modal window.
  *
  * Based on ideas from “The Incredible Accessible Modal Window” by Greg Kraus.
  * https://github.com/gdkraus/accessible-modal-dialog
  */
-
-import { listener } from '../util/passive-event-listener';
-
-export { enableModals };
 
 let lastFocusedElement;
 
@@ -16,8 +16,8 @@ function enableModals() {
   modalOpenButtons.forEach(button => {
     button.removeAttribute('disabled');
     button.addEventListener('click', event => {
-      const targetModalClass = event.currentTarget.dataset.targetModal;
-      const modal = document.querySelector(`.${targetModalClass}`);
+      const targetModal = event.currentTarget.dataset.targetModal;
+      const modal = document.querySelector(`[data-modal-${targetModal}]`);
       openModal(modal);
     });
   });

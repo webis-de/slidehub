@@ -1,24 +1,42 @@
 import { config } from '../config';
-import { buildDocuments } from './SlidehubDocumentBuilder';
-import { loadImages } from './SlidehubImageLoader';
-import { enableMouseInteraction } from './SlidehubMouseInteraction';
-import { enableKeyboardInteraction } from './SlidehubKeyboardInteraction';
-import { enableModals } from './SlidehubModal';
-import { loadPlugin } from './SlidehubPluginLoader';
+import { documentsData } from '../documents-data';
+import { parseDocumentsData, parseDocumentsMarkup } from './SlidehubParser';
+import { SlidehubDocumentBuilder } from './SlidehubDocumentBuilder';
+import { SlidehubImageLoader } from './SlidehubImageLoader';
+import { SlidehubMouseInteraction } from './SlidehubMouseInteraction';
+import { SlidehubKeyboardInteraction } from './SlidehubKeyboardInteraction';
+import { DocumentNavigator } from './DocumentNavigator';
+import { enableModals } from './Modal';
 
-import * as plugins from '../plugins';
+import { Highlighter } from '../plugins/Highlighter';
+import { DocumentSourceLinker } from '../plugins/DocumentSourceLinker';
 
-import { numberOfVisibleItems, storeItemOuterWidth } from './item-navigation';
-import { debounce, getOuterWidth } from '../util';
+import { debounce } from '../util/debounce';
+import { getOuterWidth } from '../util/get-outer-width';
+import { numberOfVisibleElements } from '../util/number-of-visible-elements';
 
 export { Slidehub };
 
+const selectClassName = 'selected';
+const highlightClassName = 'highlighted';
+
+/**
+ * Main class.
+ */
 class Slidehub {
   /**
    * @public
    */
   constructor() {
-    this.node = null;
+    this._node = null;
+    this._documents = null;
+    this._selectedDocument = null;
+    this._highlightedDocument = null;
+    this._documentNavigator = null;
+
+    this._itemWidth = null;
+    this._visibleItems = null;
+    this._scrollboxWidth = null;
 
     document.addEventListener('DOMContentLoaded', () => {
       this.start();
@@ -32,17 +50,29 @@ class Slidehub {
    * @private
    */
   start() {
-    this.node = initializeNode();
+    this.node = initializeSlidehubNode();
 
-    if (!config.staticContent) {
-      buildDocuments(this.node);
+    if (config.staticContent) {
+      this.documents = parseDocumentsMarkup(this);
+    } else {
+      this.documents = parseDocumentsData(this, documentsData);
+      const builder = new SlidehubDocumentBuilder(this);
+      builder.build();
     }
 
-    exposeDocumentInfo();
+    this.navigateDocument = new DocumentNavigator(this);
 
-    loadImages(this.node);
-    enableMouseInteraction(this.node);
-    enableKeyboardInteraction();
+    this.exposeDocumentInfo();
+
+    const imageLoader = new SlidehubImageLoader(this);
+    imageLoader.start();
+
+    const mouseInteraction = new SlidehubMouseInteraction(this);
+    mouseInteraction.start();
+
+    const keyboardInteraction = new SlidehubKeyboardInteraction(this);
+    keyboardInteraction.start();
+
     enableModals();
   }
 
@@ -52,8 +82,207 @@ class Slidehub {
    * @private
    */
   loadPlugins() {
-    for (const plugin of Object.values(plugins)) {
-      loadPlugin(plugin);
+    const highlighter = new Highlighter(this);
+    highlighter.enable();
+
+    const documentSourceLinker = new DocumentSourceLinker(this);
+    documentSourceLinker.enable();
+  }
+
+  /**
+   * @returns {HTMLElement}
+   */
+  get node() {
+    return this._node;
+  }
+
+  /**
+   * @param {HTMLElement} node
+   */
+  set node(node) {
+    this._node = node;
+  }
+
+  /**
+   * @returns {LinkedMap}
+   */
+  get documents() {
+    return this._documents;
+  }
+
+  /**
+   * @public
+   */
+  set documents(documents) {
+    this._documents = documents;
+  }
+
+  /**
+   * @returns {SlidehubDocument}
+   */
+  get selectedDocument() {
+    return this._selectedDocument;
+  }
+
+  /**
+   * @param {SlidehubDocument} doc
+   */
+  set selectedDocument(doc) {
+    this._selectedDocument = doc;
+  }
+
+  /**
+   * Sets a new selected document.
+   *
+   * @param {SlidehubDocument} doc
+   */
+  selectDocument(doc) {
+    // Remove selected class from currently selected document
+    if (this.selectedDocument) {
+      this.selectedDocument.node.classList.remove(selectClassName);
+    }
+
+    // Set new selected document
+    doc.node.classList.add(selectClassName);
+    this.selectedDocument = doc;
+
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+  }
+
+  /**
+   * @returns {SlidehubDocument}
+   */
+  get highlightedDocument() {
+    return this._highlightedDocument;
+  }
+
+  /**
+   * @param {SlidehubDocument} doc
+   */
+  set highlightedDocument(doc) {
+    this._highlightedDocument = doc;
+  }
+
+  /**
+   * Sets a new highlighted document.
+   *
+   * @param {SlidehubDocument} doc
+   */
+  highlightDocument(doc) {
+    // Remove highlighted class from currently highlighted document
+    if (this.highlightedDocument) {
+      this.highlightedDocument.node.classList.remove(highlightClassName);
+    }
+
+    // Set new highlighted document
+    doc.node.classList.add(highlightClassName);
+    this.highlightedDocument = doc;
+
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+  }
+
+  get navigateDocument() {
+    return this._documentNavigator;
+  }
+
+  set navigateDocument(documentNavigator) {
+    this._documentNavigator = documentNavigator;
+  }
+
+  get itemWidth() {
+    return this._itemWidth;
+  }
+
+  set itemWidth(itemWidth) {
+    this._itemWidth = itemWidth;
+  }
+
+  get visibleItems() {
+    return this._visibleItems;
+  }
+
+  set visibleItems(visibleItems) {
+    this._visibleItems = visibleItems;
+  }
+
+  get scrollboxWidth() {
+    return this._scrollboxWidth;
+  }
+
+  set scrollboxWidth(scrollboxWidth) {
+    this._scrollboxWidth = scrollboxWidth;
+  }
+
+  /**
+   * @private
+   */
+  exposeDocumentInfo() {
+    this.exposeItemWidth();
+    this.exposeScrollboxWidth();
+    this.exposeNumberOfVisibleItems();
+
+    // Recalculate the scrollbox width on resize.
+    window.addEventListener('resize', debounce(() => {
+      this.exposeItemWidth();
+      this.exposeScrollboxWidth();
+      this.exposeNumberOfVisibleItems();
+    }, 200));
+  }
+
+  /**
+   * Computes and stores the outer width of items in the DOM in the form of a
+   * custom property. This way, it is accessible from within CSS.
+   *
+   * TO DO: Check for box-sizing value and compute accordingly.
+   *
+   * @private
+   */
+  exposeItemWidth() {
+    const doc = this.node.querySelector(`${config.selector.doc}[data-loaded]`);
+    const item = doc.querySelector(config.selector.item);
+    const itemWidth = getOuterWidth(item);
+
+    if (this.itemWidth !== itemWidth) {
+      this.itemWidth = itemWidth;
+
+      this.node.style.setProperty('--page-outer-width', itemWidth + 'px');
+    }
+  }
+
+  /**
+   * Exposes the current width of the first scrollbox to the DOM.
+   *
+   * @private
+   */
+  exposeScrollboxWidth() {
+    const doc = this.node.querySelector(`${config.selector.doc}[data-loaded]`);
+    const scrollbox = doc.querySelector(config.selector.scrollbox);
+    const scrollboxWidth = getOuterWidth(scrollbox);
+
+    if (this.scrollboxWidth !== scrollboxWidth) {
+      this.scrollboxWidth = scrollboxWidth;
+
+      this.node.style.setProperty('--scrollbox-width', scrollboxWidth + 'px');
+    }
+  }
+
+  /**
+   * Exposes the current number of visible items in a document to the DOM.
+   *
+   * @private
+   */
+  exposeNumberOfVisibleItems() {
+    const docNode = this.node.querySelector(`${config.selector.doc}[data-loaded]`);
+    const visibleItems = numberOfVisibleElements(docNode, this.itemWidth);
+
+    if (this.visibleItems !== visibleItems) {
+      this.visibleItems = visibleItems;
+
+      this.node.style.setProperty('--visible-pages', visibleItems);
     }
   }
 };
@@ -62,7 +291,7 @@ class Slidehub {
  *
  * @returns {HTMLElement}
  */
-function initializeNode() {
+function initializeSlidehubNode() {
   const existingNode = document.querySelector(config.selector.slidehub);
   const slidehubNode = existingNode ? existingNode : createSlidehubNode();
 
@@ -94,98 +323,4 @@ function createSlidehubNode() {
   document.querySelector('[data-slidehub]').appendChild(slidehubNode);
 
   return slidehubNode;
-}
-
-function exposeDocumentInfo() {
-  exposeItemOuterWidth();
-  exposeScrollboxWidth();
-  exposeNumberOfVisibleItems();
-
-  // Recalculate the scrollbox width on resize.
-  window.addEventListener('resize', debounce(() => {
-    exposeItemOuterWidth();
-    exposeScrollboxWidth();
-    exposeNumberOfVisibleItems();
-  }, 200));
-}
-
-/**
- * Exposes the current width of the first scrollbox to the DOM.
- *
- * This function is a closure. It is instanciated once, creating a state
- * variable and keeping it alive. Also, an inner function is returned by the
- * function which uses the state variable. The purpose for this is keeping the
- * state varialbe private to this function. Otherwise, when storing it outside
- * the function, it would be exposed to the whole module.
- */
-const exposeScrollboxWidth = (function () {
-  // State variable. Will be kept alive so that further calls to this function
-  // can re-use its value.
-  let storedScrollboxWidth;
-
-  return function () {
-    const scrollbox = document.querySelector(config.selector.scrollbox);
-    const scrollboxWidth = getOuterWidth(scrollbox);
-
-    if (storedScrollboxWidth !== scrollboxWidth) {
-      storedScrollboxWidth = scrollboxWidth;
-
-      exposeCustomProperty('--scrollbox-width', scrollboxWidth + 'px');
-    }
-  };
-})();
-
-/**
- * Exposes the current number of visible items in a document to the DOM.
- *
- * This function is a closure. See {@see exposeScrollboxWidth} for an explanation.
- */
-const exposeNumberOfVisibleItems = (function () {
-  let storedVisibleItems;
-
-  return function () {
-    const doc = document.querySelector(config.selector.doc);
-    const visibleItems = numberOfVisibleItems(doc);
-
-    if (storedVisibleItems !== visibleItems) {
-      storedVisibleItems = visibleItems;
-
-      exposeCustomProperty('--visible-pages', visibleItems);
-    }
-  };
-})();
-
-/**
- * Computes and stores the outer width of items in the DOM in the form of a
- * custom property. This way, it is accessible from within CSS.
- *
- * TO DO: Check for box-sizing value and compute accordingly.
- */
-const exposeItemOuterWidth = (function () {
-  let storedItemOuterWidth;
-
-  return function () {
-    const doc = document.querySelector(`${config.selector.doc}[data-loaded]`);
-    const item = doc.querySelector(config.selector.item);
-    const itemOuterWidth = getOuterWidth(item);
-
-    if (storedItemOuterWidth !== itemOuterWidth) {
-      storedItemOuterWidth = itemOuterWidth;
-      storeItemOuterWidth(itemOuterWidth);
-
-      exposeCustomProperty('--page-outer-width', itemOuterWidth + 'px');
-    }
-  };
-})();
-
-/**
- * Exposes data to the DOM node which represents the Slidehub container. This
- * allows accessing the data from CSS.
- *
- * @param {string} propertyName
- * @param {string} value
- */
-function exposeCustomProperty(propertyName, value) {
-  const slidehubContainer = document.querySelector(config.selector.slidehub);
-  slidehubContainer.style.setProperty(propertyName, value);
 }

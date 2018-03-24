@@ -5,7 +5,7 @@ export { config };
  * @property {ConfigPropertyAssets} assets
  * @property {boolean} staticContent
  * @property {boolean} metaSlide
- * @property {boolean} allowLastPageInFirstColumn
+ * @property {boolean} keepSelectedPageInFirstColumn
  * @property {boolean} preserveAspectRatio
  * @property {string|null} selectColor
  * @property {string|null} highlightColor
@@ -43,14 +43,14 @@ const config = {
 
   // Allows navigating pages so that the last page can be placed in the first
   // column of a document container.
-  allowLastPageInFirstColumn: true,
+  keepSelectedPageInFirstColumn: true,
 
   // Preserve aspect ratio of document items?
   preserveAspectRatio: false,
 
   // Overrides the default select color.
   // Takes string values that represent a valid CSS color value; for example:
-  // 'transparent', 'tomato', '#f90', 'hsl(220, 50%, 40%)'
+  // 'transparent', 'Highlight', 'tomato', '#f90', 'hsl(220, 50%, 40%)'
   // Setting `null` uses the default color.
   selectColor: null,
 

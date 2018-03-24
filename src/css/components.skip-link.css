@@ -1,9 +1,0 @@
-/*
-* This is some selector specificity-foo to override the utility class
-* for visually hidden but keyboard-focusable elements.
-*/
-.skip-link.visually-hidden.focusable:focus {
-  position: relative;
-  display: inline-block;
-  margin: var(--spacing);
-}

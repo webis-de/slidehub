@@ -1,4 +1,4 @@
-import { getFloatPropertyValue } from '.';
+import { getFloatPropertyValue } from './get-float-property-value';
 
 export { numberOfVisibleElements };
 

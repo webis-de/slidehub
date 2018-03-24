@@ -1,29 +1,11 @@
-:root {
-  --toolbox-height: 48px;
-}
-
 .toolbox {
   --c-background: hsl(0, 0%, 85%);
 
-  position: fixed;
-  will-change: transform;
-  top: 0;
-  right: 0;
-  left: 0;
-  height: var(--toolbox-height);
   z-index: var(--plane-toolbox);
   display: flex;
   align-items: center;
   padding: calc(var(--spacing) / 2) calc(var(--spacing) * 2);
   background-color: var(--c-background);
-}
-
-.skip-link {
-  top: var(--toolbox-height);
-}
-
-.main-content {
-  margin-top: var(--toolbox-height);
 }
 
 .toolbox a {
