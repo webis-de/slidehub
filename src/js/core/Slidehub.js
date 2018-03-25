@@ -17,7 +17,7 @@ import { numberOfVisibleElements } from '../util/number-of-visible-elements';
 export { Slidehub };
 
 const selectClassName = 'selected';
-const highlightClassName = 'highlighted';
+const hoverClassName = 'highlighted';
 
 /**
  * Main class.
@@ -30,7 +30,7 @@ class Slidehub {
     this._node = null;
     this._documents = null;
     this._selectedDocument = null;
-    this._highlightedDocument = null;
+    this._hoveredDocument = null;
     this._documentNavigator = null;
 
     this._itemWidth = null;
@@ -151,28 +151,28 @@ class Slidehub {
   /**
    * @returns {SlidehubDocument}
    */
-  get highlightedDocument() {
-    return this._highlightedDocument;
+  get hoveredDocument() {
+    return this._hoveredDocument;
   }
 
   /**
    * @param {SlidehubDocument} doc
    */
-  set highlightedDocument(doc) {
-    this._highlightedDocument = doc;
+  set hoveredDocument(doc) {
+    this._hoveredDocument = doc;
   }
 
   /**
-   * Sets a new highlighted document.
+   * Sets a new hovered document.
    *
    * @param {SlidehubDocument} doc
    */
-  highlightDocument(doc) {
-    this.unhighlightDocument();
+  hoverDocument(doc) {
+    this.unhoverDocument();
 
-    // Set new highlighted document
-    doc.node.classList.add(highlightClassName);
-    this.highlightedDocument = doc;
+    // Set new hovered document
+    doc.node.classList.add(hoverClassName);
+    this.hoveredDocument = doc;
 
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
@@ -180,14 +180,14 @@ class Slidehub {
   }
 
   /**
-   * Removes the highlight from the currently highlighted document.
+   * Removes the hover from the currently hovered document.
    */
-  unhighlightDocument() {
-    // Remove highlighted class from currently highlighted document
-    if (this.highlightedDocument) {
-      this.highlightedDocument.unhighlightItem();
-      this.highlightedDocument.node.classList.remove(highlightClassName);
-      this.highlightedDocument = null;
+  unhoverDocument() {
+    // Remove hovered class from currently hovered document
+    if (this.hoveredDocument) {
+      this.hoveredDocument.unhoverItem();
+      this.hoveredDocument.node.classList.remove(hoverClassName);
+      this.hoveredDocument = null;
     }
   }
 

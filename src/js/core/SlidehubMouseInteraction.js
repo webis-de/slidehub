@@ -31,13 +31,12 @@ class SlidehubMouseInteraction {
   }
 
   /**
-   *
    * @param {Element} docNode
    */
   initMouseInteraction(docNode) {
     docNode.addEventListener('wheel', this.handleWheelInteraction.bind(this), listener.active);
     docNode.addEventListener('click', this.handleClickSelect.bind(this), listener.passive);
-    docNode.addEventListener('mousemove', this.handleHoverHighlight.bind(this), listener.passive);
+    docNode.addEventListener('mousemove', this.handleMoveHover.bind(this), listener.passive);
   }
 
   /**
@@ -96,14 +95,14 @@ class SlidehubMouseInteraction {
    *
    * @param {MouseEvent} event
    */
-  handleHoverHighlight(event) {
+  handleMoveHover(event) {
     const doc = this.slidehub.documents.get(event.currentTarget.id);
 
     if (!doc.loaded) {
       return;
     }
 
-    this.slidehub.highlightDocument(doc);
+    this.slidehub.hoverDocument(doc);
 
     if (config.keepSelectedPageInFirstColumn) {
       return;
@@ -111,7 +110,7 @@ class SlidehubMouseInteraction {
 
     const item = event.target.closest(config.selector.item);
     if (item) {
-      doc.highlightItem(item);
+      doc.hoverItem(item);
     }
   }
 
@@ -130,7 +129,7 @@ class SlidehubMouseInteraction {
    * @param {KeyboardEvent} event
    */
   onModifierDown(event) {
-    const doc = this.slidehub.highlightedDocument;
+    const doc = this.slidehub.hoveredDocument;
     if (doc && event.keyCode === 16) {
       doc.node.style.setProperty('cursor', 'ew-resize');
     }
@@ -142,7 +141,7 @@ class SlidehubMouseInteraction {
    * @param {KeyboardEvent} event
    */
   onModifierUp(event) {
-    const doc = this.slidehub.highlightedDocument;
+    const doc = this.slidehub.hoveredDocument;
     if (doc && event.keyCode === 16) {
       doc.node.style.setProperty('cursor', 'auto');
     }
@@ -152,13 +151,9 @@ class SlidehubMouseInteraction {
    * Removes the special cursor when the user somehow leaves the page.
    */
   onModifierBlur() {
-    const doc = this.slidehub.highlightedDocument;
+    const doc = this.slidehub.hoveredDocument;
     if (doc) {
       doc.node.style.setProperty('cursor', 'auto');
     }
   }
 };
-
-/**
- * Modifier keys.
- */

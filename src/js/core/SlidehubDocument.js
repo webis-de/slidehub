@@ -4,7 +4,7 @@ import { ItemNavigator } from './ItemNavigator';
 export { SlidehubDocument };
 
 const selectClassName = 'selected';
-const highlightClassName = 'highlighted';
+const hoverClassName = 'highlighted';
 
 /**
  * Slidehub Document
@@ -25,7 +25,7 @@ class SlidehubDocument {
     this._scrollboxNode = null;
     this._items = null;
     this._selectedItemNode = null;
-    this._highlightedItemNode = null;
+    this._hoveredItemNode = null;
     this._itemNavigator = null;
   }
 
@@ -107,24 +107,24 @@ class SlidehubDocument {
     }
   }
 
-  get highlightedItemNode() {
-    return this._highlightedItemNode;
+  get hoveredItemNode() {
+    return this._hoveredItemNode;
   }
 
-  set highlightedItemNode(item) {
-    this._highlightedItemNode = item;
+  set hoveredItemNode(item) {
+    this._hoveredItemNode = item;
   }
 
   /**
-   * Sets a new highlighted item.
+   * Sets a new hovered item.
    *
    * @param {Element} targetItemNode
    */
-  highlightItem(targetItemNode) {
-    this.unhighlightItem();
+  hoverItem(targetItemNode) {
+    this.unhoverItem();
 
-    this.highlightedItemNode = targetItemNode;
-    this.highlightedItemNode.classList.add(highlightClassName);
+    this.hoveredItemNode = targetItemNode;
+    this.hoveredItemNode.classList.add(hoverClassName);
 
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
@@ -132,12 +132,12 @@ class SlidehubDocument {
   }
 
   /**
-   * Removes the highlight from the currently highlighted item.
+   * Removes the hover from the currently hovered item.
    */
-  unhighlightItem() {
-    if (this.highlightedItemNode) {
-      this.highlightedItemNode.classList.remove(highlightClassName);
-      this.highlightedItemNode = null;
+  unhoverItem() {
+    if (this.hoveredItemNode) {
+      this.hoveredItemNode.classList.remove(hoverClassName);
+      this.hoveredItemNode = null;
     }
   }
 
