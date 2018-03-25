@@ -8,7 +8,6 @@ import { SlidehubKeyboardInteraction } from './SlidehubKeyboardInteraction';
 import { DocumentNavigator } from './DocumentNavigator';
 import { enableModals } from './Modal';
 
-import { Highlighter } from '../plugins/Highlighter';
 import { DocumentSourceLinker } from '../plugins/DocumentSourceLinker';
 
 import { debounce } from '../util/debounce';
@@ -61,10 +60,6 @@ class Slidehub {
       documentLoader.start();
     }
 
-    // const docNode = this.node.querySelector(`${config.selector.doc}[data-loaded]`);
-    // const doc = this.documents.get(docNode.id);
-    // this.selectDocument(doc);
-
     this.navigateDocument = new DocumentNavigator(this);
 
     this.exposeDocumentInfo();
@@ -87,9 +82,6 @@ class Slidehub {
    * @private
    */
   loadPlugins() {
-    const highlighter = new Highlighter(this);
-    highlighter.enable();
-
     const documentSourceLinker = new DocumentSourceLinker(this);
     documentSourceLinker.enable();
   }

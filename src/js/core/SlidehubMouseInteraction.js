@@ -36,7 +36,8 @@ class SlidehubMouseInteraction {
    */
   initMouseInteraction(docNode) {
     docNode.addEventListener('wheel', this.handleWheelInteraction.bind(this), listener.active);
-    docNode.addEventListener('click', this.handleClickSelection.bind(this), listener.passive);
+    docNode.addEventListener('click', this.handleClickSelect.bind(this), listener.passive);
+    docNode.addEventListener('mousemove', this.handleHoverHighlight.bind(this), listener.passive);
   }
 
   /**
@@ -66,7 +67,12 @@ class SlidehubMouseInteraction {
     }
   }
 
-  handleClickSelection(event) {
+  /**
+   * Selects documents/items on click.
+   *
+   * @param {MouseEvent} event
+   */
+  handleClickSelect(event) {
     const doc = this.slidehub.documents.get(event.currentTarget.id);
 
     if (!doc.loaded) {
@@ -82,6 +88,30 @@ class SlidehubMouseInteraction {
     const item = event.target.closest(config.selector.item);
     if (item) {
       doc.selectItem(item);
+    }
+  }
+
+  /**
+   * Highlights documents/items on hover.
+   *
+   * @param {MouseEvent} event
+   */
+  handleHoverHighlight(event) {
+    const doc = this.slidehub.documents.get(event.currentTarget.id);
+
+    if (!doc.loaded) {
+      return;
+    }
+
+    this.slidehub.highlightDocument(doc);
+
+    if (config.keepSelectedPageInFirstColumn) {
+      return;
+    }
+
+    const item = event.target.closest(config.selector.item);
+    if (item) {
+      doc.highlightItem(item);
     }
   }
 
