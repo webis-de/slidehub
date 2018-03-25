@@ -99,8 +99,8 @@ class SlidehubDocument {
       this.selectedItemNode.classList.remove(selectClassName);
     }
 
-    targetItemNode.classList.add(selectClassName);
     this.selectedItemNode = targetItemNode;
+    this.selectedItemNode.classList.add(selectClassName);
 
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();

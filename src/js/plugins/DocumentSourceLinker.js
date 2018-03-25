@@ -1,5 +1,6 @@
 import { SlidehubPlugin } from '../core/SlidehubPlugin';
 import { listener } from '../util/passive-event-listener';
+import { config } from '../config';
 
 export { DocumentSourceLinker };
 
@@ -40,7 +41,7 @@ class DocumentSourceLinker extends SlidehubPlugin {
 
     const openInNewTab = event.ctrlKey;
     const doc = this.slidehub.selectedDocument;
-    DocumentSourceLinker.handleOpenIntent(doc.node, doc.selectedItem, openInNewTab);
+    DocumentSourceLinker.handleOpenIntent(doc.node, doc.selectedItemNode, openInNewTab);
   }
 
   /**
@@ -51,10 +52,11 @@ class DocumentSourceLinker extends SlidehubPlugin {
       return;
     }
 
-    const doc = this.slidehub.highlightedDocument;
-    if (doc.highlightedItem) {
+    const itemNode = event.target.closest(config.selector.item);
+    const docNode = itemNode.closest(config.selector.doc);
+    if (docNode) {
       const openInNewTab = true;
-      DocumentSourceLinker.handleOpenIntent(doc.node, doc.highlightedItem, openInNewTab);
+      DocumentSourceLinker.handleOpenIntent(docNode, itemNode, openInNewTab);
     }
   }
 
