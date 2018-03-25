@@ -151,8 +151,6 @@ class SlidehubDocument {
     docNode.insertAdjacentHTML('beforeend', markup);
 
     this.setNode(docNode);
-    this.loaded = true;
-    this.node.setAttribute('data-loaded', '');
 
     return docNode;
   }
@@ -212,5 +210,7 @@ class SlidehubDocument {
     this._items = node.querySelectorAll('[data-page]');
     this._itemNavigator = new ItemNavigator(this.slidehub, this);
     this.selectItem(node.querySelector(config.selector.item));
+    this.loaded = true;
+    this.node.setAttribute('data-loaded', '');
   }
 };
