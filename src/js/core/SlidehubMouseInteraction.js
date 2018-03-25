@@ -48,7 +48,7 @@ class SlidehubMouseInteraction {
     // Don’t handle scrolling on elements that are not inside a document
     const doc = this.slidehub.documents.get(event.currentTarget.id);
 
-    if (!doc.node) {
+    if (!doc.loaded) {
       return;
     }
 
@@ -69,7 +69,7 @@ class SlidehubMouseInteraction {
   handleClickSelection(event) {
     const doc = this.slidehub.documents.get(event.currentTarget.id);
 
-    if (!doc.node) {
+    if (!doc.loaded) {
       return;
     }
 
