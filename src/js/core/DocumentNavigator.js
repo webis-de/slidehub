@@ -3,13 +3,14 @@ import { clamp } from '../util/clamp';
 export { DocumentNavigator };
 
 /**
- * Document Navigator
+ * Document Navigator.
  *
  * **Usage**:
  *
  * ```
  * const navigateDocument = new DocumentNavigator(slidehub);
- * navigateDocument.by(3);
+ * navigateDocument.up(3);
+ * navigateDocument.down(1);
  * ```
  */
 class DocumentNavigator {

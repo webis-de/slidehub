@@ -63,10 +63,7 @@ class ItemNavigator {
    *
    *    4.1. If the new position is the same as the current position, return.
    *
-   *    4.2. If the `keepSelectedPageInFirstColumn` option is turned on
-   *    and the selected item is already visible, return.
-   *
-   *    4.3. Update the item position with the new value.
+   *    4.2. Update the item position with the new value.
    *
    * @param {Number} vector
    * @private
