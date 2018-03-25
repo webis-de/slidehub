@@ -94,13 +94,6 @@ class ItemNavigator {
       return;
     }
 
-    // If the selected item is already inside the view, we’re done here.
-    // When an item can be moved to the first column, this behavior is disabled
-    // as I prefer keeping the selected item in the first column in this case.
-    if (!config.keepSelectedPageInFirstColumn && this.selectedItemIsVisible()) {
-      return;
-    }
-
     this.updateItemPos(newItemPos);
   }
 
@@ -205,23 +198,5 @@ class ItemNavigator {
    */
   allItemsVisible() {
     return this.doc.itemCount < this.slidehub.numberOfVisibleItems;
-  }
-
-  /**
-   * Tests whether a document’s selected item is already visible.
-   *
-   * @returns {boolean}
-   * @private
-   */
-  selectedItemIsVisible() {
-    const docRect = this.doc.node.getBoundingClientRect();
-    const itemRect = this.doc.selectedItemNode.getBoundingClientRect();
-
-    return (
-      docRect.left <= itemRect.left &&
-      itemRect.right <= docRect.right &&
-      docRect.top <= itemRect.top &&
-      itemRect.bottom <= docRect.bottom
-    );
   }
 };
