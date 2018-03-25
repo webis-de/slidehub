@@ -1,7 +1,7 @@
 import { config } from '../config';
 import { documentsData } from '../documents-data';
 import { parseDocumentsData, parseDocumentsMarkup } from './SlidehubParser';
-import { SlidehubDocumentBuilder } from './SlidehubDocumentBuilder';
+import { SlidehubDocumentLoader } from './SlidehubDocumentLoader';
 import { SlidehubImageLoader } from './SlidehubImageLoader';
 import { SlidehubMouseInteraction } from './SlidehubMouseInteraction';
 import { SlidehubKeyboardInteraction } from './SlidehubKeyboardInteraction';
@@ -56,7 +56,7 @@ class Slidehub {
       this.documents = parseDocumentsMarkup(this);
     } else {
       this.documents = parseDocumentsData(this, documentsData);
-      const builder = new SlidehubDocumentBuilder(this);
+      const builder = new SlidehubDocumentLoader(this);
       builder.build();
     }
 

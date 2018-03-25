@@ -1,27 +1,19 @@
 import { config } from '../config';
-import { getFloatPropertyValue } from '../util/get-float-property-value';
 
-export { SlidehubDocumentBuilder };
+export { SlidehubDocumentLoader };
 
 /**
  * Document Loader.
  *
  * Loads documents dynamically when needed.
  */
-class SlidehubDocumentBuilder {
+class SlidehubDocumentLoader {
   constructor(slidehub) {
     this._slidehub = slidehub;
     this.batchSize = 5;
     this.prevIterator = null;
     this.nextIterator = null;
     this.observer = new IntersectionObserver(this.documentObservationHandler.bind(this));
-
-    this.classes = {
-      doc: config.selector.doc.slice(1),
-      scrollbox: config.selector.scrollbox.slice(1),
-      itemContainer: config.selector.itemContainer.slice(1),
-      item: config.selector.item.slice(1)
-    };
   }
 
   get slidehub() {
@@ -49,7 +41,7 @@ class SlidehubDocumentBuilder {
     for (const doc of this.slidehub.documents.values()) {
       const documentSource = `${config.assets.documents}/${doc.name}`;
       documentFramesMarkup += `<div
-        class="${this.classes.doc}"
+        class="${config.selector.doc.slice(1)}"
         id="${doc.name}"
         data-doc-source="${documentSource}"
         style="--pages: ${doc.imageCount + (config.metaSlide ? 1 : 0)}"
@@ -107,20 +99,19 @@ class SlidehubDocumentBuilder {
    * @returns {SlidehubDocument}
    */
   loadInitialDocument(iteratorResult, centerDocumentInView) {
-    const initialDocument = this.loadDocument(iteratorResult, 'beforeend');
+    const doc = this.loadDocument(iteratorResult, 'beforeend');
 
     // selectDocument(initialDocument);
-    this.slidehub.selectDocument(initialDocument);
+    this.slidehub.selectDocument(doc);
 
     if (centerDocumentInView) {
-      const documentHeight = getFloatPropertyValue(initialDocument.node, 'height');
-
+      const docHeight = doc.node.clientHeight;
       // After a short while, scroll the viewport to center the document
       // In the future, `Element.scrollIntoView({ block: 'center' })` should work
-      setTimeout(() => window.scrollBy(0, -(window.innerHeight / 2 - documentHeight / 2)), 200);
+      setTimeout(() => window.scrollBy(0, -(window.innerHeight / 2 - docHeight / 2)), 200);
     }
 
-    return initialDocument;
+    return doc;
   }
 
   /**
@@ -164,72 +155,11 @@ class SlidehubDocumentBuilder {
 
     console.info(`Loading ${doc.name}.`);
 
-    doc.setNode(this.insertDocument(doc));
-
-    // doc.selectItem(doc.node.querySelector(config.selector.item));
+    doc.load();
 
     this.observer.observe(doc.node);
 
-    doc.loaded = true;
-    doc.node.setAttribute('data-loaded', '');
-
     return doc;
-  }
-
-  /**
-   * Inserts document markup into the DOM.
-   *
-   * @param {SlidehubDocument} doc
-   */
-  insertDocument(doc) {
-    const innerDocumentMarkup = this.createDocumentMarkup(doc);
-    const docNode = document.getElementById(doc.name);
-    docNode.insertAdjacentHTML('beforeend', innerDocumentMarkup);
-
-    return docNode;
-  }
-
-  /**
-   * Creates the complete markup for a document under the following assumptions:
-   * - A file named documentData.name exists on the document assets path
-   * - The document’s item images are on the image assets path
-   *
-   * @param {SlidehubDocument} doc
-   * @returns {string}
-   */
-  createDocumentMarkup(doc) {
-    let items = '';
-    for (var i = 0; i < doc.imageCount; i++) {
-      const imageSource = `${config.assets.images}/${doc.name}-${i}.png`;
-      items += `<div class="${this.classes.item}" data-page="${i + 1}">
-        <img data-src="${imageSource}" alt="page ${i + 1}">
-      </div>`;
-    }
-
-    const documentSource = `${config.assets.documents}/${doc.name}`;
-
-    const metaSlide = `<div class="${this.classes.item} ${this.classes.item}--text" data-page="0">
-      <div class="doc-meta">
-        <h2 class="doc-meta__title">
-          <a href="${documentSource}">${doc.name}</a>
-        </h2>
-        by author, ${doc.imageCount} pages, 2018
-      </div>
-    </div>`;
-
-    const dummyPage = `<div
-      class="${this.classes.item} dummy-page"
-      aria-hidden="true"
-      style="visibility: hidden;"
-    ></div>`;
-
-    return `<div class="${this.classes.scrollbox}">
-      <div class="${this.classes.itemContainer}">
-        ${config.metaSlide ? metaSlide : ''}
-        ${items}
-        ${dummyPage}
-      </div>
-    </div>`;
   }
 
   /**
@@ -241,8 +171,8 @@ class SlidehubDocumentBuilder {
   documentObservationHandler(entries, observer) {
     for (const entry of entries) {
       if (entry.isIntersecting) {
-        const documentData = this.slidehub.documents.get(entry.target.id);
-        this.loadDocument(documentData.iterator.next(), documentData.insertPosition);
+        const doc = this.slidehub.documents.get(entry.target.id);
+        this.loadDocument(doc.iterator.next(), doc.insertPosition);
 
         observer.unobserve(entry.target);
       }

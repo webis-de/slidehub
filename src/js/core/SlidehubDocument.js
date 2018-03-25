@@ -17,16 +17,16 @@ class SlidehubDocument {
   constructor(slidehub, name, imageCount) {
     this.slidehub = slidehub;
 
+    this._name = name;
+    this._imageCount = imageCount;
+    this._loaded = false;
+
     this._node = null;
     this._scrollboxNode = null;
     this._items = null;
     this._selectedItemNode = null;
     this._highlightedItemNode = null;
     this._itemNavigator = null;
-
-    this._name = name;
-    this._imageCount = imageCount;
-    this._loaded = false;
   }
 
   /**
@@ -78,23 +78,6 @@ class SlidehubDocument {
    */
   itemCount() {
     return this.items.length - 1;
-  }
-
-  get navigateItem() {
-    return this._itemNavigator;
-  }
-
-  /**
-   * @param {HTMLElement} node
-   */
-  setNode(node) {
-    this.node = node;
-    this._scrollboxNode = node.querySelector(config.selector.scrollbox);
-    // Avoid browsers remembering the scroll position when refreshing the page.
-    this._scrollboxNode.scrollLeft = 0;
-    this._items = node.querySelectorAll('[data-page]');
-    this._itemNavigator = new ItemNavigator(this.slidehub, this);
-    this.selectItem(node.querySelector(config.selector.item));
   }
 
   get selectedItemNode() {
@@ -156,5 +139,78 @@ class SlidehubDocument {
       this.highlightedItemNode.classList.remove(highlightClassName);
       this.highlightedItemNode = null;
     }
+  }
+
+  get navigateItem() {
+    return this._itemNavigator;
+  }
+
+  load() {
+    const markup = this.createMarkup();
+    const docNode = document.getElementById(this.name);
+    docNode.insertAdjacentHTML('beforeend', markup);
+
+    this.setNode(docNode);
+    this.loaded = true;
+    this.node.setAttribute('data-loaded', '');
+
+    return docNode;
+  }
+
+  /**
+   * Creates the complete markup for a document under the following assumptions:
+   * - A file named `this.name` exists on the document assets path
+   * - The document’s item images are on the image assets path
+   *
+   * @returns {String}
+   */
+  createMarkup() {
+    const scrollboxClassName = config.selector.scrollbox.slice(1);
+    const itemContainerClassName = config.selector.itemContainer.slice(1);
+    const itemClassName = config.selector.item.slice(1);
+
+    let items = '';
+    for (var i = 0; i < this.imageCount; i++) {
+      const imageSource = `${config.assets.images}/${this.name}-${i}.png`;
+      items += `<div class="${itemClassName}" data-page="${i + 1}">
+        <img data-src="${imageSource}" alt="page ${i + 1}">
+      </div>`;
+    }
+
+    const documentSource = `${config.assets.documents}/${this.name}`;
+
+    const metaSlide = `<div class="${itemClassName} ${itemClassName}--text" data-page="0">
+      <div class="doc-meta">
+        <h2 class="doc-meta__title">
+          <a href="${documentSource}">${this.name}</a>
+        </h2>
+        by author, ${this.imageCount} pages, 2018
+      </div>
+    </div>`;
+
+    const dummyPage = `<div
+      class="${itemClassName} dummy-page"
+      aria-hidden="true"
+      style="visibility: hidden;"
+    ></div>`;
+
+    return `<div class="${scrollboxClassName}">
+      <div class="${itemContainerClassName}">
+        ${config.metaSlide ? metaSlide : ''}
+        ${items}
+        ${dummyPage}
+      </div>
+    </div>`;
+  }
+
+  /**
+   * @param {HTMLElement} node
+   */
+  setNode(node) {
+    this.node = node;
+    this._scrollboxNode = node.querySelector(config.selector.scrollbox);
+    this._items = node.querySelectorAll('[data-page]');
+    this._itemNavigator = new ItemNavigator(this.slidehub, this);
+    this.selectItem(node.querySelector(config.selector.item));
   }
 };
