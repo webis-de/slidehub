@@ -9,10 +9,10 @@ export { debounce };
  * @see https://davidwalsh.name/javascript-debounce-function
  * @param {Function} func
  * @param {Number} wait
- * @param {Boolean} immediate
+ * @param {Boolean?} immediate
  * @returns {Function}
  */
-function debounce(func, wait, immediate) {
+function debounce(func, wait, immediate = false) {
   let timeout;
 
   return function () {
