@@ -34,8 +34,8 @@ class Highlighter extends SlidehubPlugin {
   handleHighlight(event) {
     if (event.target instanceof Element) {
       const docNode = event.target.closest(config.selector.doc);
-      if (docNode) {
-        const doc = this.slidehub.documents.get(docNode.id);
+      const doc = this.slidehub.documents.get(docNode.id);
+      if (doc.loaded) {
         this.slidehub.highlightDocument(doc);
 
         if (config.keepSelectedPageInFirstColumn) {
