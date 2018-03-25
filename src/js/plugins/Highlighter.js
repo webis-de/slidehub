@@ -34,18 +34,26 @@ class Highlighter extends SlidehubPlugin {
   handleHighlight(event) {
     if (event.target instanceof Element) {
       const docNode = event.target.closest(config.selector.doc);
+
+      if (!docNode) {
+        return;
+      }
+
       const doc = this.slidehub.documents.get(docNode.id);
-      if (doc.loaded) {
-        this.slidehub.highlightDocument(doc);
 
-        if (config.keepSelectedPageInFirstColumn) {
-          return;
-        }
+      if (!doc.loaded) {
+        return;
+      }
 
-        const itemNode = event.target.closest(config.selector.item);
-        if (itemNode) {
-          doc.highlightItem(itemNode);
-        }
+      this.slidehub.highlightDocument(doc);
+
+      if (config.keepSelectedPageInFirstColumn) {
+        return;
+      }
+
+      const itemNode = event.target.closest(config.selector.item);
+      if (itemNode) {
+        doc.highlightItem(itemNode);
       }
     }
   }
