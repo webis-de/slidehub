@@ -36,7 +36,6 @@ class SlidehubImageLoader {
   observeExistingDocuments() {
     const documentNodes = Array.from(this.slidehub.node.querySelectorAll(config.selector.doc));
     documentNodes.forEach(docNode => this.startImageObserver(docNode));
-    // this.slidehub.documents.forEach(doc => this.startImageObserver(doc.node));
   }
 
   /**

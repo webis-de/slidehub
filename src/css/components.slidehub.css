@@ -86,13 +86,11 @@
 }
 
 .page > img {
-  display: block;
+  width: 100%;
   pointer-events: none;
 
   /* Maintain aspect-ratio while filling the container */
   object-fit: contain;
-  margin-right: auto;
-  margin-left: auto;
   line-height: var(--page-height);
 }
 
