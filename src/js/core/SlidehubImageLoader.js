@@ -23,7 +23,7 @@ class SlidehubImageLoader {
   start() {
     if (this.imageObserver) {
       this.observeExistingDocuments();
-      // this.observeNewDocuments();
+      this.observeNewDocuments();
     } else {
       const images = Array.from(this.slidehub.node.querySelectorAll('img[data-src]'));
       images.forEach(image => loadImage(image));
@@ -59,8 +59,9 @@ class SlidehubImageLoader {
 
     const mutationObserver = new MutationObserver(this.mutationHandler.bind(this));
 
-    this.slidehub.documents.forEach(doc => {
-      mutationObserver.observe(doc.node, mutationObserverOptions);
+    const documentNodes = Array.from(this.slidehub.node.querySelectorAll(config.selector.doc));
+    documentNodes.forEach(docNode => {
+      mutationObserver.observe(docNode, mutationObserverOptions);
     });
   }
 
