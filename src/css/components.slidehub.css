@@ -127,29 +127,10 @@
   left: 0;
 }
 
-/*
-Make sure that bug [1] doesn’t affect these elements when using custom
-properties on their pseudo elements.
-[1] developer.microsoft.com/en-us/microsoft-edge/platform/issues/11495448/
-*/
-.doc.selected .page-container,
-.doc.highlighted:not(.selected) .page-container {
-  color: inherit !important;
-  background-color: transparent !important;
-  opacity: inherit !important;
-}
-
-/*
-1: Custom properties don’t work on pseudo elements in Edge 15. See:
-developer.microsoft.com/en-us/microsoft-edge/platform/issues/11495448/
-In the future, the custom property-based values can be used.
-*/
 .doc.selected .page-container::before,
 .doc.highlighted:not(.selected) .page-container::before {
   opacity: 0.15;
-
-  z-index: 220; /* 1 */
-  /* z-index: calc(var(--plane-document) + 20); */
+  z-index: 220;
 }
 
 .doc.selected .page-container::before {
@@ -171,30 +152,27 @@ In the future, the custom property-based values can be used.
 }
 
 .doc.selected .page.selected::before,
-.doc.highlighted .page.highlighted:not(.selected)::before {
+.doc.highlighted .page.highlighted::before {
   content: '';
   pointer-events: none;
   position: absolute;
+  z-index: 230;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
-}
-
-.doc.selected .page.selected::before,
-.doc.highlighted .page.highlighted:not(.selected)::before {
   opacity: 0.25;
-  z-index: 230;
-  /* z-index: calc(var(--plane-document) + 30); */
 }
 
 .doc.selected .page.selected::before {
   border: 2px solid;
   border-color: hsl(220, 50%, 40%);
   border-color: var(--c-selected);
+  z-index: 240;
 }
 
-.doc.highlighted .page.highlighted:not(.selected)::before {
+.doc.highlighted .page.highlighted:not(.selected)::before,
+.doc.highlighted:not(.selected) .page.highlighted::before {
   border: 2px solid hsl(0, 0%, 75%);
   border-color: hsl(0, 0%, 75%);
   border-color: var(--c-highlighted);
