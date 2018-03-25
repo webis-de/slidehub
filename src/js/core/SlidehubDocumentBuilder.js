@@ -69,9 +69,21 @@ class SlidehubDocumentBuilder {
   loadTargetDocument() {
     const fragmentIdentifier = getFragmentIdentifier(window.location.toString());
 
-    const documentName = this.slidehub.documents.has(fragmentIdentifier)
-      ? fragmentIdentifier
-      : this.slidehub.documents.keys().next().value;
+    let documentName;
+
+    if (this.slidehub.documents.has(fragmentIdentifier)) {
+      // Prioritize the fragment identifier
+      documentName = fragmentIdentifier;
+    } else if (document.documentElement.scrollTop === 0) {
+      // If the viewport was not scrolled already, just start from the top
+      documentName = this.slidehub.documents.keys().next().value;
+    } else {
+      // The page was scrolled (e.g. the page was reloaded with a non-zero scroll position)
+      // In this case, Slidehub attempts to load the document in the center of the view.
+      const slidehubWidth = this.slidehub.node.clientWidth;
+      const centerDocument = document.elementFromPoint(slidehubWidth / 2, window.innerHeight / 2);
+      documentName = centerDocument.id;
+    }
 
     // Obtain two iterators as pointers for which documents need to be
     // loaded next.
