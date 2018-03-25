@@ -209,8 +209,12 @@ class SlidehubDocument {
     this._scrollboxNode = node.querySelector(config.selector.scrollbox);
     this._items = node.querySelectorAll('[data-page]');
     this._itemNavigator = new ItemNavigator(this.slidehub, this);
+
+    if (!this.slidehub.selectedDocument) {
+      this.slidehub.selectDocument(this);
+    }
     this.selectItem(node.querySelector(config.selector.item));
+
     this.loaded = true;
-    this.node.setAttribute('data-loaded', '');
   }
 };

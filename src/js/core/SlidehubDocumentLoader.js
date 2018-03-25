@@ -20,7 +20,7 @@ class SlidehubDocumentLoader {
     return this._slidehub;
   }
 
-  build() {
+  start() {
     this.insertDocumentFrames();
 
     this.loadTargetDocument();
@@ -101,7 +101,6 @@ class SlidehubDocumentLoader {
   loadInitialDocument(iteratorResult, centerDocumentInView) {
     const doc = this.loadDocument(iteratorResult, 'beforeend');
 
-    // selectDocument(initialDocument);
     this.slidehub.selectDocument(doc);
 
     if (centerDocumentInView) {

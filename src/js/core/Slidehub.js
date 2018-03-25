@@ -56,9 +56,14 @@ class Slidehub {
       this.documents = parseDocumentsMarkup(this);
     } else {
       this.documents = parseDocumentsData(this, documentsData);
-      const builder = new SlidehubDocumentLoader(this);
-      builder.build();
+
+      const documentLoader = new SlidehubDocumentLoader(this);
+      documentLoader.start();
     }
+
+    // const docNode = this.node.querySelector(`${config.selector.doc}[data-loaded]`);
+    // const doc = this.documents.get(docNode.id);
+    // this.selectDocument(doc);
 
     this.navigateDocument = new DocumentNavigator(this);
 
@@ -251,8 +256,8 @@ class Slidehub {
    * @private
    */
   exposeItemWidth() {
-    const doc = this.node.querySelector(`${config.selector.doc}[data-loaded]`);
-    const item = doc.querySelector(config.selector.item);
+    const doc = this.selectedDocument;
+    const item = doc.node.querySelector(config.selector.item);
     const itemWidth = getOuterWidth(item);
 
     if (this.itemWidth !== itemWidth) {
@@ -268,9 +273,8 @@ class Slidehub {
    * @private
    */
   exposeScrollboxWidth() {
-    const doc = this.node.querySelector(`${config.selector.doc}[data-loaded]`);
-    const scrollbox = doc.querySelector(config.selector.scrollbox);
-    const scrollboxWidth = getOuterWidth(scrollbox);
+    const scrollboxNode = this.selectedDocument.node.querySelector(config.selector.scrollbox);
+    const scrollboxWidth = getOuterWidth(scrollboxNode);
 
     if (this.scrollboxWidth !== scrollboxWidth) {
       this.scrollboxWidth = scrollboxWidth;
@@ -285,8 +289,7 @@ class Slidehub {
    * @private
    */
   exposeNumberOfVisibleItems() {
-    const docNode = this.node.querySelector(`${config.selector.doc}[data-loaded]`);
-    const visibleItems = numberOfVisibleElements(docNode, this.itemWidth);
+    const visibleItems = numberOfVisibleElements(this.selectedDocument.node, this.itemWidth);
 
     if (this.visibleItems !== visibleItems) {
       this.visibleItems = visibleItems;
