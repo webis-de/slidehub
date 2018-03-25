@@ -23,6 +23,7 @@ class Highlighter extends SlidehubPlugin {
   }
 
   disable() {
+    this.slidehub.unhighlightDocument();
     document.removeEventListener('mousemove', this.boundHandleHighlight);
     super.disable();
   }

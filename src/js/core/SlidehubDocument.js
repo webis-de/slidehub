@@ -138,16 +138,23 @@ class SlidehubDocument {
    * @param {Element} targetItemNode
    */
   highlightItem(targetItemNode) {
-    const itemContainer = targetItemNode.parentElement;
-    if (this.highlightedItemNode && itemContainer.contains(this.highlightedItemNode)) {
-      this.highlightedItemNode.classList.remove(highlightClassName);
-    }
+    this.unhighlightItem();
 
-    targetItemNode.classList.add(highlightClassName);
     this.highlightedItemNode = targetItemNode;
+    this.highlightedItemNode.classList.add(highlightClassName);
 
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
+    }
+  }
+
+  /**
+   * Removes the highlight from the currently highlighted item.
+   */
+  unhighlightItem() {
+    if (this.highlightedItemNode) {
+      this.highlightedItemNode.classList.remove(highlightClassName);
+      this.highlightedItemNode = null;
     }
   }
 };

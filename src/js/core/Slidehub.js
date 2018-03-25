@@ -171,10 +171,7 @@ class Slidehub {
    * @param {SlidehubDocument} doc
    */
   highlightDocument(doc) {
-    // Remove highlighted class from currently highlighted document
-    if (this.highlightedDocument) {
-      this.highlightedDocument.node.classList.remove(highlightClassName);
-    }
+    this.unhighlightDocument();
 
     // Set new highlighted document
     doc.node.classList.add(highlightClassName);
@@ -182,6 +179,18 @@ class Slidehub {
 
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
+    }
+  }
+
+  /**
+   * Removes the highlight from the currently highlighted document.
+   */
+  unhighlightDocument() {
+    // Remove highlighted class from currently highlighted document
+    if (this.highlightedDocument) {
+      this.highlightedDocument.unhighlightItem();
+      this.highlightedDocument.node.classList.remove(highlightClassName);
+      this.highlightedDocument = null;
     }
   }
 
