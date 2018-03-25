@@ -46,8 +46,9 @@ class SlidehubMouseInteraction {
    */
   handleWheelInteraction(event) {
     // Don’t handle scrolling on elements that are not inside a document
-    const docNode = event.currentTarget;
-    if (!docNode) {
+    const doc = this.slidehub.documents.get(event.currentTarget.id);
+
+    if (!doc.node) {
       return;
     }
 
@@ -60,23 +61,27 @@ class SlidehubMouseInteraction {
       event.preventDefault();
 
       const delta = event[scrollingDirection.delta];
-      this.slidehub.selectedDocument.navigateItem.by(Math.sign(delta));
+
+      doc.navigateItem.by(Math.sign(delta));
     }
   }
 
   handleClickSelection(event) {
     const doc = this.slidehub.documents.get(event.currentTarget.id);
-    if (doc.node) {
-      this.slidehub.selectDocument(doc);
 
-      if (config.keepSelectedPageInFirstColumn) {
-        return;
-      }
+    if (!doc.node) {
+      return;
+    }
 
-      const item = event.target.closest(config.selector.item);
-      if (item) {
-        doc.selectItem(item);
-      }
+    this.slidehub.selectDocument(doc);
+
+    if (config.keepSelectedPageInFirstColumn) {
+      return;
+    }
+
+    const item = event.target.closest(config.selector.item);
+    if (item) {
+      doc.selectItem(item);
     }
   }
 
