@@ -140,8 +140,8 @@ class Slidehub {
     }
 
     // Set new selected document
-    doc.node.classList.add(selectClassName);
     this.selectedDocument = doc;
+    this.selectedDocument.node.classList.add(selectClassName);
 
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
@@ -171,8 +171,8 @@ class Slidehub {
     this.unhoverDocument();
 
     // Set new hovered document
-    doc.node.classList.add(hoverClassName);
     this.hoveredDocument = doc;
+    this.hoveredDocument.node.classList.add(hoverClassName);
 
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
