@@ -350,10 +350,6 @@ class Slidehub {
    * @private
    */
   exposeNumberOfVisibleItems() {
-    const visibleItems = Math.floor(this.scrollboxWidth / this.itemWidth);
-
-    if (this.visibleItems !== visibleItems) {
-      this.visibleItems = visibleItems;
-    }
+    this.visibleItems = Math.floor(this.scrollboxWidth / this.itemWidth);
   }
 };
