@@ -19,9 +19,9 @@ try {
 } catch (e) {}
 
 /**
- * @typedef {object} AddEventListenerOptionsObject
- * @property {boolean|AddEventListenerOptions} active
- * @property {boolean|AddEventListenerOptions} passive
+ * @typedef {Object} AddEventListenerOptionsObject
+ * @property {Boolean|AddEventListenerOptions} active
+ * @property {Boolean|AddEventListenerOptions} passive
  */
 
 /**

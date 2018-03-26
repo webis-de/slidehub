@@ -1,4 +1,5 @@
 import { config } from '../config';
+import { getFragmentIdentifier } from '../util/getFragmentIdentifier';
 
 export { SlidehubDocumentLoader };
 
@@ -9,15 +10,11 @@ export { SlidehubDocumentLoader };
  */
 class SlidehubDocumentLoader {
   constructor(slidehub) {
-    this._slidehub = slidehub;
+    this.slidehub = slidehub;
     this.batchSize = 5;
     this.prevIterator = null;
     this.nextIterator = null;
     this.observer = new IntersectionObserver(this.documentObservationHandler.bind(this));
-  }
-
-  get slidehub() {
-    return this._slidehub;
   }
 
   start() {
@@ -178,19 +175,3 @@ class SlidehubDocumentLoader {
     }
   }
 };
-
-/**
- * Returns the fragment identifier of a URL if it is present.
- * Returns null if the fragment identifier is the empty string or if there is none.
- *
- * @param {string} url
- * @returns {string|null}
- */
-function getFragmentIdentifier(url) {
-  const hashPosition = url.indexOf('#');
-  if (hashPosition > 0) {
-    return url.substring(hashPosition + 1);
-  }
-
-  return null;
-}

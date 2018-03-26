@@ -1,5 +1,4 @@
 import { config } from '../config';
-import { documentsData } from '../documents-data';
 import { parseDocumentsData, parseDocumentsMarkup } from './SlidehubParser';
 import { SlidehubDocumentLoader } from './SlidehubDocumentLoader';
 import { SlidehubImageLoader } from './SlidehubImageLoader';
@@ -11,17 +10,13 @@ import { enableModals } from './Modal';
 import { DocumentSourceLinker } from '../plugins/DocumentSourceLinker';
 
 import { debounce } from '../util/debounce';
-import { getOuterWidth } from '../util/get-outer-width';
-import { numberOfVisibleElements } from '../util/number-of-visible-elements';
+import { getOuterWidth } from '../util/getOuterWidth';
 
 export { Slidehub };
 
 const selectClassName = 'selected';
 const hoverClassName = 'highlighted';
 
-/**
- * Main class.
- */
 class Slidehub {
   /**
    * @public
@@ -38,9 +33,66 @@ class Slidehub {
     this._scrollboxWidth = null;
 
     document.addEventListener('DOMContentLoaded', () => {
+      this._node = this.getNode();
+      this._documents = this.getDocuments();
+
+      if (!config.staticContent) {
+        const documentLoader = new SlidehubDocumentLoader(this);
+        documentLoader.start();
+      }
+
       this.start();
       this.loadPlugins();
     });
+  }
+
+  /**
+   * Sets up the main Slidehub HTML element.
+   *
+   * @returns {HTMLElement} the Slidehub DOM node.
+   * @private
+   */
+  getNode() {
+    const existingNode = document.querySelector(config.selector.slidehub);
+    const slidehubNode = existingNode ? existingNode : this.createNode();
+
+    // Expose select/highlight color overrides to the DOM.
+    // This allows CSS to use inside of a rule declaration.
+    if (config.selectColor && config.selectColor !== '') {
+      slidehubNode.style.setProperty('--c-selected', config.selectColor);
+    }
+
+    if (config.highlightColor && config.highlightColor !== '') {
+      slidehubNode.style.setProperty('--c-highlighted', config.highlightColor);
+    }
+
+    return slidehubNode;
+  }
+
+  /**
+   * Hooks the Slidehub container element into the DOM.
+   *
+   * Requires an element with a custom attribute `data-slidehub` to be present
+   * in the DOM. A new <div> element will be created inside of it. No existing
+   * markup will be changed or removed.
+   *
+   * @returns {HTMLDivElement} the empty Slidehub DOM node.
+   * @private
+   */
+  createNode() {
+    const slidehubNode = document.createElement('div');
+    slidehubNode.classList.add(config.selector.slidehub.slice(1));
+
+    document.querySelector('[data-slidehub]').appendChild(slidehubNode);
+
+    return slidehubNode;
+  }
+
+  /**
+   * @returns {ReverseIterableMap} the internal documents data structure.
+   */
+  getDocuments() {
+    return config.staticContent ? parseDocumentsMarkup(this) : parseDocumentsData(this);
   }
 
   /**
@@ -49,17 +101,6 @@ class Slidehub {
    * @private
    */
   start() {
-    this.node = initializeSlidehubNode();
-
-    if (config.staticContent) {
-      this.documents = parseDocumentsMarkup(this);
-    } else {
-      this.documents = parseDocumentsData(this, documentsData);
-
-      const documentLoader = new SlidehubDocumentLoader(this);
-      documentLoader.start();
-    }
-
     this.navigateDocument = new DocumentNavigator(this);
 
     this.exposeDocumentInfo();
@@ -87,42 +128,32 @@ class Slidehub {
   }
 
   /**
-   * @returns {HTMLElement}
+   * @returns {HTMLElement} the Slidehub DOM node.
+   * @public
    */
   get node() {
     return this._node;
   }
 
   /**
-   * @param {HTMLElement} node
-   */
-  set node(node) {
-    this._node = node;
-  }
-
-  /**
-   * @returns {LinkedMap}
+   * @returns {ReverseIterableMap} the Slidehub documents data structure.
+   * @public
    */
   get documents() {
     return this._documents;
   }
 
   /**
+   * @returns {SlidehubDocument} the currently selected document.
    * @public
-   */
-  set documents(documents) {
-    this._documents = documents;
-  }
-
-  /**
-   * @returns {SlidehubDocument}
    */
   get selectedDocument() {
     return this._selectedDocument;
   }
 
   /**
-   * @param {SlidehubDocument} doc
+   * @param {SlidehubDocument} doc the new selected document.
+   * @private
    */
   set selectedDocument(doc) {
     this._selectedDocument = doc;
@@ -132,6 +163,7 @@ class Slidehub {
    * Sets a new selected document.
    *
    * @param {SlidehubDocument} doc
+   * @public
    */
   selectDocument(doc) {
     // Remove selected class from currently selected document
@@ -149,23 +181,26 @@ class Slidehub {
   }
 
   /**
-   * @returns {SlidehubDocument}
+   * @returns {SlidehubDocument} the currently hovered document.
+   * @public
    */
   get hoveredDocument() {
     return this._hoveredDocument;
   }
 
   /**
-   * @param {SlidehubDocument} doc
+   * @param {SlidehubDocument} doc the new hovered document.
+   * @private
    */
   set hoveredDocument(doc) {
     this._hoveredDocument = doc;
   }
 
   /**
-   * Sets a new hovered document.
+   * Sets a new hovered document after unsetting the old one.
    *
-   * @param {SlidehubDocument} doc
+   * @param {SlidehubDocument} doc the new hovered document.
+   * @public
    */
   hoverDocument(doc) {
     this.unhoverDocument();
@@ -181,6 +216,11 @@ class Slidehub {
 
   /**
    * Removes the hover from the currently hovered document.
+   *
+   * **Side effect**: Also removes the hover from the currently hovered item
+   * within that document.
+   *
+   * @public
    */
   unhoverDocument() {
     // Remove hovered class from currently hovered document
@@ -191,39 +231,73 @@ class Slidehub {
     }
   }
 
+  /**
+   * @returns {DocumentNavigator} the document navigator object.
+   * @public
+   */
   get navigateDocument() {
     return this._documentNavigator;
   }
 
+  /**
+   * @param {DocumentNavigator} documentNavigator
+   * @private
+   */
   set navigateDocument(documentNavigator) {
     this._documentNavigator = documentNavigator;
   }
 
+  /**
+   * @returns {Number}
+   * @public
+   */
   get itemWidth() {
     return this._itemWidth;
   }
 
+  /**
+   * @param {Number} itemWidth
+   * @private
+   */
   set itemWidth(itemWidth) {
     this._itemWidth = itemWidth;
   }
 
+  /**
+   * @returns {Number}
+   * @public
+   */
   get visibleItems() {
     return this._visibleItems;
   }
 
+  /**
+   * @param {Number} visibleItems
+   * @private
+   */
   set visibleItems(visibleItems) {
     this._visibleItems = visibleItems;
   }
 
+  /**
+   * @returns {Number}
+   * @public
+   */
   get scrollboxWidth() {
     return this._scrollboxWidth;
   }
 
+  /**
+   * @param {Number} scrollboxWidth
+   * @private
+   */
   set scrollboxWidth(scrollboxWidth) {
     this._scrollboxWidth = scrollboxWidth;
   }
 
   /**
+   * Wrapper method for all expose methods.
+   *
    * @private
    */
   exposeDocumentInfo() {
@@ -240,38 +314,33 @@ class Slidehub {
   }
 
   /**
-   * Computes and stores the outer width of items in the DOM in the form of a
-   * custom property. This way, it is accessible from within CSS.
-   *
-   * TO DO: Check for box-sizing value and compute accordingly.
+   * Exposes the current outer width of an item to the DOM.
    *
    * @private
    */
   exposeItemWidth() {
-    const doc = this.selectedDocument;
-    const item = doc.node.querySelector(config.selector.item);
-    const itemWidth = getOuterWidth(item);
+    const item = this.selectedDocument.node.querySelector(config.selector.item);
+    const itemOuterWidth = getOuterWidth(item);
 
-    if (this.itemWidth !== itemWidth) {
-      this.itemWidth = itemWidth;
+    if (this.itemWidth !== itemOuterWidth) {
+      this.itemWidth = itemOuterWidth;
 
-      this.node.style.setProperty('--page-outer-width', itemWidth + 'px');
+      this.node.style.setProperty('--page-outer-width', this.itemWidth + 'px');
     }
   }
 
   /**
-   * Exposes the current width of the first scrollbox to the DOM.
+   * Exposes the current `clientWidth` of the selected scrollbox to the DOM.
    *
    * @private
    */
   exposeScrollboxWidth() {
     const scrollboxNode = this.selectedDocument.node.querySelector(config.selector.scrollbox);
-    const scrollboxWidth = getOuterWidth(scrollboxNode);
 
-    if (this.scrollboxWidth !== scrollboxWidth) {
-      this.scrollboxWidth = scrollboxWidth;
+    if (this.scrollboxWidth !== scrollboxNode.clientWidth) {
+      this.scrollboxWidth = scrollboxNode.clientWidth;
 
-      this.node.style.setProperty('--scrollbox-width', scrollboxWidth + 'px');
+      this.node.style.setProperty('--scrollbox-width', this.scrollboxWidth + 'px');
     }
   }
 
@@ -281,50 +350,10 @@ class Slidehub {
    * @private
    */
   exposeNumberOfVisibleItems() {
-    const visibleItems = numberOfVisibleElements(this.selectedDocument.node, this.itemWidth);
+    const visibleItems = Math.floor(this.scrollboxWidth / this.itemWidth);
 
     if (this.visibleItems !== visibleItems) {
       this.visibleItems = visibleItems;
-
-      this.node.style.setProperty('--visible-pages', visibleItems);
     }
   }
 };
-
-/**
- *
- * @returns {HTMLElement}
- */
-function initializeSlidehubNode() {
-  const existingNode = document.querySelector(config.selector.slidehub);
-  const slidehubNode = existingNode ? existingNode : createSlidehubNode();
-
-  // Expose select/highlight color overrides to the DOM.
-  // This allows CSS to use inside of a rule declaration.
-  if (config.selectColor && config.selectColor !== '') {
-    slidehubNode.style.setProperty('--c-selected', config.selectColor);
-  }
-
-  if (config.highlightColor && config.highlightColor !== '') {
-    slidehubNode.style.setProperty('--c-highlighted', config.highlightColor);
-  }
-
-  return slidehubNode;
-}
-
-/**
- * Hooks the Slidehub container element into the DOM.
- *
- * Requires an element with a custom attribute `data-slidehub`. A new <div> element
- * will be created inside of it. No existing markup will be changed or removed.
- *
- * @returns {HTMLElement}
- */
-function createSlidehubNode() {
-  const slidehubNode = document.createElement('div');
-  slidehubNode.classList.add(config.selector.slidehub.slice(1));
-
-  document.querySelector('[data-slidehub]').appendChild(slidehubNode);
-
-  return slidehubNode;
-}
