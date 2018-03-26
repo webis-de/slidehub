@@ -3,7 +3,8 @@
  */
 
 import { config } from '../config';
-import { LinkedMap } from '../util/linked-map';
+import { documentsData } from '../documents-data';
+import { ReverseIterableMap } from '../lib/reverse-iterable-map';
 import { SlidehubDocument } from './SlidehubDocument';
 
 export { parseDocumentsData, parseDocumentsMarkup };
@@ -13,11 +14,10 @@ export { parseDocumentsData, parseDocumentsMarkup };
  * The resulting structure keeps track of a documents’ loaded state.
  *
  * @param {Slidehub} slidehub
- * @param {Array<[string, number]>} documentsData
- * @returns {LinkedMap}
+ * @returns {ReverseIterableMap}
  */
-function parseDocumentsData(slidehub, documentsData) {
-  const documents = new LinkedMap();
+function parseDocumentsData(slidehub) {
+  const documents = new ReverseIterableMap();
 
   documentsData.forEach(([name, imageCount]) => {
     const doc = new SlidehubDocument(slidehub, name, imageCount);
@@ -29,10 +29,10 @@ function parseDocumentsData(slidehub, documentsData) {
 
 /**
  * @param {Slidehub} slidehub
- * @returns {LinkedMap}
+ * @returns {ReverseIterableMap}
  */
 function parseDocumentsMarkup(slidehub) {
-  const documents = new LinkedMap();
+  const documents = new ReverseIterableMap();
 
   const documentNodes = slidehub.node.querySelectorAll(config.selector.doc);
   documentNodes.forEach(docNode => {
