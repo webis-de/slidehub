@@ -12,9 +12,19 @@ export { enableModals };
 let lastFocusedElement;
 
 function enableModals() {
+  const buttonArea = document.querySelector('[data-slidehub-modal-buttons]');
+
+  if (!buttonArea) {
+    return;
+  }
+
+  const shortcutsOpenButton = createOpenButton('Shortcuts');
+  buttonArea.insertAdjacentHTML('beforeend', shortcutsOpenButton);
+  const featuresOpenButton = createOpenButton('Features');
+  buttonArea.insertAdjacentHTML('beforeend', featuresOpenButton);
+
   const modalOpenButtons = Array.from(document.querySelectorAll('button[data-target-modal]'));
   modalOpenButtons.forEach(button => {
-    button.removeAttribute('disabled');
     button.addEventListener('click', event => {
       const targetModal = event.currentTarget.dataset.targetModal;
       const modal = document.querySelector(`[data-modal-${targetModal}]`);
@@ -29,6 +39,12 @@ function enableModals() {
       closeModal(modal);
     });
   });
+}
+
+function createOpenButton(title) {
+  return `<button data-target-modal="${title.toLowerCase()}">
+    ${title}
+  </button>`;
 }
 
 /**
