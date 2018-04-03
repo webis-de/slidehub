@@ -1,5 +1,35 @@
 export { SlidehubPlugin };
 
+/**
+ * Abstract base class for Slidehub plugins.
+ *
+ * Ensures that classes extending `SlidehubPlugin` implement an `enable()` and
+ * `disable()` method.
+ *
+ * **Usage**:
+ *
+ * ```
+ * import { SlidehubPlugin } from '../core/SlidehubPlugin';
+ *
+ * class MyPlugin extends SlidehubPlugin {
+ *    constructor(slidehub) {
+ *      super(
+ *        slidehub,
+ *        'MyPlugin',
+ *        'Description of your plugin'
+ *      );
+ *    }
+ *
+ *    enable() {
+ *      // Implement an enable routine
+ *    }
+ *
+ *    disable() {
+ *      // Implement an disable routine
+ *    }
+ * };
+ * ```
+ */
 class SlidehubPlugin {
   constructor(slidehub, name, description) {
     this.slidehub = slidehub;

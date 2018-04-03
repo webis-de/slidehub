@@ -7,7 +7,7 @@ import { SlidehubKeyboardInteraction } from './SlidehubKeyboardInteraction';
 import { DocumentNavigator } from './DocumentNavigator';
 import { enableModals } from './Modal';
 
-import { DocumentSourceLinker } from '../plugins/DocumentSourceLinker';
+import * as plugin from '../plugins/namespace';
 
 import { debounce } from '../util/debounce';
 import { getOuterWidth } from '../util/getOuterWidth';
@@ -123,7 +123,7 @@ class Slidehub {
    * @private
    */
   loadPlugins() {
-    const documentSourceLinker = new DocumentSourceLinker(this);
+    const documentSourceLinker = new plugin.DocumentSourceLinker(this);
     documentSourceLinker.enable();
   }
 
