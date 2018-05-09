@@ -135,10 +135,10 @@ class Slidehub {
   jumpToTargetDocument(targetDoc) {
     const fragmentIdentifier = getFragmentIdentifier(window.location.toString());
     if (document.documentElement.scrollTop !== 0 || fragmentIdentifier) {
-      const centerOffset = window.innerHeight / 2 - targetDoc.node.clientHeight / 2;
+      const centerOffset = (window.innerHeight - targetDoc.node.clientHeight) / 2;
       // After a short while, scroll the viewport to center the document
       // In the future, `Element.scrollIntoView({ block: 'center' })` should work
-      setTimeout(() => window.scrollBy(0, centerOffset), 200);
+      setTimeout(() => window.scrollBy(0, -centerOffset), 200);
     }
   }
 
