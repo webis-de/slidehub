@@ -11,6 +11,7 @@ import * as plugin from '../plugins/namespace';
 
 import { debounce } from '../util/debounce';
 import { getOuterWidth } from '../util/getOuterWidth';
+import { getFragmentIdentifier } from '../util/getFragmentIdentifier';
 
 export { Slidehub };
 
@@ -36,10 +37,21 @@ class Slidehub {
       this._node = this.getNode();
       this._documents = this.getDocuments();
 
+      let documentLoader;
+
       if (!config.staticContent) {
-        const documentLoader = new SlidehubDocumentLoader(this);
-        documentLoader.start();
+        documentLoader = new SlidehubDocumentLoader(this);
+        documentLoader.insertDocumentFrames();
       }
+
+      const targetDoc = this.determineTargetDocument();
+
+      if (!config.staticContent) {
+        documentLoader.start(targetDoc);
+      }
+
+      this.selectDocument(targetDoc);
+      this.jumpToTargetDocument(targetDoc);
 
       this.start();
       this.loadPlugins();
@@ -93,6 +105,41 @@ class Slidehub {
    */
   getDocuments() {
     return config.staticContent ? parseDocumentsMarkup(this) : parseDocumentsData(this);
+  }
+
+  /**
+   * @returns {SlidehubDocument}
+   */
+  determineTargetDocument() {
+    const fragmentIdentifier = getFragmentIdentifier(window.location.toString());
+
+    let targetDoc;
+
+    if (this.documents.has(fragmentIdentifier)) {
+      targetDoc = this.documents.get(fragmentIdentifier);
+    } else if (document.documentElement.scrollTop === 0) {
+      // If the viewport was not scrolled already, just start from the top
+      targetDoc = this.documents.values().next().value;
+    } else {
+      // The page was scrolled (e.g. the page was reloaded with a non-zero scroll position)
+      // In this case, Slidehub attempts to load the document in the center of the view.
+      const slidehubWidth = this.node.clientWidth;
+      const centerElement = document.elementFromPoint(slidehubWidth / 2, window.innerHeight / 2);
+      const centerDocument = centerElement.closest(config.selector.doc);
+      targetDoc = this.documents.get(centerDocument.id);
+    }
+
+    return targetDoc;
+  }
+
+  jumpToTargetDocument(targetDoc) {
+    const fragmentIdentifier = getFragmentIdentifier(window.location.toString());
+    if (document.documentElement.scrollTop !== 0 || fragmentIdentifier) {
+      const centerOffset = window.innerHeight / 2 - targetDoc.node.clientHeight / 2;
+      // After a short while, scroll the viewport to center the document
+      // In the future, `Element.scrollIntoView({ block: 'center' })` should work
+      setTimeout(() => window.scrollBy(0, centerOffset), 200);
+    }
   }
 
   /**

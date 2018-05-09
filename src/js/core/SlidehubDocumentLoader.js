@@ -1,5 +1,4 @@
 import { config } from '../config';
-import { getFragmentIdentifier } from '../util/getFragmentIdentifier';
 
 export { SlidehubDocumentLoader };
 
@@ -17,10 +16,8 @@ class SlidehubDocumentLoader {
     this.observer = new IntersectionObserver(this.documentObservationHandler.bind(this));
   }
 
-  start() {
-    this.insertDocumentFrames();
-
-    this.loadTargetDocument();
+  start(targetDoc) {
+    this.loadTargetDocument(targetDoc);
 
     // Load one batch in both directions
     this.loadBatch(this.nextIterator, 'beforeend', this.batchSize);
@@ -30,7 +27,7 @@ class SlidehubDocumentLoader {
   /**
    * Prepares the DOM with empty frames for all documents.
    *
-   * @private
+   * @public
    */
   insertDocumentFrames() {
     let documentFramesMarkup = '';
@@ -55,29 +52,11 @@ class SlidehubDocumentLoader {
    *
    * @returns {SlidehubDocument}
    */
-  loadTargetDocument() {
-    const fragmentIdentifier = getFragmentIdentifier(window.location.toString());
-
-    let documentName;
-
-    if (this.slidehub.documents.has(fragmentIdentifier)) {
-      // Prioritize the fragment identifier
-      documentName = fragmentIdentifier;
-    } else if (document.documentElement.scrollTop === 0) {
-      // If the viewport was not scrolled already, just start from the top
-      documentName = this.slidehub.documents.keys().next().value;
-    } else {
-      // The page was scrolled (e.g. the page was reloaded with a non-zero scroll position)
-      // In this case, Slidehub attempts to load the document in the center of the view.
-      const slidehubWidth = this.slidehub.node.clientWidth;
-      const centerDocument = document.elementFromPoint(slidehubWidth / 2, window.innerHeight / 2);
-      documentName = centerDocument.id;
-    }
-
+  loadTargetDocument(targetDoc) {
     // Obtain two iterators as pointers for which documents need to be
     // loaded next.
-    this.prevIterator = this.slidehub.documents.iteratorFor(documentName).reverse();
-    this.nextIterator = this.slidehub.documents.iteratorFor(documentName);
+    this.prevIterator = this.slidehub.documents.iteratorFor(targetDoc.name).reverse();
+    this.nextIterator = this.slidehub.documents.iteratorFor(targetDoc.name);
 
     // The target document will be loaded next by retrieving the iterator result
     // from nextIterator. Since prevIterator points to the same document, it
@@ -85,29 +64,7 @@ class SlidehubDocumentLoader {
     // again.
     this.prevIterator.next();
 
-    return this.loadInitialDocument(this.nextIterator.next(), this.slidehub.documents.has(fragmentIdentifier));
-  }
-
-  /**
-   * Manages loading the very first Slidehub document.
-   *
-   * @param {IteratorResult} iteratorResult
-   * @param {boolean} centerDocumentInView
-   * @returns {SlidehubDocument}
-   */
-  loadInitialDocument(iteratorResult, centerDocumentInView) {
-    const doc = this.loadDocument(iteratorResult, 'beforeend');
-
-    this.slidehub.selectDocument(doc);
-
-    if (centerDocumentInView) {
-      const docHeight = doc.node.clientHeight;
-      // After a short while, scroll the viewport to center the document
-      // In the future, `Element.scrollIntoView({ block: 'center' })` should work
-      setTimeout(() => window.scrollBy(0, -(window.innerHeight / 2 - docHeight / 2)), 200);
-    }
-
-    return doc;
+    return this.loadDocument(this.nextIterator.next(), 'beforeend');
   }
 
   /**
