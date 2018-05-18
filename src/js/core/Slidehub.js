@@ -222,6 +222,11 @@ class Slidehub {
     this.selectedDocument = doc;
     this.selectedDocument.node.classList.add(selectClassName);
 
+    const slidehubSelectDocumentEvent = new CustomEvent('SlidehubSelectDocument', {
+      detail: { doc }
+    });
+    this.node.dispatchEvent(slidehubSelectDocumentEvent);
+
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
@@ -255,6 +260,11 @@ class Slidehub {
     // Set new hovered document
     this.hoveredDocument = doc;
     this.hoveredDocument.node.classList.add(hoverClassName);
+
+    const slidehubHoverDocumentEvent = new CustomEvent('SlidehubHoverDocument', {
+      detail: { doc }
+    });
+    this.node.dispatchEvent(slidehubHoverDocumentEvent);
 
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();

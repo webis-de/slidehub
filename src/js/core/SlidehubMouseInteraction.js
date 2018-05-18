@@ -104,10 +104,6 @@ class SlidehubMouseInteraction {
 
     this.slidehub.hoverDocument(doc);
 
-    if (config.keepSelectedPageInFirstColumn) {
-      return;
-    }
-
     const item = event.target.closest(config.selector.item);
     if (item) {
       doc.hoverItem(item);

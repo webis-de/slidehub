@@ -91,16 +91,22 @@ class SlidehubDocument {
   /**
    * Sets a new selected item.
    *
-   * @param {Element} targetItemNode
+   * @param {Element} itemNode
    */
-  selectItem(targetItemNode) {
-    const itemContainer = targetItemNode.parentElement;
+  selectItem(itemNode) {
+    const itemContainer = itemNode.parentElement;
     if (this.selectedItemNode && itemContainer.contains(this.selectedItemNode)) {
       this.selectedItemNode.classList.remove(selectClassName);
     }
 
-    this.selectedItemNode = targetItemNode;
+    this.selectedItemNode = itemNode;
     this.selectedItemNode.classList.add(selectClassName);
+
+    const slidehubSelectItemEvent = new CustomEvent('SlidehubSelectItem', {
+      bubbles: true,
+      detail: { itemNode }
+    });
+    this.node.dispatchEvent(slidehubSelectItemEvent);
 
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
@@ -118,13 +124,19 @@ class SlidehubDocument {
   /**
    * Sets a new hovered item.
    *
-   * @param {Element} targetItemNode
+   * @param {Element} itemNode
    */
-  hoverItem(targetItemNode) {
+  hoverItem(itemNode) {
     this.unhoverItem();
 
-    this.hoveredItemNode = targetItemNode;
+    this.hoveredItemNode = itemNode;
     this.hoveredItemNode.classList.add(hoverClassName);
+
+    const slidehubHoverItemEvent = new CustomEvent('SlidehubHoverItem', {
+      bubbles: true,
+      detail: { itemNode }
+    });
+    this.node.dispatchEvent(slidehubHoverItemEvent);
 
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
