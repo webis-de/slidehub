@@ -18,6 +18,9 @@ export { Slidehub };
 const selectClassName = 'selected';
 const hoverClassName = 'highlighted';
 
+/**
+ * Main Slidehub prototype.
+ */
 class Slidehub {
   /**
    * @public
@@ -172,6 +175,9 @@ class Slidehub {
   loadPlugins() {
     const documentSourceLinker = new plugin.DocumentSourceLinker(this);
     documentSourceLinker.enable();
+
+    const pageWidgetPlugin = new plugin.PageWidgetPlugin(this);
+    pageWidgetPlugin.enable();
   }
 
   /**

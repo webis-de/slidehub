@@ -1,0 +1,12 @@
+.sh-page-widget {
+  display: flex;
+}
+
+.sh-page-widget__current-page,
+.sh-page-widget__total-pages {
+  font-feature-settings: "tnum";
+}
+
+.sh-page-widget__current-page::after {
+  content: "/";
+}

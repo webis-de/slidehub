@@ -17,3 +17,4 @@
  */
 
 export * from './DocumentSourceLinker';
+export * from './PageWidgetPlugin';
