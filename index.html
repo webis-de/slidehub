@@ -15,28 +15,29 @@
 
 <body>
 
-  <header class="toolbox" data-slidehub-modal-buttons>
-    <h1 class="site-title">Slidehub</h1>
-  </header>
-
   <main class="main-content" data-slidehub>
     <!-- Slidehub will hook itself as a child element into [data-slidehub] -->
   </main>
 
-  <div class="modal modal--shortcuts closed" data-modal-shortcuts aria-hidden="true" aria-labelledby="shortcuts-title" role="dialog">
+  <footer class="sh-status-bar">
+
+    <div class="sh-modal-buttons" data-slidehub-modal-buttons></div>
+  </footer>
+
+  <div class="modal modal--controls closed" data-modal-controls aria-hidden="true" aria-labelledby="controls-title" role="dialog">
     <div class="modal-content" role="document">
       <button class="modal__close button--close" data-close-modal aria-label="Close">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" role="img" aria-labelledby="close-shortcuts-title">
-          <title id="close-shortcuts-title">An x symbol representing a closing action</title>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" role="img" aria-labelledby="close-controls-title">
+          <title id="close-controls-title">An x symbol representing a closing action</title>
           <path d="m4,0l8,8 8,-8 4,4 -8,8 8,8 -4,4 -8,-8 -8,8 -4,-4 8,-8 -8,-8 Z" fill="#000" />
         </svg>
       </button>
 
-      <h2 id="shortcuts-title">Shortcuts</h2>
+      <h2 id="controls-title">Controls</h2>
 
       <div class="shortcut-table-wrapper">
         <table class="shortcut-table">
-          <caption class="visually-hidden">Document-specific shortcuts</caption>
+          <caption class="visually-hidden">Document-specific controls</caption>
           <thead>
             <tr>
               <th class="shortcut-table__input">
@@ -67,7 +68,7 @@
         </table>
 
         <table class="shortcut-table">
-          <caption class="visually-hidden">Page-specific shortcuts</caption>
+          <caption class="visually-hidden">Page-specific controls</caption>
           <thead>
             <tr>
               <th class="shortcut-table__input">
@@ -97,23 +98,6 @@
           </tbody>
         </table>
       </div>
-    </div>
-  </div>
-
-  <div class="modal modal--features closed" data-modal-features aria-hidden="true" aria-labelledby="features-title" role="dialog">
-    <div class="modal-content" role="document">
-      <button class="modal__close button--close" data-close-modal aria-label="Close">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" role="img" aria-labelledby="close-features-title">
-          <title id="close-features-title">An x symbol representing a closing action</title>
-          <path d="m4,0l8,8 8,-8 4,4 -8,8 8,8 -4,4 -8,-8 -8,8 -4,-4 8,-8 -8,-8 Z" fill="#000" />
-        </svg>
-      </button>
-
-      <h2 id="features-title">Features</h2>
-
-      <fieldset class="features-fieldset">
-        <legend class="visually-hidden">Features</legend>
-      </fieldset>
     </div>
   </div>
 

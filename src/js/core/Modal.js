@@ -18,10 +18,8 @@ function enableModals() {
     return;
   }
 
-  const shortcutsOpenButton = createOpenButton('Shortcuts');
-  buttonArea.insertAdjacentHTML('beforeend', shortcutsOpenButton);
-  const featuresOpenButton = createOpenButton('Features');
-  buttonArea.insertAdjacentHTML('beforeend', featuresOpenButton);
+  const controlsOpenButton = createOpenButton('Controls');
+  buttonArea.insertAdjacentHTML('beforeend', controlsOpenButton);
 
   const modalOpenButtons = Array.from(document.querySelectorAll('button[data-target-modal]'));
   modalOpenButtons.forEach(button => {
@@ -42,7 +40,7 @@ function enableModals() {
 }
 
 function createOpenButton(title) {
-  return `<button data-target-modal="${title.toLowerCase()}">
+  return `<button class="button button--subtle" data-target-modal="${title.toLowerCase()}">
     ${title}
   </button>`;
 }

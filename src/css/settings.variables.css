@@ -14,7 +14,7 @@
   * z-index: calc( var(--plane-document) + 10 );
   */
   --plane-document: 200;
-  --plane-toolbox: 300;
+  --plane-status-bar: 300;
   --plane-modal: 400;
 
   /*
@@ -28,6 +28,8 @@
 
   --c-accent: hsl(220, 60%, 41%);
   --c-accent-dark: hsl(220, 60%, 30%);
+
+  --c-subtle-dark: hsl(0, 0%, 20%);
 
   --c-alt-light: hsl(0, 0%, 85%);
   --c-alt: hsl(0, 0%, 50%);

@@ -1,0 +1,29 @@
+.sh-status-bar {
+  --c-background: hsl(0, 0%, 85%);
+
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: var(--plane-status-bar);
+  display: flex;
+  align-items: center;
+  padding: calc(var(--spacing) / 2) var(--spacing);
+  background-color: var(--c-background);
+}
+
+.sh-status-bar > * {
+  flex: 1;
+}
+
+.sh-status-bar a {
+  color: currentColor;
+}
+
+.sh-modal-buttons {
+  text-align: right;
+}
+
+.sh-modal-buttons > *:not(:last-child) {
+  margin-right: calc(var(--spacing) * 2);
+}

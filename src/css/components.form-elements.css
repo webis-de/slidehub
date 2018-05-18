@@ -1,24 +1,3 @@
-input,
-button {
-  color: #222;
-  color: var(--c-text);
-}
-
-input:disabled,
-button:disabled {
-  color: hsl(0, 0%, 70%);
-  color: var(--c-text-disabled);
-}
-
-input[type='submit'],
-button {
-  color: hsl(220, 50%, 40%);
-  color: var(--c-accent);
-  background-color: #fff;
-  border: 2px solid;
-  border-radius: 3px;
-}
-
 .form-group {
   padding: var(--spacing);
 }
@@ -30,19 +9,29 @@ button {
 /*
 * Button
 */
-input[type='submit'],
 button {
-  padding: calc(var(--spacing) / 4) var(--spacing);
+  color: #fff;
+  background-color: hsl(220, 50%, 40%);
+  background-color: var(--c-accent);
 }
 
-input[type='submit']:enabled:active,
+button:disabled {
+  color: hsl(0, 0%, 70%);
+  color: var(--c-text-disabled);
+}
+
 button:enabled:active {
-  color: #000;
+  background-color: hsl(220, 60%, 30%);
+  background-color: var(--c-accent-dark);
 }
 
-input[type='submit']:disabled:focus,
 button:disabled:focus {
   outline: 0;
+}
+
+.button {
+  padding: calc(var(--spacing) / 4) var(--spacing);
+  border-radius: 3px;
 }
 
 .button--close {
@@ -53,6 +42,22 @@ button:disabled:focus {
 .button--close,
 .button--close:enabled:active {
   background-color: transparent;
+}
+
+/*
+* Subtle button
+*/
+.button--subtle {
+  padding: 0 calc(var(--spacing) / 2);
+  border: 2px solid var(--c-alt);
+  color: currentColor;
+  background-color: transparent;
+}
+
+.button--subtle:enabled:active {
+  border-color: var(--c-alt-dark);
+  color: #000;
+  background-color: inherit;
 }
 
 /*
