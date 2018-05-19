@@ -1,29 +1,31 @@
-.sh-status-bar {
-  position: fixed;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: var(--plane-status-bar);
-  display: flex;
-  align-items: center;
-  padding: calc(var(--spacing) / 2) var(--spacing);
-  border-top: 2px solid var(--c-alt-light);
-  background-color: var(--c-background);
-  font-size: 0.9em;
-}
+@media only screen and (min-width: 1000px) {
+  .sh-status-bar {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: var(--plane-status-bar);
+    display: flex;
+    align-items: center;
+    padding: calc(var(--spacing) / 2) var(--spacing);
+    border-top: 2px solid var(--c-alt-light);
+    background-color: var(--c-background);
+    font-size: 0.9em;
+  }
 
-.sh-status-bar > * {
-  flex: 1;
-}
+  .sh-status-bar > * {
+    flex: 1;
+  }
 
-.sh-status-bar a {
-  color: currentColor;
-}
+  .sh-status-bar a {
+    color: currentColor;
+  }
 
-.sh-modal-buttons {
-  text-align: right;
-}
+  .sh-modal-buttons {
+    text-align: right;
+  }
 
-.sh-modal-buttons > *:not(:last-child) {
-  margin-right: calc(var(--spacing) * 2);
+  .sh-modal-buttons > *:not(:last-child) {
+    margin-right: calc(var(--spacing) * 2);
+  }
 }
