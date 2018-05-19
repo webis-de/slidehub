@@ -1,6 +1,4 @@
 .sh-status-bar {
-  --c-background: hsl(0, 0%, 85%);
-
   position: fixed;
   right: 0;
   bottom: 0;
@@ -9,7 +7,9 @@
   display: flex;
   align-items: center;
   padding: calc(var(--spacing) / 2) var(--spacing);
+  border-top: 2px solid var(--c-alt-light);
   background-color: var(--c-background);
+  font-size: 0.9em;
 }
 
 .sh-status-bar > * {
