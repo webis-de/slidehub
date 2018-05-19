@@ -7,6 +7,10 @@
   margin: var(--spacing);
 }
 
+.shortcut-table kbd {
+  padding: calc(var(--spacing) / 4) var(--spacing);
+}
+
 .shortcut-table__input {
   text-align: right;
   min-width: 10em;

@@ -99,8 +99,8 @@ samp {
 }
 
 kbd {
-  padding: calc(var(--spacing) / 4) var(--spacing);
-  border: 1px solid var(--c-alt-light);
+  padding: calc(var(--spacing) / 4) calc(var(--spacing) / 2);
+  border: 1px solid var(--c-alt);
   border-radius: 4px;
   box-shadow: 0 1px var(--c-alt-dark);
   text-transform: capitalize;
