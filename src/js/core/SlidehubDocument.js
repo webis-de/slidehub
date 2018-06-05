@@ -94,6 +94,10 @@ class SlidehubDocument {
    * @param {Element} itemNode
    */
   selectItem(itemNode) {
+    if (this.selectedItemNode === itemNode) {
+      return;
+    }
+
     const itemContainer = itemNode.parentElement;
     if (this.selectedItemNode && itemContainer.contains(this.selectedItemNode)) {
       this.selectedItemNode.classList.remove(selectClassName);
@@ -127,6 +131,10 @@ class SlidehubDocument {
    * @param {Element} itemNode
    */
   hoverItem(itemNode) {
+    if (this.hoveredItemNode === itemNode) {
+      return;
+    }
+
     this.unhoverItem();
 
     this.hoveredItemNode = itemNode;

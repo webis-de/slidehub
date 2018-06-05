@@ -219,6 +219,10 @@ class Slidehub {
    * @public
    */
   selectDocument(doc) {
+    if (this.selectedDocument === doc) {
+      return;
+    }
+
     // Remove selected class from currently selected document
     if (this.selectedDocument) {
       this.selectedDocument.node.classList.remove(selectClassName);
@@ -261,6 +265,10 @@ class Slidehub {
    * @public
    */
   hoverDocument(doc) {
+    if (this.hoveredDocument === doc) {
+      return;
+    }
+
     this.unhoverDocument();
 
     // Set new hovered document
