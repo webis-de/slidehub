@@ -1,5 +1,6 @@
 import { config } from '../config';
 import { listener } from '../util/passive-event-listener';
+import { debounce } from '../util/debounce';
 
 export { SlidehubMouseInteraction };
 
@@ -17,12 +18,32 @@ const scrolling = {
  */
 class SlidehubMouseInteraction {
   constructor(slidehub) {
+    this.mouseX = window.innerWidth / 2;
+    this.mouseY = window.innerHeight / 2;
     this.slidehub = slidehub;
   }
 
   start() {
-    this.enableModifier();
+    this.initStoreMousePosition();
+    this.initHoverOnScroll();
     this.initExistingDocuments();
+    this.initModifiers();
+  }
+
+  initStoreMousePosition() {
+    document.addEventListener('mousemove', this.storeMousePosition.bind(this), listener.passive);
+  }
+
+  /**
+   * The firing rate of the listener needs to be slowed down because the
+   * `scroll` event is rapidly firing. Not doing so will decrease the
+   * performance significantly.
+   *
+   * It’s sufficient to debounce the listener. This means the listener will
+   * be triggered **once** after the event has stopped firing.
+   */
+  initHoverOnScroll() {
+    document.addEventListener('scroll', debounce(this.handleScrollHover.bind(this), 25), listener.passive);
   }
 
   initExistingDocuments() {
@@ -31,12 +52,52 @@ class SlidehubMouseInteraction {
   }
 
   /**
+   * Wrapper for initializing all event listeners related to mouse interactions.
+   *
    * @param {Element} docNode
    */
   initMouseInteraction(docNode) {
     docNode.addEventListener('wheel', this.handleWheelInteraction.bind(this), listener.active);
     docNode.addEventListener('click', this.handleClickSelect.bind(this), listener.passive);
     docNode.addEventListener('mousemove', this.handleMoveHover.bind(this), listener.passive);
+  }
+
+  /**
+   * Stores the position of the mouse cursor.
+   *
+   * @param {MouseEvent} event
+   */
+  storeMousePosition(event) {
+    this.mouseX = event.clientX;
+    this.mouseY = event.clientY;
+  }
+
+  /**
+   * Finds and hovers the document under the current mouse cursor.
+   *
+   * @param {UIEvent} event
+   */
+  handleScrollHover(event) {
+    const targetElement = document.elementFromPoint(this.mouseX, this.mouseY);
+    const docElement = targetElement.closest(config.selector.doc);
+
+    if (!docElement) {
+      return;
+    }
+
+    const doc = this.slidehub.documents.get(docElement.id);
+
+    if (!doc.loaded) {
+      return;
+    }
+
+    this.slidehub.hoverDocument(doc);
+
+    const itemElement = targetElement.closest(config.selector.item);
+
+    if (itemElement) {
+      doc.hoverItem(itemElement);
+    }
   }
 
   /**
@@ -113,7 +174,7 @@ class SlidehubMouseInteraction {
   /**
    * Wrapper for enabling all event listeners related to modifier handling.
    */
-  enableModifier() {
+  initModifiers() {
     document.addEventListener('keydown', this.onModifierDown.bind(this), listener.passive);
     document.addEventListener('keyup', this.onModifierUp.bind(this), listener.passive);
     window.addEventListener('blur', this.onModifierBlur.bind(this), listener.passive);
