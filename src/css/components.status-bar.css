@@ -5,12 +5,14 @@
     bottom: 0;
     left: 0;
     z-index: var(--plane-status-bar);
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(100px, auto) 1fr auto;
+    grid-gap: var(--spacing);
     align-items: center;
     padding: calc(var(--spacing) / 2) var(--spacing);
     border-top: 2px solid var(--c-alt-light);
     background-color: var(--c-background);
-    font-size: 0.9em;
+    font-size: 0.85em;
   }
 
   .sh-status-bar > * {
@@ -19,6 +21,13 @@
 
   .sh-status-bar a {
     color: currentColor;
+  }
+
+  .sh-status-bar kbd {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
   }
 
   .sh-modal-buttons {
