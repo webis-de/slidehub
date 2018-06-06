@@ -27,16 +27,16 @@
     <div class="sh-modal-buttons" data-slidehub-modal-buttons></div>
   </footer>
 
-  <div class="modal modal--controls closed" data-modal-controls aria-hidden="true" aria-labelledby="controls-title" role="dialog">
+  <div class="modal closed" data-modal-help aria-hidden="true" aria-labelledby="help-title" role="dialog">
     <div class="modal-content" role="document">
       <button class="modal__close button--close" data-close-modal aria-label="Close">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" role="img" aria-labelledby="close-controls-title">
-          <title id="close-controls-title">An x symbol representing a closing action</title>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" role="img" aria-labelledby="close-help-title">
+          <title id="close-help-title">An x symbol representing a closing action</title>
           <path d="m4,0l8,8 8,-8 4,4 -8,8 8,8 -4,4 -8,-8 -8,8 -4,-4 8,-8 -8,-8 Z" fill="#000" />
         </svg>
       </button>
 
-      <h2 id="controls-title">Controls</h2>
+      <h2 id="help-title">Help</h2>
 
       <div class="shortcut-table-wrapper">
         <table class="shortcut-table">
@@ -85,6 +85,15 @@
               <td class="shortcut-table__input">
                 <div class="shortcut-group">
                   <kbd aria-label="Left or right arrow key">←/→</kbd>
+                </div>
+              </td>
+              <td class="shortcut-table__action">Navigate pages</td>
+            </tr>
+            <tr>
+              <td class="shortcut-table__input">
+                <div class="shortcut-group">
+                  <kbd>Shift</kbd> +
+                  <kbd>MouseWheel</kbd>
                 </div>
               </td>
               <td class="shortcut-table__action">Navigate pages</td>

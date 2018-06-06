@@ -18,7 +18,7 @@ function enableModals() {
     return;
   }
 
-  const controlsOpenButton = createOpenButton('Controls');
+  const controlsOpenButton = createOpenButton('Help');
   buttonArea.insertAdjacentHTML('beforeend', controlsOpenButton);
 
   const modalOpenButtons = Array.from(document.querySelectorAll('button[data-target-modal]'));
