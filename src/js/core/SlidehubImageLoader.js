@@ -23,16 +23,12 @@ class SlidehubImageLoader {
   start() {
     if (this.imageObserver) {
       this.observeExistingDocuments();
-      this.observeNewDocuments();
     } else {
       const images = Array.from(this.slidehub.node.querySelectorAll('img[data-src]'));
       images.forEach(image => loadImage(image));
     }
   }
 
-  /**
-   *
-   */
   observeExistingDocuments() {
     const documentNodes = Array.from(this.slidehub.node.querySelectorAll(config.selector.doc));
     documentNodes.forEach(docNode => this.startImageObserver(docNode));
@@ -46,34 +42,6 @@ class SlidehubImageLoader {
   startImageObserver(docNode) {
     const images = Array.from(docNode.querySelectorAll('img[data-src]'));
     images.forEach(image => this.imageObserver.observe(image));
-  }
-
-  /**
-   *
-   */
-  observeNewDocuments() {
-    const mutationObserverOptions = {
-      childList: true
-    };
-
-    const mutationObserver = new MutationObserver(this.mutationHandler.bind(this));
-
-    const documentNodes = Array.from(this.slidehub.node.querySelectorAll(config.selector.doc));
-    documentNodes.forEach(docNode => {
-      mutationObserver.observe(docNode, mutationObserverOptions);
-    });
-  }
-
-  /**
-   *
-   * @param {*} mutationsList
-   */
-  mutationHandler(mutationsList) {
-    for (const mutation of mutationsList) {
-      if (mutation.addedNodes.length !== 0) {
-        this.startImageObserver(mutation.target);
-      }
-    }
   }
 };
 

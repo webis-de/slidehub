@@ -155,16 +155,46 @@ class Slidehub {
 
     this.exposeDocumentInfo();
 
-    const imageLoader = new SlidehubImageLoader(this);
-    imageLoader.start();
+    this.imageLoader = new SlidehubImageLoader(this);
+    this.imageLoader.start();
 
-    const mouseInteraction = new SlidehubMouseInteraction(this);
-    mouseInteraction.start();
+    this.mouseInteraction = new SlidehubMouseInteraction(this);
+    this.mouseInteraction.start();
 
     const keyboardInteraction = new SlidehubKeyboardInteraction(this);
     keyboardInteraction.start();
 
+    this.observeDocumentLoaded();
     enableModals();
+  }
+
+  /**
+   * Observes documents being loaded
+   */
+  observeDocumentLoaded() {
+    const documentLoadedObserver = new MutationObserver(this.mutationHandler.bind(this));
+
+    const documentNodes = Array.from(this.node.querySelectorAll(config.selector.doc));
+    documentNodes.forEach(docNode => {
+      documentLoadedObserver.observe(docNode, { childList: true });
+    });
+  }
+
+  /**
+   *
+   * @param {Array<MutationRecord>} mutationsList
+   */
+  mutationHandler(mutationsList) {
+    for (const mutation of mutationsList) {
+      if (mutation.addedNodes.length !== 0) {
+        const docNode = mutation.target;
+        this.imageLoader.startImageObserver(docNode);
+        const scrollbox = docNode.querySelector(config.selector.scrollbox);
+        if (scrollbox) {
+          this.mouseInteraction.initScrollInteraction(scrollbox);
+        }
+      }
+    }
   }
 
   /**

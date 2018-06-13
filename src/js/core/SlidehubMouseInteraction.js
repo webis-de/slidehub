@@ -25,11 +25,14 @@ class SlidehubMouseInteraction {
 
   start() {
     this.initStoreMousePosition();
-    this.initHoverOnScroll();
+    this.initHoverDocumentOnScroll();
     this.initExistingDocuments();
     this.initModifiers();
   }
 
+  /**
+   * Whenever the mouse moves, store its position.
+   */
   initStoreMousePosition() {
     document.addEventListener('mousemove', this.storeMousePosition.bind(this), listener.passive);
   }
@@ -42,24 +45,50 @@ class SlidehubMouseInteraction {
    * It’s sufficient to debounce the listener. This means the listener will
    * be triggered **once** after the event has stopped firing.
    */
-  initHoverOnScroll() {
-    document.addEventListener('scroll', debounce(this.handleScrollHover.bind(this), 25), listener.passive);
-  }
-
-  initExistingDocuments() {
-    const documents = Array.from(this.slidehub.node.querySelectorAll(config.selector.doc));
-    documents.forEach(docNode => this.initMouseInteraction(docNode));
+  initHoverDocumentOnScroll() {
+    document.addEventListener(
+      'scroll',
+      debounce(this.handleScrollDocumentHover.bind(this), 25),
+      listener.passive
+    );
   }
 
   /**
-   * Wrapper for initializing all event listeners related to mouse interactions.
+   * Initialize mouse and scroll interactions for existing documents.
+   */
+  initExistingDocuments() {
+    const documents = Array.from(this.slidehub.node.querySelectorAll(config.selector.doc));
+    documents.forEach(docNode => {
+      this.initMouseInteraction(docNode);
+      const scrollbox = docNode.querySelector(config.selector.scrollbox);
+      if (scrollbox) {
+        this.initScrollInteraction(scrollbox);
+      }
+    });
+  }
+
+  /**
+   * Wrapper for initializing all event listeners related to mouse interaction.
    *
-   * @param {Element} docNode
+   * @param {HTMLElement} docNode
    */
   initMouseInteraction(docNode) {
     docNode.addEventListener('wheel', this.handleWheelInteraction.bind(this), listener.active);
     docNode.addEventListener('click', this.handleClickSelect.bind(this), listener.passive);
     docNode.addEventListener('mousemove', this.handleMoveHover.bind(this), listener.passive);
+  }
+
+  /**
+   * Wrapper for initializing all event listeners related to scroll interaction.
+   *
+   * @param {HTMLElement} scrollboxNode
+   */
+  initScrollInteraction(scrollboxNode) {
+    scrollboxNode.addEventListener(
+      'scroll',
+      debounce(this.handleScrollDocumentHover.bind(this), 25),
+      listener.passive
+    );
   }
 
   /**
@@ -73,11 +102,9 @@ class SlidehubMouseInteraction {
   }
 
   /**
-   * Finds and hovers the document under the current mouse cursor.
-   *
-   * @param {UIEvent} event
+   * Finds and hovers the item/document under the current mouse cursor position.
    */
-  handleScrollHover(event) {
+  handleScrollDocumentHover() {
     const targetElement = document.elementFromPoint(this.mouseX, this.mouseY);
     const docElement = targetElement.closest(config.selector.doc);
 
@@ -94,7 +121,6 @@ class SlidehubMouseInteraction {
     this.slidehub.hoverDocument(doc);
 
     const itemElement = targetElement.closest(config.selector.item);
-
     if (itemElement) {
       doc.hoverItem(itemElement);
     }
