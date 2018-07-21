@@ -37,4 +37,4 @@ parcelRequire=function(e,r,n,t){var i="function"==typeof parcelRequire&&parcelRe
 },{"../config.mjs":"U4Cg","./SlidehubParser.mjs":"rRx2","./SlidehubDocumentLoader.mjs":"EiIq","./SlidehubImageLoader.mjs":"3rb0","./SlidehubMouseInteraction.mjs":"dYrh","./SlidehubKeyboardInteraction.mjs":"IcSO","./DocumentNavigator.mjs":"sXe+","./Modal.mjs":"pcB8","../util/debounce.mjs":"OaPC","../util/getOuterWidth.mjs":"BfVx","../util/getFragmentIdentifier.mjs":"iVvh"}],"iSrD":[function(require,module,exports) {
 "use strict";var e=require("./core/Slidehub.mjs");new e.Slidehub;
 },{"./core/Slidehub.mjs":"cRsE"}]},{},["iSrD"], null)
-//# sourceMappingURL=/app.58e59b24.map
+//# sourceMappingURL=app.58e59b24.map
