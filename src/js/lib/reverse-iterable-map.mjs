@@ -1,5 +1,3 @@
-export { ReverseIterableMap };
-
 /**
  * A reverse-iterable map implementation based on the built-in [`Map`][Map] object.
  *
@@ -591,3 +589,5 @@ function iteratorResult(value) {
     done: value === undefined
   };
 }
+
+export { ReverseIterableMap };

@@ -1,5 +1,3 @@
-export { getFragmentIdentifier };
-
 /**
  * Returns the fragment identifier of a URL if it is present.
  *
@@ -15,3 +13,5 @@ function getFragmentIdentifier(url) {
 
   return null;
 }
+
+export { getFragmentIdentifier };

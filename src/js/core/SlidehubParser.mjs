@@ -2,12 +2,10 @@
  * Parses the document data.
  */
 
-import { config } from '../config';
-import { documentsData } from '../documents-data';
-import { ReverseIterableMap } from '../lib/reverse-iterable-map';
-import { SlidehubDocument } from './SlidehubDocument';
-
-export { parseDocumentsData, parseDocumentsMarkup };
+import { config } from '../config.mjs';
+import { documentsData } from '../documents-data.mjs';
+import { ReverseIterableMap } from '../lib/reverse-iterable-map.mjs';
+import { SlidehubDocument } from './SlidehubDocument.mjs';
 
 /**
  * Parses the initial document data into a more managable data structure.
@@ -44,3 +42,5 @@ function parseDocumentsMarkup(slidehub) {
 
   return documents;
 }
+
+export { parseDocumentsData, parseDocumentsMarkup };

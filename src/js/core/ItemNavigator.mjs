@@ -1,7 +1,5 @@
-import { config } from '../config';
-import { clamp } from '../util/clamp';
-
-export { ItemNavigator };
+import { config } from '../config.mjs';
+import { clamp } from '../util/clamp.mjs';
 
 /**
  * Item Navigator
@@ -197,3 +195,5 @@ class ItemNavigator {
     return this.doc.itemCount < this.slidehub.numberOfVisibleItems;
   }
 };
+
+export { ItemNavigator };

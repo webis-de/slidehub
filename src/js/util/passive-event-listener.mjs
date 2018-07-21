@@ -1,5 +1,3 @@
-export { listener };
-
 /**
  * Feature detection for passive event listeners as per:
  * https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md#feature-detection
@@ -32,3 +30,5 @@ const listener = {
   active: supportsPassive ? { passive: false } : false,
   passive: supportsPassive ? { passive: true } : false
 };
+
+export { listener };

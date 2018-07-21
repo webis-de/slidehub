@@ -1,5 +1,3 @@
-export { config };
-
 /**
  * @typedef {object} Config
  * @property {ConfigPropertyAssets} assets
@@ -66,3 +64,5 @@ const config = {
     item: '.page'
   }
 };
+
+export { config };

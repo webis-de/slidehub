@@ -1,6 +1,4 @@
-import { clamp } from '../util/clamp';
-
-export { DocumentNavigator };
+import { clamp } from '../util/clamp.mjs';
 
 /**
  * Document Navigator.
@@ -119,3 +117,5 @@ class DocumentNavigator {
     return this.slidehub.selectedDocument.node.parentElement.children;
   }
 };
+
+export { DocumentNavigator };

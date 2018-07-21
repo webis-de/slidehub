@@ -1,5 +1,3 @@
-export { SlidehubPlugin };
-
 /**
  * Abstract base class for Slidehub plugins.
  *
@@ -158,3 +156,5 @@ class SlidehubPlugin {
 
 const x = new MyPlugin();
 x.enable(); */
+
+export { SlidehubPlugin };

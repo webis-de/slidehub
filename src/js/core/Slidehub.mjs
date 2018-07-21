@@ -1,19 +1,17 @@
-import { config } from '../config';
-import { parseDocumentsData, parseDocumentsMarkup } from './SlidehubParser';
-import { SlidehubDocumentLoader } from './SlidehubDocumentLoader';
-import { SlidehubImageLoader } from './SlidehubImageLoader';
-import { SlidehubMouseInteraction } from './SlidehubMouseInteraction';
-import { SlidehubKeyboardInteraction } from './SlidehubKeyboardInteraction';
-import { DocumentNavigator } from './DocumentNavigator';
-import { enableModals } from './Modal';
+import { config } from '../config.mjs';
+import { parseDocumentsData, parseDocumentsMarkup } from './SlidehubParser.mjs';
+import { SlidehubDocumentLoader } from './SlidehubDocumentLoader.mjs';
+import { SlidehubImageLoader } from './SlidehubImageLoader.mjs';
+import { SlidehubMouseInteraction } from './SlidehubMouseInteraction.mjs';
+import { SlidehubKeyboardInteraction } from './SlidehubKeyboardInteraction.mjs';
+import { DocumentNavigator } from './DocumentNavigator.mjs';
+import { enableModals } from './Modal.mjs';
 
-import * as plugin from '../plugins/namespace';
+// import * as plugin from '../plugins/namespace.mjs';
 
-import { debounce } from '../util/debounce';
-import { getOuterWidth } from '../util/getOuterWidth';
-import { getFragmentIdentifier } from '../util/getFragmentIdentifier';
-
-export { Slidehub };
+import { debounce } from '../util/debounce.mjs';
+import { getOuterWidth } from '../util/getOuterWidth.mjs';
+import { getFragmentIdentifier } from '../util/getFragmentIdentifier.mjs';
 
 const selectClassName = 'selected';
 const hoverClassName = 'highlighted';
@@ -57,7 +55,7 @@ class Slidehub {
       this.jumpToTargetDocument(targetDoc);
 
       this.start();
-      this.loadPlugins();
+      // this.loadPlugins();
     });
   }
 
@@ -454,3 +452,5 @@ class Slidehub {
     this.visibleItems = Math.floor(this.scrollboxWidth / this.itemWidth);
   }
 };
+
+export { Slidehub };

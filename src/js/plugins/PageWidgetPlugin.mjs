@@ -1,7 +1,5 @@
-import { SlidehubPlugin } from '../core/SlidehubPlugin';
-import { listener } from '../util/passive-event-listener';
-
-export { PageWidgetPlugin };
+import { SlidehubPlugin } from '../core/SlidehubPlugin.mjs';
+import { listener } from '../util/passive-event-listener.mjs';
 
 class PageWidgetPlugin extends SlidehubPlugin {
   constructor(slidehub) {
@@ -62,3 +60,5 @@ class PageWidgetPlugin extends SlidehubPlugin {
     this.currentPageNode.textContent = event.detail.itemNode.dataset.page;
   }
 }
+
+export { PageWidgetPlugin };

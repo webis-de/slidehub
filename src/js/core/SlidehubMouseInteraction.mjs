@@ -1,8 +1,6 @@
-import { config } from '../config';
-import { listener } from '../util/passive-event-listener';
-import { debounce } from '../util/debounce';
-
-export { SlidehubMouseInteraction };
+import { config } from '../config.mjs';
+import { listener } from '../util/passive-event-listener.mjs';
+import { debounce } from '../util/debounce.mjs';
 
 const scrolling = {
   vertical: {
@@ -240,3 +238,5 @@ class SlidehubMouseInteraction {
     }
   }
 };
+
+export { SlidehubMouseInteraction };

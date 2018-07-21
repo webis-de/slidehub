@@ -1,5 +1,3 @@
-export { documentsData };
-
 /** @type {Array<[string, number]>} */
 const documentsData = [
   ['acrostic-talk.pdf', 100],
@@ -204,3 +202,5 @@ const documentsData = [
   ['unit-en-search-introduction.pdf', 36],
   ['unit-en-search-organization.pdf', 4]
 ];
+
+export { documentsData };

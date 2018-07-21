@@ -2,9 +2,9 @@
  * Application entry point.
  */
 
-import './lib/intersection-observer';
+// import './lib/intersection-observer';
 
-import { Slidehub } from './core/Slidehub';
+import { Slidehub } from './core/Slidehub.mjs';
 
 /**
  * An Immediately Invoked Function Expression, called like that because it’s

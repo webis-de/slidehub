@@ -1,6 +1,4 @@
-import { config } from '../config';
-
-export { SlidehubImageLoader };
+import { config } from '../config.mjs';
 
 /**
  * Loads document images when needed (i.e. lazy-loading).
@@ -101,3 +99,5 @@ function setItemAspectRatio(image) {
     docNode.style.setProperty('--page-aspect-ratio', aspectRatio.toString());
   }
 }
+
+export { SlidehubImageLoader };

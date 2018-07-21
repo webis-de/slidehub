@@ -1,6 +1,4 @@
-import { listener } from '../util/passive-event-listener';
-
-export { SlidehubKeyboardInteraction };
+import { listener } from '../util/passive-event-listener.mjs';
 
 const controlKeyNames = {
   33: 'pageUp',
@@ -85,3 +83,5 @@ class SlidehubKeyboardInteraction {
     }
   }
 };
+
+export { SlidehubKeyboardInteraction };

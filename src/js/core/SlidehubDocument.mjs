@@ -1,7 +1,5 @@
-import { config } from '../config';
-import { ItemNavigator } from './ItemNavigator';
-
-export { SlidehubDocument };
+import { config } from '../config.mjs';
+import { ItemNavigator } from './ItemNavigator.mjs';
 
 const selectClassName = 'selected';
 const hoverClassName = 'highlighted';
@@ -238,3 +236,5 @@ class SlidehubDocument {
     this.loaded = true;
   }
 };
+
+export { SlidehubDocument };

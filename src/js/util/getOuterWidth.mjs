@@ -1,5 +1,3 @@
-export { getOuterWidth };
-
 /**
  * Calculates the outer width of an element. In the context of this
  * application, the outer width of an element is its `offsetWidth` plus
@@ -15,3 +13,5 @@ function getOuterWidth(element) {
 
   return marginLeft + element.offsetWidth + marginRight;
 }
+
+export { getOuterWidth };

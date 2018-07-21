@@ -1,6 +1,4 @@
-import { config } from '../config';
-
-export { SlidehubDocumentLoader };
+import { config } from '../config.mjs';
 
 /**
  * Document Loader.
@@ -132,3 +130,5 @@ class SlidehubDocumentLoader {
     }
   }
 };
+
+export { SlidehubDocumentLoader };

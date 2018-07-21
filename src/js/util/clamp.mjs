@@ -1,5 +1,3 @@
-export { clamp };
-
 /**
  * Clamps the given value between the min and max boundaries.
  *
@@ -13,3 +11,5 @@ export { clamp };
 function clamp(value, min, max) {
   return Math.max(min, Math.min(value, max));
 }
+
+export { clamp };

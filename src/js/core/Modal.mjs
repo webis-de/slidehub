@@ -1,6 +1,4 @@
-import { listener } from '../util/passive-event-listener';
-
-export { enableModals };
+import { listener } from '../util/passive-event-listener.mjs';
 
 /**
  * Modal window.
@@ -168,3 +166,5 @@ function getFocusableElements(ancestor = document) {
 
 const focusableElementsSelector =
   'a[href], input:not(:disabled), textarea:not(:disabled), button:not(:disabled), [tabindex]';
+
+export { enableModals };

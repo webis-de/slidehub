@@ -1,8 +1,6 @@
-import { SlidehubPlugin } from '../core/SlidehubPlugin';
-import { listener } from '../util/passive-event-listener';
-import { config } from '../config';
-
-export { DocumentSourceLinker };
+import { SlidehubPlugin } from '../core/SlidehubPlugin.mjs';
+import { listener } from '../util/passive-event-listener.mjs';
+import { config } from '../config.mjs';
 
 /**
  * Item Linking.
@@ -137,3 +135,5 @@ function isInteractive(element) {
 
   return false;
 }
+
+export { DocumentSourceLinker };
