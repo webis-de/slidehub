@@ -7,7 +7,7 @@ import { SlidehubKeyboardInteraction } from './SlidehubKeyboardInteraction.mjs';
 import { DocumentNavigator } from './DocumentNavigator.mjs';
 import { enableModals } from './Modal.mjs';
 
-// import * as plugin from '../plugins/namespace.mjs';
+import * as plugin from '../plugins/namespace.mjs';
 
 import { debounce } from '../util/debounce.mjs';
 import { getOuterWidth } from '../util/getOuterWidth.mjs';
@@ -55,7 +55,7 @@ class Slidehub {
       this.jumpToTargetDocument(targetDoc);
 
       this.start();
-      // this.loadPlugins();
+      this.loadPlugins();
     });
   }
 
