@@ -1,5 +1,3 @@
-import { clamp } from '../util/clamp.mjs';
-
 /**
  * Document Navigator.
  *
@@ -28,7 +26,8 @@ class DocumentNavigator {
    * @public
    */
   up(distance) {
-    this.iterator = this.slidehub.documents.iteratorFor(this.slidehub.selectedDocument.name).reverse();
+    const selectedDocumentName = this.slidehub.selectedDocument.name;
+    this.iterator = this.slidehub.documents.iteratorFor(selectedDocumentName).reverse();
     this.by(distance);
   }
 
@@ -39,7 +38,8 @@ class DocumentNavigator {
    * @public
    */
   down(distance) {
-    this.iterator = this.slidehub.documents.iteratorFor(this.slidehub.selectedDocument.name);
+    const selectedDocumentName = this.slidehub.selectedDocument.name;
+    this.iterator = this.slidehub.documents.iteratorFor(selectedDocumentName);
     this.by(distance);
   }
 
@@ -80,20 +80,6 @@ class DocumentNavigator {
   }
 
   /**
-   * Finds the target document given a navigation distance.
-   *
-   * @param {number} distance
-   * @returns {SlidehubDocument}
-   */
-  getTargetDoc(distance) {
-    const documentNodes = this.getDocumentNodes();
-    const targetDocumentPos = clamp(this.selectedDocPos + distance, 0, documentNodes.length - 1);
-    const targetDocumentNode = documentNodes.item(targetDocumentPos);
-
-    return this.slidehub.documents.get(targetDocumentNode.id);
-  }
-
-  /**
    * Returns an object containing vertical offsets for an element with the
    * viewport.
    *
@@ -106,15 +92,6 @@ class DocumentNavigator {
       top: element.offsetTop - window.scrollY,
       bottom: window.scrollY + docEl.clientHeight - (element.offsetTop + element.offsetHeight)
     };
-  }
-
-  /**
-   * Returns all Slidehub documents as a HTMLCollection.
-   *
-   * @returns {HTMLCollection}
-   */
-  getDocumentNodes() {
-    return this.slidehub.selectedDocument.node.parentElement.children;
   }
 };
 
