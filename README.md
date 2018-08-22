@@ -1,6 +1,6 @@
 # Slidehub
 
-Slidehub ([demo website](http://test.webis.de/slidehub)) is a web-based presentation/lecture/talk slide explorer. Its goal is to provide quick access to a database of paged documents. The documents are represented as rows of a grid-like structure while each cell is a page.
+Slidehub ([demo website](https://webis.de/slidehub/)) is a web-based presentation/lecture/talk slide explorer. Its goal is to provide quick access to a database of paged documents. The documents are represented as rows of a grid-like structure while each cell is a page.
 
 All documents are available as PDF files. In addition, all slides are available as images that act as a kind of preview for the actual documents’ page.
 
