@@ -2,9 +2,10 @@
  * Application entry point.
  */
 
-// import './lib/intersection-observer';
-
+import { polyfillIntersectionObserver } from './lib/intersection-observer.mjs';
 import { Slidehub } from './core/Slidehub.mjs';
+
+polyfillIntersectionObserver(window, document);
 
 /**
  * An Immediately Invoked Function Expression, called like that because it’s
