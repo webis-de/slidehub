@@ -1,3 +1,22 @@
+@media only screen and (max-width: 999px) {
+  /*
+  See trumps.visually-hidden.css
+  */
+  .sh-status-bar {
+    position: absolute;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    -webkit-clip-path: inset(50%);
+    clip-path: inset(50%);
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    white-space: nowrap;
+  }
+}
+
 @media only screen and (min-width: 1000px) {
   .sh-status-bar {
     position: fixed;
