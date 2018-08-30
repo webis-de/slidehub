@@ -12,6 +12,7 @@ import * as plugin from '../plugins/namespace.mjs';
 import { debounce } from '../util/debounce.mjs';
 import { getOuterWidth } from '../util/getOuterWidth.mjs';
 import { getFragmentIdentifier } from '../util/getFragmentIdentifier.mjs';
+import { SlidehubDocument } from './SlidehubDocument.mjs';
 
 /**
  * Main Slidehub prototype.
@@ -21,8 +22,8 @@ class Slidehub {
    * @public
    */
   constructor() {
-    this._node = null;
-    this._documents = null;
+    this._node = this.getNode();
+    this._documents = this.getDocuments();
     this._selectedDocument = null;
     this._hoveredDocument = null;
     this._documentNavigator = null;
@@ -31,29 +32,14 @@ class Slidehub {
     this._visibleItems = null;
     this._scrollboxWidth = null;
 
-    document.addEventListener('DOMContentLoaded', () => {
-      this._node = this.getNode();
-      this._documents = this.getDocuments();
+    if (!config.staticContent) {
+      new SlidehubDocumentLoader(this);
+    }
 
-      let documentLoader;
+    this.jumpToTargetDocument();
 
-      if (!config.staticContent) {
-        documentLoader = new SlidehubDocumentLoader(this);
-        documentLoader.insertDocumentFrames();
-      }
-
-      const targetDoc = this.determineTargetDocument();
-
-      if (!config.staticContent) {
-        documentLoader.start(targetDoc);
-      }
-
-      this.selectDocument(targetDoc);
-      this.jumpToTargetDocument(targetDoc);
-
-      this.start();
-      this.loadPlugins();
-    });
+    this.start();
+    this.loadPlugins();
   }
 
   /**
@@ -106,36 +92,17 @@ class Slidehub {
   }
 
   /**
-   * @returns {SlidehubDocument}
+   * @private
    */
-  determineTargetDocument() {
+  jumpToTargetDocument() {
     const fragmentIdentifier = getFragmentIdentifier(window.location.toString());
-
-    let targetDoc;
 
     if (this.documents.has(fragmentIdentifier)) {
-      targetDoc = this.documents.get(fragmentIdentifier);
-    } else if (document.documentElement.scrollTop === 0) {
-      // If the viewport was not scrolled already, just start from the top
-      targetDoc = this.documents.values().next().value;
-    } else {
-      // The page was scrolled (e.g. the page was reloaded with a non-zero scroll position)
-      // In this case, Slidehub attempts to load the document in the center of the view.
-      const slidehubWidth = this.node.clientWidth;
-      const centerElement = document.elementFromPoint(slidehubWidth / 2, window.innerHeight / 2);
-      const centerDocument = centerElement.closest(config.selector.doc);
-      targetDoc = this.documents.get(centerDocument.id);
-    }
-
-    return targetDoc;
-  }
-
-  jumpToTargetDocument(targetDoc) {
-    const fragmentIdentifier = getFragmentIdentifier(window.location.toString());
-    if (document.documentElement.scrollTop !== 0 || fragmentIdentifier) {
-      const centerOffset = (window.innerHeight - targetDoc.node.clientHeight) / 2;
+      const targetDoc = this.documents.get(fragmentIdentifier);
       // After a short while, scroll the viewport to center the document
-      // In the future, `Element.scrollIntoView({ block: 'center' })` should work
+      // In the future, `Element.scrollIntoView({ block: 'center' })` should work:
+      // https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView
+      const centerOffset = (window.innerHeight - targetDoc.node.clientHeight) / 2;
       setTimeout(() => window.scrollBy(0, -centerOffset), 200);
     }
   }

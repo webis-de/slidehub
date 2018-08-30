@@ -14,5 +14,7 @@ polyfillIntersectionObserver(window, document);
  * Starts the engines for Slidehub.
  */
 (function () {
-  new Slidehub();
+  document.addEventListener('DOMContentLoaded', () => {
+    new Slidehub();
+  });
 })();
