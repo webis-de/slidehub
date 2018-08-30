@@ -9,6 +9,7 @@
     "clean": "rm *.map slidehub.*.js app.*.js slidehub.*.css 2> /dev/null || true"
   },
   "devDependencies": {
-    "cssnano": "^4.1.0"
+    "cssnano": "^4.1.0",
+    "parcel-bundler": "^1.9.7"
   }
 }

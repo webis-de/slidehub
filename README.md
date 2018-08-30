@@ -59,7 +59,6 @@ I’d like to avoid Internet Explorer. It doesn’t have great support for [Flex
 Installs all required development dependencies.
 
 ```
-npm install -g parcel-bundler
 npm install
 ```
 
