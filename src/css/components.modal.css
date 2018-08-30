@@ -14,8 +14,15 @@
   background-color: rgba(0, 0, 0, 0.6);
 }
 
+/*
+[1]: Use the `visibility` property to hide the modal to ensure the dialog can receive focus on
+iOS Safari with VoiceOver. For more information, refer to
+
+“The current state of modal dialog accessibility” by Scott O’Hara
+https://developer.paciellogroup.com/blog/2018/06/the-current-state-of-modal-dialog-accessibility
+*/
 .sh-modal[aria-hidden='true'] {
-  display: none;
+  visibility: hidden; /* [1] */
 }
 
 .sh-modal-content {
@@ -33,6 +40,10 @@
   position: absolute;
   top: calc(var(--sh-spacing) / 2);
   right: calc(var(--sh-spacing) / 2);
+}
+
+.sh-modal__close svg {
+  vertical-align: middle;
 }
 
 .sh-modal__title {
