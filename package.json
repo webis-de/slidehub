@@ -6,7 +6,7 @@
   "scripts": {
     "start": "parcel src/index.html --out-dir .",
     "build": "npm run clean && parcel build src/index.html --out-dir . --public-url ./ --no-source-maps",
-    "clean": "rm slidehub.*.js app.*.js slidehub.*.css 2> /dev/null || true"
+    "clean": "rm *.map slidehub.*.js app.*.js slidehub.*.css 2> /dev/null || true"
   },
   "devDependencies": {
     "cssnano": "^4.1.0"
