@@ -11,8 +11,8 @@ All documents are available as PDF files. In addition, all slides are available 
 - [To Do](#to-do)
 - [Known Issues](#known-issues)
 - [Generate graphics from PDF files](#generate-graphics-from-pdf-files)
-- [Examples](#examples)
-- [Troubleshooting](#troubleshooting)
+  - [Examples](#examples)
+  - [Troubleshooting](#troubleshooting)
 
 
 
@@ -28,7 +28,7 @@ All documents are available as PDF files. In addition, all slides are available 
 
 The application can be navigated with the most common input devices (i.e. mouse, trackpad, touchpad, keyboard).
 
-With a mouse, one can navigate the pages within a document by holding down <kbd>Shift</kbd> and turning the mouse wheel. With a double-click on a page, the PDF is opened at this page.
+With a mouse, one can navigate the pages within a document by holding down <kbd>Shift</kbd> and turning the mouse wheel. With a double-click on a page, the PDF is opened (if possible targetting the correct page).
 
 With a keyboard, the arrow keys allow navigating the pages within documents and the documents itself. Holding down <kbd>Shift</kbd> while pressing an arrow key navigates three pages or documents at a time. Furthermore, <kbd>Home</kbd>/<kbd>End</kbd> jump to the first/last page of a document.
 
@@ -36,18 +36,14 @@ With a keyboard, the arrow keys allow navigating the pages within documents and 
 
 ## Browser Support
 
-| IE | Edge | Firefox | Chrome | Safari | Opera |
-|---:|-----:|--------:|-------:|-------:|------:|
-| —  | 15   | 31      | 49     | 9.1    | 36    |
-
-Slidehub does not support Internet Explorer. All features listed below are not supported by Internet Explorer (unless a polyfill is provided). To achieve support for Internet Explorer 11, the JavaScript code needs to be transpiled to not use unsupported features (like promises). In addition, the CSS has to be written in a way to either not use custom properties at all or provide explicit fallbacks to property declarations using them.
-
-I’d like to avoid Internet Explorer. It doesn’t have great support for [Flexbox](https://caniuse.com/#feat=flexbox). It only has [support for an old version](https://caniuse.com/#feat=css-grid) of the CSS grid specification. It also lacks support for a lot of [ECMAScript 6](https://kangax.github.io/compat-table/es6/) features.
+| Edge | Firefox | Chrome | Safari |
+|-----:|--------:|-------:|-------:|
+| 16   | 60      | 61     | 10.1   |
 
 **Used Features** (sorted by most unsupported feature first):
 
+- [ES Modules](https://caniuse.com/#feat=es6-module)
 - [CSS custom properties](https://caniuse.com/#feat=css-variables)
-- [Promises](https://caniuse.com/#feat=promises)
 - [IntersectionObserver](https://caniuse.com/#feat=intersectionobserver) with [polyfill](https://github.com/w3c/IntersectionObserver/tree/master/polyfill)
 
 
@@ -100,8 +96,7 @@ npm start
 
 ## Known Issues
 
-- documents `unit-en-radial-basis-functions.pdf`, `unit-de-conceptual-design3.pdf`, `unit-de-relational-design0.pdf` have no PNGs (e.g. all entries with only one page)
-- ImageMagick occasionally creates transparent PNGs (For documents with a specific background color, this might have a drastic impact on perceivability)
+- Accessibility: Modal window doesn’t stop the user from interacting with the main page
 
 
 
