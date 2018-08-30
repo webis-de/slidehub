@@ -54,16 +54,18 @@ class DocumentNavigator {
     this.iterator.next();
 
     let iteratorResult;
+    let targetDoc;
     for (let i = 0; i < distance; i++) {
       iteratorResult = this.iterator.next();
-      if (iteratorResult.done) {
-        return;
+      if (!iteratorResult.done) {
+        targetDoc = iteratorResult.value[1];
       }
     }
 
-    const targetDoc = iteratorResult.value[1];
-    this.slidehub.selectDocument(targetDoc);
-    this.scrollDocumentIntoView(targetDoc);
+    if (targetDoc !== undefined) {
+      this.slidehub.selectDocument(targetDoc);
+      this.scrollDocumentIntoView(targetDoc);
+    }
   }
 
   /**
