@@ -8,6 +8,19 @@
   vertical-align: baseline;
 }
 
+.sh-shortcut-table tr:not(:last-child) {
+  border-bottom: 1px solid var(--sh-c-alt-light);
+}
+
+.sh-shortcut-table th,
+.sh-shortcut-table td {
+  padding: var(--sh-spacing) calc(var(--sh-spacing) / 2);
+}
+
+.sh-shortcut-table th {
+  font-weight: bold;
+}
+
 .sh-shortcut-table kbd {
   padding: calc(var(--sh-spacing) / 4) var(--sh-spacing);
 }

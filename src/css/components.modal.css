@@ -37,6 +37,6 @@
 
 .sh-modal__title {
   margin-top: 0;
-  margin-bottom: 0;
+  margin-bottom: 1.5rem;
   border-bottom: 1px solid var(--sh-c-alt-light);
 }
