@@ -1,9 +1,6 @@
 import { config } from '../config.mjs';
 import { ItemNavigator } from './ItemNavigator.mjs';
 
-const selectClassName = 'selected';
-const hoverClassName = 'highlighted';
-
 /**
  * Slidehub Document
  */
@@ -98,11 +95,11 @@ class SlidehubDocument {
 
     const itemContainer = itemNode.parentElement;
     if (this.selectedItemNode && itemContainer.contains(this.selectedItemNode)) {
-      this.selectedItemNode.classList.remove(selectClassName);
+      this.selectedItemNode.classList.remove(config.className.selected);
     }
 
     this.selectedItemNode = itemNode;
-    this.selectedItemNode.classList.add(selectClassName);
+    this.selectedItemNode.classList.add(config.className.selected);
 
     const slidehubSelectItemEvent = new CustomEvent('SlidehubSelectItem', {
       bubbles: true,
@@ -136,7 +133,7 @@ class SlidehubDocument {
     this.unhoverItem();
 
     this.hoveredItemNode = itemNode;
-    this.hoveredItemNode.classList.add(hoverClassName);
+    this.hoveredItemNode.classList.add(config.className.highlighted);
 
     const slidehubHoverItemEvent = new CustomEvent('SlidehubHoverItem', {
       bubbles: true,
@@ -154,7 +151,7 @@ class SlidehubDocument {
    */
   unhoverItem() {
     if (this.hoveredItemNode) {
-      this.hoveredItemNode.classList.remove(hoverClassName);
+      this.hoveredItemNode.classList.remove(config.className.highlighted);
       this.hoveredItemNode = null;
     }
   }
@@ -181,23 +178,19 @@ class SlidehubDocument {
    * @returns {String}
    */
   createMarkup() {
-    const scrollboxClassName = config.selector.scrollbox.slice(1);
-    const itemContainerClassName = config.selector.itemContainer.slice(1);
-    const itemClassName = config.selector.item.slice(1);
-
     let items = '';
     for (var i = 0; i < this.imageCount; i++) {
       const imageSource = `${config.assets.images}/${this.name}-${i}.png`;
-      items += `<div class="${itemClassName}" data-page="${i + 1}">
+      items += `<div class="${config.className.item}" data-page="${i + 1}">
         <img data-src="${imageSource}" alt="page ${i + 1}">
       </div>`;
     }
 
     const documentSource = `${config.assets.documents}/${this.name}`;
 
-    const metaSlide = `<div class="${itemClassName} ${itemClassName}--text" data-page="0">
-      <div class="doc-meta">
-        <h2 class="doc-meta__title">
+    const metaSlide = `<div class="${config.className.item} ${config.className.item}--text" data-page="0">
+      <div class="sh-doc-meta">
+        <h2 class="sh-doc-meta__title">
           <a href="${documentSource}">${this.name}</a>
         </h2>
         by author, ${this.imageCount} pages, 2018
@@ -205,13 +198,13 @@ class SlidehubDocument {
     </div>`;
 
     const dummyPage = `<div
-      class="${itemClassName} dummy-page"
+      class="${config.className.item} dummy-page"
       aria-hidden="true"
       style="visibility: hidden;"
     ></div>`;
 
-    return `<div class="${scrollboxClassName}">
-      <div class="${itemContainerClassName}">
+    return `<div class="${config.className.scrollbox}">
+      <div class="${config.className.itemContainer}">
         ${config.metaSlide ? metaSlide : ''}
         ${items}
         ${dummyPage}

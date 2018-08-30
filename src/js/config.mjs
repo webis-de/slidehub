@@ -7,18 +7,21 @@
  * @property {boolean} preserveAspectRatio
  * @property {string|null} selectColor
  * @property {string|null} highlightColor
- * @property {ConfigPropertySelector} selector
+ * @property {ConfigPropertyClassName} className
+ * @property {*} selector
  *
  * @typedef {object} ConfigPropertyAssets
  * @property {string} documents
  * @property {string} images
  *
- * @typedef {object} ConfigPropertySelector
+ * @typedef {object} ConfigPropertyClassName
  * @property {string} slidehub
  * @property {string} doc
  * @property {string} scrollbox
  * @property {string} itemContainer
  * @property {string} item
+ * @property {string} selected
+ * @property {string} highlighted
  */
 
 /**
@@ -56,13 +59,21 @@ const config = {
   highlightColor: null,
 
   // Selectors for UI components
-  selector: {
-    slidehub: '.slidehub-container',
-    doc: '.doc',
-    scrollbox: '.doc-scrollbox',
-    itemContainer: '.page-container',
-    item: '.page'
-  }
+  className: {
+    slidehub: 'slidehub-container',
+    doc: 'sh-doc',
+    scrollbox: 'sh-doc-scrollbox',
+    itemContainer: 'sh-page-container',
+    item: 'sh-page',
+    selected: 'sh-selected',
+    highlighted: 'sh-highlighted'
+  },
+
+  selector: {}
 };
+
+for (const prop in config.className) {
+  config.selector[prop] = `.${config.className[prop]}`;
+}
 
 export { config };

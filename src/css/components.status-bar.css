@@ -4,14 +4,14 @@
     right: 0;
     bottom: 0;
     left: 0;
-    z-index: var(--plane-status-bar);
+    z-index: var(--sh-plane-status-bar);
     display: grid;
     grid-template-columns: minmax(100px, auto) 1fr auto;
-    grid-gap: var(--spacing);
+    grid-gap: var(--sh-spacing);
     align-items: center;
-    padding: calc(var(--spacing) / 2) var(--spacing);
-    border-top: 2px solid var(--c-alt-light);
-    background-color: var(--c-background);
+    padding: calc(var(--sh-spacing) / 2) var(--sh-spacing);
+    border-top: 2px solid var(--sh-c-alt-light);
+    background-color: var(--sh-c-background);
     font-size: 0.85em;
   }
 
@@ -35,6 +35,6 @@
   }
 
   .sh-modal-buttons > *:not(:last-child) {
-    margin-right: calc(var(--spacing) * 2);
+    margin-right: calc(var(--sh-spacing) * 2);
   }
 }

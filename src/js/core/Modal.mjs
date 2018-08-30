@@ -19,7 +19,7 @@ function enableModals() {
   const controlsOpenButton = createOpenButton('Help');
   buttonArea.insertAdjacentHTML('beforeend', controlsOpenButton);
 
-  const modalOpenButtons = Array.from(document.querySelectorAll('button[data-target-modal]'));
+  const modalOpenButtons = Array.from(document.querySelectorAll('.sh-button[data-target-modal]'));
   modalOpenButtons.forEach(button => {
     button.addEventListener('click', event => {
       const targetModal = event.currentTarget.dataset.targetModal;
@@ -28,17 +28,17 @@ function enableModals() {
     });
   });
 
-  const modalCloseButtons = Array.from(document.querySelectorAll('button[data-close-modal]'));
+  const modalCloseButtons = Array.from(document.querySelectorAll('.sh-button[data-close-modal]'));
   modalCloseButtons.forEach(button => {
     button.addEventListener('click', event => {
-      const modal = event.currentTarget.closest('.modal');
+      const modal = event.currentTarget.closest('.sh-modal');
       closeModal(modal);
     });
   });
 }
 
 function createOpenButton(title) {
-  return `<button class="button button--subtle" data-target-modal="${title.toLowerCase()}">
+  return `<button class="sh-button sh-button--subtle" data-target-modal="${title.toLowerCase()}">
     ${title}
   </button>`;
 }
@@ -105,7 +105,7 @@ function closeModal(modal) {
  * @param {MouseEvent} event
  */
 function closeOnBackground(event) {
-  const modal = document.querySelector('.modal[aria-hidden="false"]');
+  const modal = document.querySelector('.sh-modal[aria-hidden="false"]');
   if (modal === event.target) {
     closeModal(modal);
   }
@@ -118,7 +118,7 @@ function closeOnBackground(event) {
  */
 function closeOnEscape(event) {
   if (event.keyCode === 27) {
-    closeModal(document.querySelector('.modal[aria-hidden="false"]'));
+    closeModal(document.querySelector('.sh-modal[aria-hidden="false"]'));
   }
 }
 

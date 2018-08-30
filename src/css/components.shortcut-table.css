@@ -1,29 +1,30 @@
-.shortcut-table-wrapper {
+.sh-shortcut-table-wrapper {
   display: flex;
   flex-wrap: wrap;
 }
 
-.shortcut-table {
-  margin: var(--spacing);
+.sh-shortcut-table {
+  margin: var(--sh-spacing);
+  vertical-align: baseline;
 }
 
-.shortcut-table kbd {
-  padding: calc(var(--spacing) / 4) var(--spacing);
+.sh-shortcut-table kbd {
+  padding: calc(var(--sh-spacing) / 4) var(--sh-spacing);
 }
 
-.shortcut-table__input {
+.sh-shortcut-table__input {
   text-align: right;
   min-width: 10em;
 }
 
-.shortcut-table__action {
+.sh-shortcut-table__action {
   text-align: left;
 }
 
-.shortcut-group:not(:last-child) {
-  margin-bottom: calc(var(--spacing) / 2);
+.sh-shortcut-group:not(:last-child) {
+  margin-bottom: calc(var(--sh-spacing) / 2);
 }
 
-.shortcut-group > kbd {
+.sh-shortcut-group > kbd {
   display: inline-block;
 }

@@ -7,8 +7,8 @@ html {
   line-height: 1.5;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif,
     'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
-  color: var(--c-text);
-  background-color: var(--c-background);
+  color: var(--sh-c-text);
+  background-color: var(--sh-c-background);
 }
 
 /* Set `margin-bottom` to maintain vertycal rhythm */
@@ -76,12 +76,12 @@ figure > * {
 */
 
 tr:not(:last-child) {
-  border-bottom: 1px solid var(--c-alt-light);
+  border-bottom: 1px solid var(--sh-c-alt-light);
 }
 
 th,
 td {
-  padding: var(--spacing) calc(var(--spacing) / 2);
+  padding: var(--sh-spacing) calc(var(--sh-spacing) / 2);
 }
 
 th {
@@ -99,8 +99,8 @@ samp {
 }
 
 kbd {
-  padding: calc(var(--spacing) / 4) calc(var(--spacing) / 2);
-  border: 1px solid var(--c-alt);
+  padding: calc(var(--sh-spacing) / 4) calc(var(--sh-spacing) / 2);
+  border: 1px solid var(--sh-c-alt);
   border-radius: 4px;
-  box-shadow: 0 1px var(--c-alt-dark);
+  box-shadow: 0 1px var(--sh-c-alt-dark);
 }

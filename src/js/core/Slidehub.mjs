@@ -13,9 +13,6 @@ import { debounce } from '../util/debounce.mjs';
 import { getOuterWidth } from '../util/getOuterWidth.mjs';
 import { getFragmentIdentifier } from '../util/getFragmentIdentifier.mjs';
 
-const selectClassName = 'selected';
-const hoverClassName = 'highlighted';
-
 /**
  * Main Slidehub prototype.
  */
@@ -72,11 +69,11 @@ class Slidehub {
     // Expose select/highlight color overrides to the DOM.
     // This allows CSS to use inside of a rule declaration.
     if (config.selectColor && config.selectColor !== '') {
-      slidehubNode.style.setProperty('--c-selected', config.selectColor);
+      slidehubNode.style.setProperty('--sh-c-selected', config.selectColor);
     }
 
     if (config.highlightColor && config.highlightColor !== '') {
-      slidehubNode.style.setProperty('--c-highlighted', config.highlightColor);
+      slidehubNode.style.setProperty('--sh-c-highlighted', config.highlightColor);
     }
 
     return slidehubNode;
@@ -94,7 +91,7 @@ class Slidehub {
    */
   createNode() {
     const slidehubNode = document.createElement('div');
-    slidehubNode.classList.add(config.selector.slidehub.slice(1));
+    slidehubNode.classList.add(config.className.slidehub);
 
     document.querySelector('[data-slidehub]').appendChild(slidehubNode);
 
@@ -253,12 +250,12 @@ class Slidehub {
 
     // Remove selected class from currently selected document
     if (this.selectedDocument) {
-      this.selectedDocument.node.classList.remove(selectClassName);
+      this.selectedDocument.node.classList.remove(config.className.selected);
     }
 
     // Set new selected document
     this.selectedDocument = doc;
-    this.selectedDocument.node.classList.add(selectClassName);
+    this.selectedDocument.node.classList.add(config.className.selected);
 
     const slidehubSelectDocumentEvent = new CustomEvent('SlidehubSelectDocument', {
       detail: { doc }
@@ -301,7 +298,7 @@ class Slidehub {
 
     // Set new hovered document
     this.hoveredDocument = doc;
-    this.hoveredDocument.node.classList.add(hoverClassName);
+    this.hoveredDocument.node.classList.add(config.className.highlighted);
 
     const slidehubHoverDocumentEvent = new CustomEvent('SlidehubHoverDocument', {
       detail: { doc }
@@ -325,7 +322,7 @@ class Slidehub {
     // Remove hovered class from currently hovered document
     if (this.hoveredDocument) {
       this.hoveredDocument.unhoverItem();
-      this.hoveredDocument.node.classList.remove(hoverClassName);
+      this.hoveredDocument.node.classList.remove(config.className.highlighted);
       this.hoveredDocument = null;
     }
   }

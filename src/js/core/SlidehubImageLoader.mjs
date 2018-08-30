@@ -94,9 +94,9 @@ function handleItemImageLoaded(image) {
 function setItemAspectRatio(image) {
   const docNode = image.closest(config.selector.doc);
 
-  if (docNode && !docNode.style.cssText.includes('--page-aspect-ratio')) {
+  if (docNode && !docNode.style.cssText.includes('--sh-page-aspect-ratio')) {
     const aspectRatio = image.naturalWidth / image.naturalHeight;
-    docNode.style.setProperty('--page-aspect-ratio', aspectRatio.toString());
+    docNode.style.setProperty('--sh-page-aspect-ratio', aspectRatio.toString());
   }
 }
 

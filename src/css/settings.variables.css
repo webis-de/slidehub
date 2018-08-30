@@ -3,35 +3,35 @@
   * Used to create uniform visual space. Smaller/bigger values should be
   * created using `calc`:
   *
-  * padding: calc( var(--spacing) / 2 );
+  * padding: calc( var(--sh-spacing) / 2 );
   */
-  --spacing: 12px;
+  --sh-spacing: 12px;
 
   /*
   * Hierarchy of z-index values (i.e. planes). To elevate elements within
   * these planes, add arbitrary values small than 100 via `calc`:
   *
-  * z-index: calc( var(--plane-document) + 10 );
+  * z-index: calc( var(--sh-plane-document) + 10 );
   */
-  --plane-document: 200;
-  --plane-status-bar: 300;
-  --plane-modal: 400;
+  --sh-plane-document: 200;
+  --sh-plane-status-bar: 300;
+  --sh-plane-modal: 400;
 
   /*
   * Colors
   */
-  --c-text: hsl(0, 0%, 15%);
-  --c-text-disabled: hsl(0, 0%, 70%);
-  --c-background: hsl(0, 0%, 100%);
+  --sh-c-text: hsl(0, 0%, 15%);
+  --sh-c-text-disabled: hsl(0, 0%, 70%);
+  --sh-c-background: hsl(0, 0%, 100%);
 
-  --c-focus: hsl(40, 80%, 50%);
+  --sh-c-focus: hsl(40, 80%, 50%);
 
-  --c-accent: hsl(220, 60%, 41%);
-  --c-accent-dark: hsl(220, 60%, 30%);
+  --sh-c-accent: hsl(220, 60%, 41%);
+  --sh-c-accent-dark: hsl(220, 60%, 30%);
 
-  --c-subtle-dark: hsl(0, 0%, 20%);
+  --sh-c-subtle-dark: hsl(0, 0%, 20%);
 
-  --c-alt-light: hsl(0, 0%, 85%);
-  --c-alt: hsl(0, 0%, 50%);
-  --c-alt-dark: hsl(0, 0%, 20%);
+  --sh-c-alt-light: hsl(0, 0%, 85%);
+  --sh-c-alt: hsl(0, 0%, 50%);
+  --sh-c-alt-dark: hsl(0, 0%, 20%);
 }

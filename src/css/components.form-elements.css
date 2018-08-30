@@ -1,61 +1,59 @@
-.form-group {
-  padding: var(--spacing);
+.sh-form-group {
+  padding: var(--sh-spacing);
 }
 
-.form-label {
+.sh-form-label {
   max-width: 400px;
 }
 
 /*
 * Button
 */
-button {
+.sh-button {
+  padding: calc(var(--sh-spacing) / 4) var(--sh-spacing);
+  border-radius: 3px;
   color: #fff;
   background-color: hsl(220, 50%, 40%);
-  background-color: var(--c-accent);
+  background-color: var(--sh-c-accent);
+  font: inherit;
 }
 
-button:disabled {
+.sh-button:disabled {
   color: hsl(0, 0%, 70%);
-  color: var(--c-text-disabled);
+  color: var(--sh-c-text-disabled);
 }
 
-button:enabled:active {
+.sh-button:enabled:active {
   background-color: hsl(220, 60%, 30%);
-  background-color: var(--c-accent-dark);
+  background-color: var(--sh-c-accent-dark);
 }
 
-button:disabled:focus {
+.sh-button:disabled:focus {
   outline: 0;
 }
 
-.button {
-  padding: calc(var(--spacing) / 4) var(--spacing);
-  border-radius: 3px;
-}
-
-.button--close {
-  padding: calc(var(--spacing) / 2);
+.sh-button--close {
+  padding: calc(var(--sh-spacing) / 2);
   border: 0;
 }
 
-.button--close,
-.button--close:enabled:active {
+.sh-button--close,
+.sh-button--close:enabled:active {
   background-color: transparent;
 }
 
 /*
 * Subtle button
 */
-.button--subtle {
-  padding: 0 calc(var(--spacing) / 2);
-  border: 2px solid var(--c-alt);
+.sh-button--subtle {
+  padding: 0 calc(var(--sh-spacing) / 2);
+  border: 2px solid var(--sh-c-alt);
   color: currentColor;
   background-color: transparent;
 }
 
-.button--subtle:enabled:active {
-  border-color: var(--c-alt-dark);
+.sh-button--subtle:enabled:active {
+  border-color: var(--sh-c-alt-dark);
   color: #000;
   background-color: inherit;
 }
@@ -63,71 +61,71 @@ button:disabled:focus {
 /*
 * Switch button
 */
-.form-group--switch {
+.sh-form-group--switch {
   display: flex;
   align-items: center;
 }
 
-.form-group--switch:not(:last-child) {
-  border-bottom: 1px solid var(--c-alt-light);
+.sh-form-group--switch:not(:last-child) {
+  border-bottom: 1px solid var(--sh-c-alt-light);
 }
 
-.form-group--switch .form-label {
+.sh-form-group--switch .sh-form-label {
   flex: 1;
-  margin-right: calc(4 * var(--spacing));
+  margin-right: calc(4 * var(--sh-spacing));
 }
 
-[aria-checked] {
+.sh-switch {
   display: flex;
   color: #fff;
 
   --offset: 4px;
   position: relative;
-  width: calc(var(--spacing) * 4.5);
-  height: calc(var(--spacing) * 2 + var(--offset) * 2);
+  width: calc(var(--sh-spacing) * 4.5);
+  height: calc(var(--sh-spacing) * 2 + var(--offset) * 2);
   padding: var(--offset);
   border: 0;
-  border-radius: calc(var(--spacing) * 2 + var(--offset));
+  border-radius: calc(var(--sh-spacing) * 2 + var(--offset));
 }
 
-[aria-checked]:disabled {
-  background-color: var(--c-alt);
+.sh-switch:disabled {
+  background-color: var(--sh-c-alt);
 }
 
-[aria-checked='true']:enabled {
+.sh-switch[aria-checked='true']:enabled {
   background-color: hsl(220, 50%, 40%);
-  background-color: var(--c-accent);
+  background-color: var(--sh-c-accent);
 }
 
-[aria-checked='false']:enabled {
+.sh-switch[aria-checked='false']:enabled {
   background-color: hsl(0, 0%, 50%);
-  background-color: var(--c-alt);
+  background-color: var(--sh-c-alt);
 }
 
-[aria-checked] .state {
+.sh-switch__state {
   position: absolute;
   top: var(--offset);
-  width: calc(var(--spacing) * 2);
-  height: calc(var(--spacing) * 2);
-  line-height: calc(var(--spacing) * 2);
-  color: var(--c-text);
-  border-radius: var(--spacing);
+  width: calc(var(--sh-spacing) * 2);
+  height: calc(var(--sh-spacing) * 2);
+  line-height: calc(var(--sh-spacing) * 2);
+  color: var(--sh-c-text);
+  border-radius: var(--sh-spacing);
 }
 
-[aria-checked] .state--true {
+.sh-switch__state--true {
   left: var(--offset);
 }
 
-[aria-checked] .state--false {
+.sh-switch__state--false {
   right: var(--offset);
 }
 
-[aria-checked='true']:enabled .state--true,
-[aria-checked='false']:enabled .state--false {
+.sh-switch[aria-checked='true']:enabled .sh-switch__state--true,
+.sh-switch[aria-checked='false']:enabled .sh-switch__state--false {
   background-color: #fff;
 }
 
-[aria-checked='true']:disabled .state--true,
-[aria-checked='false']:disabled .state--false {
-  background-color: var(--c-alt-light);
+.sh-switch[aria-checked='true']:disabled .sh-switch__state--true,
+.sh-switch[aria-checked='false']:disabled .sh-switch__state--false {
+  background-color: var(--sh-c-alt-light);
 }

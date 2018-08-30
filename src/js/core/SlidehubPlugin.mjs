@@ -77,16 +77,17 @@ class SlidehubPlugin {
     }
 
     const toggleButtonMarkup = `
-      <div class="form-group form-group--switch">
-        <span class="form-label" id="${this.name}-label">${this.description}</span>
+      <div class="sh-form-group sh-form-group--switch">
+        <span class="sh-form-label" id="${this.name}-label">${this.description}</span>
         <button
+          class="sh-switch"
           role="switch"
           aria-checked="false"
           aria-labelledby="${this.name}-label"
           data-feature="${this.name}"
         >
-          <span class="state state--true" aria-label="on"></span>
-          <span class="state state--false" aria-label="off"></span>
+          <span class="sh-switch__state sh-switch__state--true" aria-label="on"></span>
+          <span class="sh-switch__state sh-switch__state--false" aria-label="off"></span>
         </button>
       </div>
     `;

@@ -1,5 +1,5 @@
 :focus {
-  outline: 2px solid var(--c-focus);
+  outline: 2px solid var(--sh-c-focus);
 }
 
 a:focus {
@@ -8,13 +8,13 @@ a:focus {
 
 a {
   color: hsl(220, 50%, 40%);
-  color: var(--c-accent);
+  color: var(--sh-c-accent);
   text-decoration: none;
 }
 
 a:visited {
   color: hsl(220, 50%, 30%);
-  color: var(--c-accent-dark);
+  color: var(--sh-c-accent-dark);
 }
 
 a:hover,

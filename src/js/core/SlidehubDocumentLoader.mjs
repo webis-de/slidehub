@@ -33,10 +33,10 @@ class SlidehubDocumentLoader {
     for (const doc of this.slidehub.documents.values()) {
       const documentSource = `${config.assets.documents}/${doc.name}`;
       documentFramesMarkup += `<div
-        class="${config.selector.doc.slice(1)}"
+        class="${config.className.doc}"
         id="${doc.name}"
         data-doc-source="${documentSource}"
-        style="--pages: ${doc.imageCount + (config.metaSlide ? 1 : 0)}"
+        style="--sh-pages: ${doc.imageCount + (config.metaSlide ? 1 : 0)}"
       ></div>`;
     }
 

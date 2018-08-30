@@ -2,110 +2,111 @@
 * Container for all documents
 */
 .slidehub-container {
-  --c-selected: hsl(220, 50%, 40%);
-  --c-highlighted: hsl(0, 0%, 65%);
-  --page-aspect-ratio: 1.25;
-  --page-width: 200px;
-  --border-width: 1px;
+  --sh-c-selected: hsl(220, 50%, 40%);
+  --sh-c-highlighted: hsl(0, 0%, 65%);
+  --sh-page-aspect-ratio: 1.25;
+  --sh-page-width: 200px;
+  --sh-border-width: 1px;
 
-  padding: var(--spacing);
+  padding: var(--sh-spacing);
 }
 
 @media only screen and (min-width: 600px) {
   .slidehub-container {
-    --page-width: 300px;
+    --sh-page-width: 300px;
   }
 }
 
 /*
 * Document
 */
-.doc {
-  --pages: 1;
-  --page-height: calc(var(--page-width) / var(--page-aspect-ratio));
+.slidehub-container .sh-doc {
+  --sh-pages: 1;
+  --sh-page-height: calc(var(--sh-page-width) / var(--sh-page-aspect-ratio));
 
   width: 100%;
-  height: var(--page-height);
+  height: var(--sh-page-height);
   box-sizing: content-box;
   position: relative;
-  z-index: var(--plane-document);
+  z-index: var(--sh-plane-document);
 
   overflow: hidden;
-  border: var(--border-width) solid var(--c-alt-light);
-  margin: calc(-1 * var(--border-width));
+  border: var(--sh-border-width) solid var(--sh-c-alt-light);
+  margin: calc(-1 * var(--sh-border-width));
 }
 
-.doc.selected {
-  --c-text: #000;
-  --c-accent: hsl(220, 100%, 15%);
-  --c-accent-dark: hsl(220, 100%, 5%);
+.slidehub-container .sh-doc.sh-selected {
+  --sh-c-text: #000;
+  --sh-c-accent: hsl(220, 100%, 15%);
+  --sh-c-accent-dark: hsl(220, 100%, 5%);
 
   /*
   Elevate the selected document above other document. This is used to make its
   border visible when negative margins are used to collapse the border
   widths.
   */
-  z-index: calc(var(--plane-document) + 10);
+  z-index: calc(var(--sh-plane-document) + 10);
 }
 
-.doc-scrollbox {
+.slidehub-container .sh-doc-scrollbox {
   overflow-x: auto;
 }
 
-.page-container {
-  /* Clears floated .page elements */
+.slidehub-container .sh-page-container {
+  /* Clears floated .sh-page elements */
   display: flow-root;
   width: calc(
-    var(--scrollbox-width) - var(--page-outer-width) + var(--pages) * var(--page-outer-width)
+    var(--scrollbox-width) - var(--page-outer-width) + var(--sh-pages) * var(--page-outer-width)
   );
 }
 
-.page {
+.slidehub-container .sh-page {
   float: left;
-  width: var(--page-width);
-  height: var(--page-height);
+  width: var(--sh-page-width);
+  height: var(--sh-page-height);
   position: relative;
   display: flex;
   align-items: center;
 
-  outline: var(--border-width) solid var(--c-alt-light);
+  outline: var(--sh-border-width) solid var(--sh-c-alt-light);
 
   /* Make sure transparent slides appear on white background */
   background-color: #fff;
 }
 
-.page:not(.page--text) {
+.slidehub-container .sh-page:not(.sh-page--text) {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
 }
 
-.page {
-  margin-right: var(--border-width);
+.slidehub-container .sh-page {
+  margin-right: var(--sh-border-width);
 }
 
-.page > img {
+.slidehub-container .sh-page > img {
   width: 100%;
   pointer-events: none;
 
   /* Maintain aspect-ratio while filling the container */
   object-fit: contain;
-  line-height: var(--page-height);
+  line-height: var(--sh-page-height);
 }
 
-.doc-meta {
+.slidehub-container .sh-doc-meta {
   align-self: flex-start;
-  padding: calc(var(--spacing) / 2);
+  padding: calc(var(--sh-spacing) / 2);
 }
 
-.doc-meta__title {
+.slidehub-container .sh-doc-meta__title {
+  margin-top: 0;
   margin-bottom: 0;
   font-weight: normal;
   font-size: 1rem;
 }
 
-.dummy-page {
+.slidehub-container .sh-dummy-page {
   width: calc(var(--scrollbox-width) - var(--page-outer-width));
   margin-right: 0;
 }
@@ -114,8 +115,8 @@
 * Selected & Highlighted Documents
 */
 
-.doc.selected .page-container::before,
-.doc.highlighted:not(.selected) .page-container::before {
+.slidehub-container .sh-doc.sh-selected .sh-page-container::before,
+.slidehub-container .sh-doc.sh-highlighted:not(.sh-selected) .sh-page-container::before {
   content: '';
   pointer-events: none;
   position: absolute;
@@ -125,32 +126,32 @@
   left: 0;
 }
 
-.doc.selected .page-container::before,
-.doc.highlighted:not(.selected) .page-container::before {
+.slidehub-container .sh-doc.sh-selected .sh-page-container::before,
+.slidehub-container .sh-doc.sh-highlighted:not(.sh-selected) .sh-page-container::before {
   opacity: 0.15;
   z-index: 220;
 }
 
-.doc.selected .page-container::before {
+.slidehub-container .sh-doc.sh-selected .sh-page-container::before {
   background-color: hsl(220, 50%, 40%);
-  background-color: var(--c-selected);
+  background-color: var(--sh-c-selected);
 }
 
-.doc.highlighted:not(.selected) .page-container::before {
+.slidehub-container .sh-doc.sh-highlighted:not(.sh-selected) .sh-page-container::before {
   background-color: hsl(0, 0%, 75%);
-  background-color: var(--c-highlighted);
+  background-color: var(--sh-c-highlighted);
 }
 
 /*
 * Selected & Highlighted Pages
 */
-.doc.selected .page,
-.doc.highlighted .page {
+.slidehub-container .sh-doc.sh-selected .sh-page,
+.slidehub-container .sh-doc.sh-highlighted .sh-page {
   border: inherit !important;
 }
 
-.doc.selected .page.selected::before,
-.doc.highlighted .page.highlighted::before {
+.slidehub-container .sh-doc.sh-selected .sh-page.sh-selected::before,
+.slidehub-container .sh-doc.sh-highlighted .sh-page.sh-highlighted::before {
   content: '';
   pointer-events: none;
   position: absolute;
@@ -162,16 +163,16 @@
   opacity: 0.25;
 }
 
-.doc.selected .page.selected::before {
+.slidehub-container .sh-doc.sh-selected .sh-page.sh-selected::before {
   border: 2px solid;
   border-color: hsl(220, 50%, 40%);
-  border-color: var(--c-selected);
+  border-color: var(--sh-c-selected);
   z-index: 240;
 }
 
-.doc.highlighted .page.highlighted:not(.selected)::before,
-.doc.highlighted:not(.selected) .page.highlighted::before {
+.slidehub-container .sh-doc.sh-highlighted .sh-page.sh-highlighted:not(.sh-selected)::before,
+.slidehub-container .sh-doc.sh-highlighted:not(.sh-selected) .sh-page.sh-highlighted::before {
   border: 2px solid hsl(0, 0%, 75%);
   border-color: hsl(0, 0%, 75%);
-  border-color: var(--c-highlighted);
+  border-color: var(--sh-c-highlighted);
 }

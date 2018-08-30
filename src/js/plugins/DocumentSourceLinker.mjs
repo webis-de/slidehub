@@ -37,9 +37,15 @@ class DocumentSourceLinker extends SlidehubPlugin {
       return;
     }
 
+    // Focusable elements have a default behavior (e.g. activating a link)
+    // That behavior shall not be altered/extended.
+    if (isInteractive(document.activeElement)) {
+      return;
+    }
+
     const openInNewTab = event.ctrlKey;
     const doc = this.slidehub.selectedDocument;
-    DocumentSourceLinker.handleOpenIntent(doc.node, doc.selectedItemNode, openInNewTab);
+    DocumentSourceLinker.openDocumentSource(doc.node, doc.selectedItemNode, openInNewTab);
   }
 
   /**
@@ -54,24 +60,8 @@ class DocumentSourceLinker extends SlidehubPlugin {
     const docNode = itemNode.closest(config.selector.doc);
     if (docNode) {
       const openInNewTab = true;
-      DocumentSourceLinker.handleOpenIntent(docNode, itemNode, openInNewTab);
+      DocumentSourceLinker.openDocumentSource(docNode, itemNode, openInNewTab);
     }
-  }
-
-  /**
-   *
-   * @param {HTMLElement} docNode
-   * @param {HTMLElement} item
-   * @param {boolean} openInNewTab
-   */
-  static handleOpenIntent(docNode, item, openInNewTab) {
-    // Focusable elements have a default behavior (e.g. activating a link)
-    // That behavior shall not be altered/extended.
-    if (isInteractive(item)) {
-      return;
-    }
-
-    DocumentSourceLinker.openDocumentSource(docNode, item, openInNewTab);
   }
 
   /**
