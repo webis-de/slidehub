@@ -5,8 +5,9 @@
   "license": "MIT",
   "scripts": {
     "start": "parcel src/index.html --out-dir .",
-    "build": "npm run clean && parcel build src/index.html --out-dir . --public-url ./ --no-source-maps",
-    "clean": "rm *.map slidehub.*.js app.*.js slidehub.*.css 2> /dev/null || true"
+    "build": "npm run clean && parcel build src/index.html --out-dir . --public-url ./ --no-source-maps && npm run hotfix-parcel",
+    "clean": "rm *.map slidehub.*.js app.*.js slidehub.*.css 2> /dev/null || true",
+    "hotfix-parcel": "sed -i 's/parcelRequire=function/window.parcelRequire=function/' app.*.js"
   },
   "devDependencies": {
     "cssnano": "^4.1.0",
