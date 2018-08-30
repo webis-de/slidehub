@@ -1,5 +1,4 @@
-/** @type {Array<[string, number]>} */
-const documentsData = [
+export const documentsData = [
   ['acrostic-talk.pdf', 100],
   ['argumentation-cross-domain-talk.pdf', 9],
   ['cicling14-talk.pdf', 14],
@@ -76,7 +75,7 @@ const documentsData = [
   ['unit-de-client-technologies2.pdf', 45],
   ['unit-de-conceptual-design1.pdf', 31],
   ['unit-de-conceptual-design2.pdf', 52],
-  // ["unit-de-conceptual-design3.pdf", 1],
+  ['unit-de-conceptual-design3.pdf', 1],
   ['unit-de-configuration-basics.pdf', 34],
   ['unit-de-constraints-fd1.pdf', 43],
   ['unit-de-constraints-fd2.pdf', 50],
@@ -127,7 +126,7 @@ const documentsData = [
   ['unit-de-psk.pdf', 12],
   ['unit-de-relational-algebra.pdf', 67],
   ['unit-de-relational-calculus.pdf', 85],
-  // ["unit-de-relational-design0.pdf", 1],
+  ['unit-de-relational-design0.pdf', 1],
   ['unit-de-relational-design1.pdf', 43],
   ['unit-de-relational-design2.pdf', 62],
   ['unit-de-relational-theory1.pdf', 71],
@@ -193,7 +192,7 @@ const documentsData = [
   ['unit-en-perceptron-learning.pdf', 59],
   ['unit-en-performance-measures.pdf', 21],
   ['unit-en-probability-basics.pdf', 20],
-  // ["unit-en-radial-basis-functions.pdf", 1],
+  ['unit-en-radial-basis-functions.pdf', 1],
   ['unit-en-regression.pdf', 44],
   ['unit-en-relaxed-models.pdf', 24],
   ['unit-en-representation1.pdf', 34],
@@ -202,5 +201,3 @@ const documentsData = [
   ['unit-en-search-introduction.pdf', 36],
   ['unit-en-search-organization.pdf', 4]
 ];
-
-export { documentsData };
