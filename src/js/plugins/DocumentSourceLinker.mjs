@@ -57,6 +57,11 @@ class DocumentSourceLinker extends SlidehubPlugin {
     }
 
     const itemNode = event.target.closest(config.selector.item);
+
+    if (itemNode === null) {
+      return;
+    }
+
     const docNode = itemNode.closest(config.selector.doc);
     if (docNode) {
       const openInNewTab = true;
