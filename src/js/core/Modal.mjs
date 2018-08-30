@@ -10,31 +10,35 @@ import { listener } from '../util/passive-event-listener.mjs';
 let lastFocusedElement;
 
 function enableModals() {
-  const buttonArea = document.querySelector('[data-slidehub-modal-buttons]');
+  const openButtonContainer = document.querySelector('[data-slidehub-modal-buttons]');
 
-  if (!buttonArea) {
+  if (openButtonContainer === null) {
     return;
   }
 
-  const controlsOpenButton = createOpenButton('Help');
-  buttonArea.insertAdjacentHTML('beforeend', controlsOpenButton);
+  injectModalButtons(openButtonContainer);
 
-  const modalOpenButtons = Array.from(document.querySelectorAll('.sh-button[data-target-modal]'));
-  modalOpenButtons.forEach(button => {
-    button.addEventListener('click', event => {
-      const targetModal = event.currentTarget.dataset.targetModal;
-      const modal = document.querySelector(`[data-modal-${targetModal}]`);
+  const openButtons = Array.from(openButtonContainer.querySelectorAll('[data-target-modal]'));
+  openButtons.forEach(openButton => {
+    openButton.addEventListener('click', event => {
+      const targetModalName = event.currentTarget.dataset.targetModal;
+      const modal = document.querySelector(`[data-modal-${targetModalName}]`);
       openModal(modal);
     });
   });
 
-  const modalCloseButtons = Array.from(document.querySelectorAll('.sh-button[data-close-modal]'));
-  modalCloseButtons.forEach(button => {
-    button.addEventListener('click', event => {
-      const modal = event.currentTarget.closest('.sh-modal');
+  const closeButtons = Array.from(document.querySelectorAll('[data-close-modal]'));
+  closeButtons.forEach(closeButton => {
+    closeButton.addEventListener('click', event => {
+      const modal = event.currentTarget.closest('[role="dialog"]');
       closeModal(modal);
     });
   });
+}
+
+function injectModalButtons(openButtonContainer) {
+  const helpOpenButton = createOpenButton('Help');
+  openButtonContainer.insertAdjacentHTML('beforeend', helpOpenButton);
 }
 
 function createOpenButton(title) {
@@ -164,7 +168,17 @@ function getFocusableElements(ancestor = document) {
   return Array.from(ancestor.querySelectorAll(focusableElementsSelector));
 }
 
-const focusableElementsSelector =
-  'a[href], input:not(:disabled), textarea:not(:disabled), button:not(:disabled), [tabindex]';
+const focusableElementsSelector = [
+  'a[href]',
+  'area[href]',
+  'input:not(:disabled)',
+  'select:not(:disabled)',
+  'textarea:not(:disabled)',
+  'button:not(:disabled)',
+  'iframe',
+  'object',
+  'embed',
+  '[tabindex]'
+].join(',');
 
 export { enableModals };
