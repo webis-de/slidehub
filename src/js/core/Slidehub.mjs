@@ -22,8 +22,6 @@ class Slidehub {
    * @public
    */
   constructor() {
-    this._node = this.getNode();
-    this._documents = this.getDocuments();
     this._selectedDocument = null;
     this._hoveredDocument = null;
     this._documentNavigator = null;
@@ -32,9 +30,15 @@ class Slidehub {
     this._visibleItems = null;
     this._scrollboxWidth = null;
 
+    this._node = this.getNode();
+    this._documents = this.getDocuments();
+    this._targetDocument = this.determineTargetDocument();
+
     if (!config.staticContent) {
       new SlidehubDocumentLoader(this);
     }
+
+    this.selectDocument(this.targetDocument);
 
     this.jumpToTargetDocument();
 
@@ -89,6 +93,28 @@ class Slidehub {
    */
   getDocuments() {
     return config.staticContent ? parseDocumentsMarkup(this) : parseDocumentsData(this);
+  }
+
+  /**
+   * @returns {SlidehubDocument}
+   * @private
+   */
+  determineTargetDocument() {
+    const fragmentIdentifier = getFragmentIdentifier(window.location.toString());
+
+    if (this.documents.has(fragmentIdentifier)) {
+      return this.documents.get(fragmentIdentifier);
+    } else if (document.documentElement.scrollTop !== 0) {
+      // The page was scrolled (e.g. the page was reloaded with a non-zero scroll position)
+      // In this case, Slidehub attempts to load the document in the center of the view.
+      const slidehubWidth = this.node.clientWidth;
+      const centerElement = document.elementFromPoint(slidehubWidth / 2, window.innerHeight / 2);
+      const centerDocNode = centerElement.closest(config.selector.doc);
+      return this.documents.get(centerDocNode.id);
+    }
+
+    // If the viewport was not scrolled already, just start from the top
+    return this.documents.values().next().value;
   }
 
   /**
@@ -188,6 +214,10 @@ class Slidehub {
     return this._documents;
   }
 
+  get targetDocument() {
+    return this._targetDocument;
+  }
+
   /**
    * @returns {SlidehubDocument} the currently selected document.
    * @public
@@ -214,6 +244,7 @@ class Slidehub {
     if (this.selectedDocument === doc) {
       return;
     }
+
 
     // Remove selected class from currently selected document
     if (this.selectedDocument) {
