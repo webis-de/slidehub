@@ -1,3 +1,4 @@
+import { config } from '../config.mjs';
 import { SlidehubPlugin } from '../core/SlidehubPlugin.mjs';
 import { listener } from '../util/passive-event-listener.mjs';
 
@@ -39,7 +40,7 @@ class PageWidgetPlugin extends SlidehubPlugin {
     this.currentPageNode = widgetNode.firstElementChild;
     this.totalPagesNode = widgetNode.lastElementChild;
 
-    this.totalPagesNode.textContent = this.slidehub.selectedDocument.itemCount();
+    this.totalPagesNode.textContent =  this.slidehub.selectedDocument.totalPages();
     this.currentPageNode.textContent = this.slidehub.selectedDocument.selectedItemNode.dataset.page;
   }
 
@@ -53,7 +54,7 @@ class PageWidgetPlugin extends SlidehubPlugin {
   }
 
   exposeItemCount(event) {
-    this.totalPagesNode.textContent = event.detail.doc.itemCount();
+    this.totalPagesNode.textContent = event.detail.doc.totalPages();
   }
 
   exposeCurrentItem(event) {

@@ -75,6 +75,13 @@ class SlidehubDocument {
     return this.items.length - 1;
   }
 
+  /**
+   * @returns {Number}
+   */
+  totalPages() {
+    return this.itemCount() + (config.metaSlide ? 0 : 1);
+  }
+
   get selectedItemNode() {
     return this._selectedItemNode;
   }
@@ -219,6 +226,7 @@ class SlidehubDocument {
     this.node = node;
     this._scrollboxNode = node.querySelector(config.selector.scrollbox);
     this._items = node.querySelectorAll('[data-page]');
+    console.log(this._items);
     this._itemNavigator = new ItemNavigator(this.slidehub, this);
 
     if (!this.slidehub.selectedDocument) {
