@@ -1,4 +1,3 @@
-import { config } from '../config.mjs';
 import { SlidehubPlugin } from '../core/SlidehubPlugin.mjs';
 import { listener } from '../util/passive-event-listener.mjs';
 

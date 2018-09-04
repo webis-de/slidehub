@@ -15,21 +15,20 @@ class SlidehubImageLoader {
       };
 
       this.imageObserver = new IntersectionObserver(imageObservationHandler, imageObserverOptions);
-    }
-  }
 
-  start() {
-    if (this.imageObserver) {
-      this.observeExistingDocuments();
+      this.slidehub.documents.forEach(doc => {
+        if (doc.loaded) {
+          this.startImageObserver(doc.node);
+        } else {
+          doc.node.addEventListener('SlidehubDocumentContentLoaded', () => {
+            this.startImageObserver(doc.node);
+          });
+        }
+      });
     } else {
       const images = Array.from(this.slidehub.node.querySelectorAll('img[data-src]'));
       images.forEach(image => loadImage(image));
     }
-  }
-
-  observeExistingDocuments() {
-    const documentNodes = Array.from(this.slidehub.node.querySelectorAll(config.selector.doc));
-    documentNodes.forEach(docNode => this.startImageObserver(docNode));
   }
 
   /**

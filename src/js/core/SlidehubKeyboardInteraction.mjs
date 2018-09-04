@@ -16,57 +16,53 @@ const controlKeyNames = {
  */
 class SlidehubKeyboardInteraction {
   constructor(slidehub) {
-    this.slidehub = slidehub;
-
     this.controlKey = {
       homeKey: {
         trigger: () => {
-          this.slidehub.selectedDocument.navigateItem.left(
-            this.slidehub.selectedDocument.itemCount()
+          slidehub.selectedDocument.navigateItem.left(
+            slidehub.selectedDocument.itemCount()
           );
         }
       },
       endKey: {
         trigger: () => {
-          this.slidehub.selectedDocument.navigateItem.right(
-            this.slidehub.selectedDocument.itemCount()
+          slidehub.selectedDocument.navigateItem.right(
+            slidehub.selectedDocument.itemCount()
           );
         }
       },
       arrowLeft: {
         trigger: event => {
-          this.slidehub.selectedDocument.navigateItem.left(event.shiftKey ? 3 : 1);
+          slidehub.selectedDocument.navigateItem.left(event.shiftKey ? 3 : 1);
         }
       },
       arrowRight: {
         trigger: event => {
-          this.slidehub.selectedDocument.navigateItem.right(event.shiftKey ? 3 : 1);
+          slidehub.selectedDocument.navigateItem.right(event.shiftKey ? 3 : 1);
         }
       },
       arrowUp: {
         trigger: event => {
-          this.slidehub.navigateDocument.up(event.shiftKey ? 3 : 1);
+          slidehub.navigateDocument.up(event.shiftKey ? 3 : 1);
         }
       },
       arrowDown: {
         trigger: event => {
-          this.slidehub.navigateDocument.down(event.shiftKey ? 3 : 1);
+          slidehub.navigateDocument.down(event.shiftKey ? 3 : 1);
         }
       },
       pageUp: {
         trigger: () => {
-          this.slidehub.navigateDocument.up(3);
+          slidehub.navigateDocument.up(3);
         }
       },
       pageDown: {
         trigger: () => {
-          this.slidehub.navigateDocument.down(3);
+          slidehub.navigateDocument.down(3);
         }
       }
     };
-  }
 
-  start() {
     document.addEventListener('keydown', this.handleKeyboardInput.bind(this), listener.active);
   }
 

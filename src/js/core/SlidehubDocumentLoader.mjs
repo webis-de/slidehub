@@ -1,5 +1,3 @@
-import { config } from '../config.mjs';
-
 /**
  * Document Loader.
  *
@@ -12,11 +10,7 @@ class SlidehubDocumentLoader {
     this.prevIterator = null;
     this.nextIterator = null;
     this.observer = new IntersectionObserver(this.documentObservationHandler.bind(this));
-    this.insertDocumentFrames();
-    this.start();
-  }
 
-  start() {
     this.loadTargetDocument();
 
     // Load one batch in both directions
@@ -25,39 +19,16 @@ class SlidehubDocumentLoader {
   }
 
   /**
-   * Prepares the DOM with empty frames for all documents.
-   *
-   * @private
-   */
-  insertDocumentFrames() {
-    let documentFramesMarkup = '';
-
-    for (const doc of this.slidehub.documents.values()) {
-      const documentSource = `${config.assets.documents}/${doc.name}`;
-      documentFramesMarkup += `<div
-        class="${config.className.doc}"
-        id="${doc.name}"
-        data-doc-source="${documentSource}"
-        style="--sh-pages: ${doc.imageCount + (config.metaSlide ? 1 : 0)}"
-      ></div>`;
-    }
-
-    this.slidehub.node.insertAdjacentHTML('beforeend', documentFramesMarkup);
-  }
-
-  /**
    * Starts off the document loading process. Determines which document should be
    * loaded and sets up two iterators. They will be used to load new documents
    * when needed.
-   *
-   * @returns {SlidehubDocument}
    */
   loadTargetDocument() {
     // Obtain two iterators as pointers for which documents need to be
     // loaded next.
-    const targetDoc = this.slidehub.targetDocument;
-    this.prevIterator = this.slidehub.documents.iteratorFor(targetDoc.name).reverse();
-    this.nextIterator = this.slidehub.documents.iteratorFor(targetDoc.name);
+    const targetDocument = this.slidehub.targetDocument;
+    this.prevIterator = this.slidehub.documents.iteratorFor(targetDocument.name).reverse();
+    this.nextIterator = this.slidehub.documents.iteratorFor(targetDocument.name);
 
     // The target document will be loaded next by retrieving the iterator result
     // from nextIterator. Since prevIterator points to the same document, it
@@ -65,7 +36,7 @@ class SlidehubDocumentLoader {
     // again.
     this.prevIterator.next();
 
-    return this.loadDocument(this.nextIterator.next(), 'beforeend');
+    this.loadDocument(this.nextIterator.next(), 'beforeend');
   }
 
   /**
@@ -87,7 +58,6 @@ class SlidehubDocumentLoader {
    *
    * @param {IteratorResult} iteratorResult
    * @param {'afterbegin'|'beforeend'} insertPosition
-   * @returns {SlidehubDocument}
    */
   loadDocument(iteratorResult, insertPosition) {
     if (iteratorResult.done) {
@@ -112,8 +82,6 @@ class SlidehubDocumentLoader {
     doc.load();
 
     this.observer.observe(doc.node);
-
-    return doc;
   }
 
   /**

@@ -16,23 +16,43 @@ const scrolling = {
  */
 class SlidehubMouseInteraction {
   constructor(slidehub) {
+    this.slidehub = slidehub;
     this.mouseX = window.innerWidth / 2;
     this.mouseY = window.innerHeight / 2;
-    this.slidehub = slidehub;
-  }
 
-  start() {
     this.initStoreMousePosition();
     this.initHoverDocumentOnScroll();
-    this.initExistingDocuments();
     this.initModifiers();
+
+    this.slidehub.documents.forEach(doc => {
+      if (doc.loaded) {
+        this.initInteraction(doc);
+      } else {
+        doc.node.addEventListener('SlidehubDocumentContentLoaded', () => {
+          this.initInteraction(doc);
+        });
+      }
+    });
   }
 
   /**
    * Whenever the mouse moves, store its position.
+   *
+   * @private
    */
   initStoreMousePosition() {
     document.addEventListener('mousemove', this.storeMousePosition.bind(this), listener.passive);
+  }
+
+  /**
+   * Stores the position of the mouse cursor.
+   *
+   * @param {MouseEvent} event
+   * @private
+   */
+  storeMousePosition(event) {
+    this.mouseX = event.clientX;
+    this.mouseY = event.clientY;
   }
 
   /**
@@ -42,6 +62,8 @@ class SlidehubMouseInteraction {
    *
    * It’s sufficient to debounce the listener. This means the listener will
    * be triggered **once** after the event has stopped firing.
+   *
+   * @private
    */
   initHoverDocumentOnScroll() {
     document.addEventListener(
@@ -52,23 +74,19 @@ class SlidehubMouseInteraction {
   }
 
   /**
-   * Initialize mouse and scroll interactions for existing documents.
+   * @param {SlidehubDocument} doc
+   * @private
    */
-  initExistingDocuments() {
-    const documents = Array.from(this.slidehub.node.querySelectorAll(config.selector.doc));
-    documents.forEach(docNode => {
-      this.initMouseInteraction(docNode);
-      const scrollbox = docNode.querySelector(config.selector.scrollbox);
-      if (scrollbox) {
-        this.initScrollInteraction(scrollbox);
-      }
-    });
+  initInteraction(doc) {
+    this.initMouseInteraction(doc.node);
+    this.initScrollInteraction(doc.scrollboxNode);
   }
 
   /**
    * Wrapper for initializing all event listeners related to mouse interaction.
    *
    * @param {HTMLElement} docNode
+   * @private
    */
   initMouseInteraction(docNode) {
     docNode.addEventListener('wheel', this.handleWheelInteraction.bind(this), listener.active);
@@ -80,6 +98,7 @@ class SlidehubMouseInteraction {
    * Wrapper for initializing all event listeners related to scroll interaction.
    *
    * @param {HTMLElement} scrollboxNode
+   * @private
    */
   initScrollInteraction(scrollboxNode) {
     scrollboxNode.addEventListener(
@@ -90,17 +109,8 @@ class SlidehubMouseInteraction {
   }
 
   /**
-   * Stores the position of the mouse cursor.
-   *
-   * @param {MouseEvent} event
-   */
-  storeMousePosition(event) {
-    this.mouseX = event.clientX;
-    this.mouseY = event.clientY;
-  }
-
-  /**
    * Finds and hovers the item/document under the current mouse cursor position.
+   * @private
    */
   handleScrollDocumentHover() {
     const targetElement = document.elementFromPoint(this.mouseX, this.mouseY);
@@ -128,6 +138,7 @@ class SlidehubMouseInteraction {
    * Handles wheel navigation.
    *
    * @param {WheelEvent} event
+   * @private
    */
   handleWheelInteraction(event) {
     // Don’t handle scrolling on elements that are not inside a document
@@ -155,6 +166,7 @@ class SlidehubMouseInteraction {
    * Selects documents/items on click.
    *
    * @param {MouseEvent} event
+   * @private
    */
   handleClickSelect(event) {
     const doc = this.slidehub.documents.get(event.currentTarget.id);
@@ -179,6 +191,7 @@ class SlidehubMouseInteraction {
    * Highlights documents/items on hover.
    *
    * @param {MouseEvent} event
+   * @private
    */
   handleMoveHover(event) {
     const doc = this.slidehub.documents.get(event.currentTarget.id);
@@ -197,6 +210,8 @@ class SlidehubMouseInteraction {
 
   /**
    * Wrapper for enabling all event listeners related to modifier handling.
+   *
+   * @private
    */
   initModifiers() {
     document.addEventListener('keydown', this.onModifierDown.bind(this), listener.passive);
@@ -208,6 +223,7 @@ class SlidehubMouseInteraction {
    * Displays a special cursor when the modifier is pressed.
    *
    * @param {KeyboardEvent} event
+   * @private
    */
   onModifierDown(event) {
     const doc = this.slidehub.hoveredDocument;
@@ -220,21 +236,24 @@ class SlidehubMouseInteraction {
    * Removes the special cursor when the modifier is no longer pressed.
    *
    * @param {KeyboardEvent} event
+   * @private
    */
   onModifierUp(event) {
     const doc = this.slidehub.hoveredDocument;
     if (doc && event.keyCode === 16) {
-      doc.node.style.setProperty('cursor', 'auto');
+      doc.node.style.removeProperty('cursor');
     }
   }
 
   /**
    * Removes the special cursor when the user somehow leaves the page.
+   *
+   * @private
    */
   onModifierBlur() {
     const doc = this.slidehub.hoveredDocument;
     if (doc) {
-      doc.node.style.setProperty('cursor', 'auto');
+      doc.node.style.removeProperty('cursor');
     }
   }
 };

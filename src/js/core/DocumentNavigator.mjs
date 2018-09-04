@@ -23,7 +23,6 @@ class DocumentNavigator {
    * Navigate document up (in reverse document loading order, if that makes sense).
    *
    * @param {Number} distance
-   * @public
    */
   up(distance) {
     const selectedDocumentName = this.slidehub.selectedDocument.name;
@@ -35,7 +34,6 @@ class DocumentNavigator {
    * Navigate document down.
    *
    * @param {Number} distance
-   * @public
    */
   down(distance) {
     const selectedDocumentName = this.slidehub.selectedDocument.name;
@@ -70,9 +68,10 @@ class DocumentNavigator {
 
   /**
    * @param {SlidehubDocument} doc
+   * @private
    */
   scrollDocumentIntoView(doc) {
-    const offset = this.getVerticalOffsets(doc.node);
+    const offset = getVerticalOffsets(doc.node);
     const extraPart = doc.node.clientHeight / 2;
     if (offset.top < 0) {
       window.scrollBy(0, -(Math.abs(offset.top) + extraPart));
@@ -81,20 +80,22 @@ class DocumentNavigator {
     }
   }
 
-  /**
-   * Returns an object containing vertical offsets for an element with the
-   * viewport.
-   *
-   * @param {HTMLElement} element
-   * @returns {object}
-   */
-  getVerticalOffsets(element) {
-    const docEl = document.documentElement;
-    return {
-      top: element.offsetTop - window.scrollY,
-      bottom: window.scrollY + docEl.clientHeight - (element.offsetTop + element.offsetHeight)
-    };
-  }
+
 };
+
+/**
+ * Returns an object containing vertical offsets for an element with the
+ * viewport.
+ *
+ * @param {HTMLElement} element
+ * @returns {Object}
+ */
+function getVerticalOffsets(element) {
+  const docEl = document.documentElement;
+  return {
+    top: element.offsetTop - window.scrollY,
+    bottom: window.scrollY + docEl.clientHeight - (element.offsetTop + element.offsetHeight)
+  };
+}
 
 export { DocumentNavigator };

@@ -54,7 +54,7 @@
   /* Clears floated .sh-page elements */
   display: flow-root;
   width: calc(
-    var(--scrollbox-width) - var(--page-outer-width) + var(--sh-pages) * var(--page-outer-width)
+    var(--sh-scrollbox-width) - var(--sh-page-outer-width) + var(--sh-pages) * var(--sh-page-outer-width)
   );
 }
 
@@ -123,7 +123,7 @@
 }
 
 .sh-dummy-page {
-  width: calc(var(--scrollbox-width) - var(--page-outer-width));
+  width: calc(var(--sh-scrollbox-width) - var(--sh-page-outer-width));
   margin-right: 0;
 }
 

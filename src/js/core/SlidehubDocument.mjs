@@ -3,20 +3,29 @@ import { ItemNavigator } from './ItemNavigator.mjs';
 
 /**
  * Slidehub Document
+ *
+ * Once Custom Elements v1 ([browser support][1]) are implemented in all major browsers, we should
+ * make use of them with `class SlidehubDocument extends HTMLElement {};`.
+ *
+ * Currently, the `SlidehubDocument` object is not exposed to the DOM and needs to be referenced by
+ * the document node’s ID.
+ *
+ * [1]: https://caniuse.com/#feat=custom-elementsv1
  */
 class SlidehubDocument {
   /**
+   * @param {Slidehub} slidehub
    * @param {String} name
    * @param {Number} imageCount
+   * @param {HTMLDivElement?} node
    */
-  constructor(slidehub, name, imageCount) {
+  constructor(slidehub, name, imageCount, node = undefined) {
     this.slidehub = slidehub;
-
     this._name = name;
     this._imageCount = imageCount;
     this._loaded = false;
+    this._node = node ? node : this.insertDocumentNode();
 
-    this._node = null;
     this._scrollboxNode = null;
     this._items = null;
     this._selectedItemNode = null;
@@ -24,40 +33,20 @@ class SlidehubDocument {
     this._itemNavigator = null;
   }
 
-  /**
-   * @returns {String}
-   */
   get name() {
     return this._name;
   }
 
-  /**
-   * @returns {Number}
-   */
   get imageCount() {
     return this._imageCount;
   }
 
-  /**
-   * @returns {Boolean}
-   */
   get loaded() {
     return this._loaded;
   }
 
-  /**
-   * @param {Boolean} loaded
-   */
-  set loaded(loaded) {
-    this._loaded = loaded;
-  }
-
   get node() {
     return this._node;
-  }
-
-  set node(node) {
-    this._node = node;
   }
 
   get scrollboxNode() {
@@ -66,6 +55,18 @@ class SlidehubDocument {
 
   get items() {
     return this._items;
+  }
+
+  get selectedItemNode() {
+    return this._selectedItemNode;
+  }
+
+  get hoveredItemNode() {
+    return this._hoveredItemNode;
+  }
+
+  get navigateItem() {
+    return this._itemNavigator;
   }
 
   /**
@@ -80,14 +81,6 @@ class SlidehubDocument {
    */
   totalPages() {
     return this.itemCount() + (config.metaSlide ? 0 : 1);
-  }
-
-  get selectedItemNode() {
-    return this._selectedItemNode;
-  }
-
-  set selectedItemNode(item) {
-    this._selectedItemNode = item;
   }
 
   /**
@@ -105,7 +98,7 @@ class SlidehubDocument {
       this.selectedItemNode.classList.remove(config.className.selected);
     }
 
-    this.selectedItemNode = itemNode;
+    this._selectedItemNode = itemNode;
     this.selectedItemNode.classList.add(config.className.selected);
 
     const slidehubSelectItemEvent = new CustomEvent('SlidehubSelectItem', {
@@ -117,14 +110,6 @@ class SlidehubDocument {
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
-  }
-
-  get hoveredItemNode() {
-    return this._hoveredItemNode;
-  }
-
-  set hoveredItemNode(item) {
-    this._hoveredItemNode = item;
   }
 
   /**
@@ -139,7 +124,7 @@ class SlidehubDocument {
 
     this.unhoverItem();
 
-    this.hoveredItemNode = itemNode;
+    this._hoveredItemNode = itemNode;
     this.hoveredItemNode.classList.add(config.className.highlighted);
 
     const slidehubHoverItemEvent = new CustomEvent('SlidehubHoverItem', {
@@ -159,22 +144,39 @@ class SlidehubDocument {
   unhoverItem() {
     if (this.hoveredItemNode) {
       this.hoveredItemNode.classList.remove(config.className.highlighted);
-      this.hoveredItemNode = null;
+      this._hoveredItemNode = null;
     }
   }
 
-  get navigateItem() {
-    return this._itemNavigator;
-  }
+  /**
+   * Inserts the node for the `SlidehubDocument` object into the DOM.
+   *
+   * @returns {HTMLDivElement}
+   * @private
+   */
+  insertDocumentNode() {
+    const documentSource = `${config.assets.documents}/${this.name}`;
 
-  load() {
-    const markup = this.createMarkup();
-    const docNode = document.getElementById(this.name);
-    docNode.insertAdjacentHTML('beforeend', markup);
+    const docNode = document.createElement('div');
+    docNode.classList.add(config.className.doc);
+    docNode.id = this.name;
+    docNode.setAttribute('data-doc-source', documentSource);
+    const pages = this.imageCount + (config.metaSlide ? 1 : 0);
+    docNode.style.setProperty('--sh-pages', pages.toString());
 
-    this.setNode(docNode);
+    this.slidehub.node.insertAdjacentElement('beforeend', docNode);
 
     return docNode;
+  }
+
+  /**
+   * Loads a SlidehubDocument.
+   */
+  load() {
+    const docNodeInnerMarkup = this.createInnerMarkup();
+    this.node.insertAdjacentHTML('beforeend', docNodeInnerMarkup);
+
+    this.finalizeLoading();
   }
 
   /**
@@ -183,8 +185,9 @@ class SlidehubDocument {
    * - The document’s item images are on the image assets path
    *
    * @returns {String}
+   * @private
    */
-  createMarkup() {
+  createInnerMarkup() {
     let items = '';
     for (var i = 0; i < this.imageCount; i++) {
       const imageSource = `${config.assets.images}/${this.name}-${i}.png`;
@@ -220,20 +223,23 @@ class SlidehubDocument {
   }
 
   /**
-   * @param {HTMLElement} node
+   * Finalizes loading of a SlidehubDocument. This routine mainly sets up references to often used
+   * DOM nodes.
    */
-  setNode(node) {
-    this.node = node;
-    this._scrollboxNode = node.querySelector(config.selector.scrollbox);
-    this._items = node.querySelectorAll('[data-page]');
+  finalizeLoading() {
+    this._scrollboxNode = this.node.querySelector(config.selector.scrollbox);
+    this._items = this.node.querySelectorAll('[data-page]');
     this._itemNavigator = new ItemNavigator(this.slidehub, this);
 
     if (!this.slidehub.selectedDocument) {
       this.slidehub.selectDocument(this);
     }
-    this.selectItem(node.querySelector(config.selector.item));
 
-    this.loaded = true;
+    this.selectItem(this.node.querySelector(config.selector.item));
+
+    this._loaded = true;
+
+    this.node.dispatchEvent(new Event('SlidehubDocumentContentLoaded'));
   }
 };
 

@@ -54,6 +54,7 @@ class SlidehubPlugin {
 
     if (!this.toggleButton) {
       this.toggleButton = this.createToggleButton();
+
       if (this.toggleButton) {
         this.toggleButton.addEventListener('click', this.handleToggleButton.bind(this));
       }

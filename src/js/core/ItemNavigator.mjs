@@ -15,7 +15,6 @@ class ItemNavigator {
   /**
    * @param {Slidehub} slidehub
    * @param {SlidehubDocument} doc
-   * @public
    */
   constructor(slidehub, doc) {
     this.slidehub = slidehub;
@@ -24,11 +23,22 @@ class ItemNavigator {
     this._selectedItemPos = 0;
   }
 
+  get doc() {
+    return this._doc;
+  }
+
+  get itemPos() {
+    return this._itemPos;
+  }
+
+  get selectedItemPos() {
+    return this._selectedItemPos;
+  }
+
   /**
    * Navigate item down.
    *
    * @param {Number} distance
-   * @public
    */
   left(distance) {
     this.by(-distance);
@@ -38,7 +48,6 @@ class ItemNavigator {
    * Navigate item down.
    *
    * @param {Number} distance
-   * @public
    */
   right(distance) {
     this.by(distance);
@@ -93,37 +102,13 @@ class ItemNavigator {
   }
 
   /**
-   * @returns {SlidehubDocument}
-   * @public
-   */
-  get doc() {
-    return this._doc;
-  }
-
-  /**
-   * @returns {Number}
-   * @public
-   */
-  get itemPos() {
-    return this._itemPos;
-  }
-
-  /**
-   * @param {Number} itemPos
-   * @private
-   */
-  set itemPos(itemPos) {
-    this._itemPos = itemPos;
-  }
-
-  /**
    * Updates the position of the item.
    *
    * @param {Number} newItemPos
    * @private
    */
   updateItemPos(newItemPos) {
-    this.itemPos = newItemPos;
+    this._itemPos = newItemPos;
     this.doc.scrollboxNode.scrollLeft = newItemPos * this.slidehub.itemWidth;
   }
 
@@ -147,29 +132,13 @@ class ItemNavigator {
   }
 
   /**
-   * @returns {Number}
-   * @public
-   */
-  get selectedItemPos() {
-    return this._selectedItemPos;
-  }
-
-  /**
-   * @param {Number} selectedItemPos
-   * @private
-   */
-  set selectedItemPos(selectedItemPos) {
-    this._selectedItemPos = selectedItemPos;
-  }
-
-  /**
    * Updates the position of the selected item.
    *
    * @param {Number} newSelectedItemPos
    * @private
    */
   updateSelectedItemPos(newSelectedItemPos) {
-    this.selectedItemPos = newSelectedItemPos;
+    this._selectedItemPos = newSelectedItemPos;
     this.doc.selectItem(this.doc.items.item(newSelectedItemPos));
   }
 
