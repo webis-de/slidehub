@@ -14,6 +14,14 @@
   background-color: rgba(0, 0, 0, 0.6);
 }
 
+.sh-modal kbd {
+  font-family: 'Fira Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+  padding: calc(var(--sh-spacing) / 4) calc(var(--sh-spacing) / 2);
+  border: 1px solid var(--sh-c-alt);
+  border-radius: 4px;
+  box-shadow: 0 1px var(--sh-c-alt-dark);
+}
+
 /*
 [1]: Use the `visibility` property to hide the modal to ensure the dialog can receive focus on
 iOS Safari with VoiceOver. For more information, refer to
