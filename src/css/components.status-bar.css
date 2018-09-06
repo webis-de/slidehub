@@ -33,27 +33,4 @@
     background-color: var(--sh-c-background);
     font-size: 0.85em;
   }
-
-  .sh-status-bar > * {
-    flex: 1;
-  }
-
-  .sh-status-bar a {
-    color: currentColor;
-  }
-
-  .sh-status-bar kbd {
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
-    padding: 0;
-  }
-
-  .sh-modal-buttons {
-    text-align: right;
-  }
-
-  .sh-modal-buttons > *:not(:last-child) {
-    margin-right: calc(var(--sh-spacing) * 2);
-  }
 }

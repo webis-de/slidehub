@@ -24,6 +24,9 @@ class SlidehubMouseInteraction {
     this.initHoverDocumentOnScroll();
     this.initModifiers();
 
+    const mouseWheelTipNode = document.querySelector('[data-slidehub-mousewheel-tip]');
+    mouseWheelTipNode.insertAdjacentHTML('beforeend', 'Tip: Scroll through documents with <kbd>Shift</kbd>+<kbd>MouseWheel</kbd>.');
+
     this.slidehub.documents.forEach(doc => {
       if (doc.loaded) {
         this.initInteraction(doc);

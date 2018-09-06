@@ -8,26 +8,40 @@
 
   <title>Slidehub</title>
 
+  <style>
+    body {
+      margin: 0;
+      padding: var(--sh-spacing);
+      overflow-y: scroll;
+      font-size: 1em;
+      line-height: 1.5;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+      color: var(--sh-c-text, #000);
+      background-color: var(--sh-c-background, #fff);
+    }
+  </style>
+
   <link rel="stylesheet" href="./css/slidehub.css">
 
   <script src="./js/app.mjs" type="module"></script>
 </head>
 
-<body class="slidehub-demo">
+<body>
 
   <footer class="sh-status-bar">
     <div data-slidehub-page-widget></div>
 
-    <span>Tip: Scroll through documents with <kbd>Shift</kbd>+<kbd>MouseWheel</kbd>.</span>
+    <div data-slidehub-mousewheel-tip></div>
 
-    <div class="sh-modal-buttons" data-slidehub-modal-buttons></div>
+    <div data-slidehub-modal-buttons></div>
   </footer>
 
   <main data-slidehub>
     <!-- Slidehub will hook itself as a child element into [data-slidehub] -->
   </main>
 
-  <div class="sh-modal closed" data-modal-help aria-hidden="true" aria-labelledby="sh-help-title" role="dialog">
+  <div class="sh-modal" data-modal-help aria-hidden="true" aria-labelledby="sh-help-title" role="dialog">
     <div class="sh-modal-content" role="document">
       <button class="sh-modal__close sh-button sh-button--close" data-close-modal aria-label="Close">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" role="img" aria-labelledby="sh-close-help-title">

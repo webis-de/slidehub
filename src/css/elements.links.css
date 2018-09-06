@@ -1,24 +1,22 @@
-:focus {
+.slidehub-container :focus {
   outline: 2px solid var(--sh-c-focus);
 }
 
-a:focus {
+.slidehub-container a:focus {
   outline-offset: 2px;
 }
 
-a {
-  color: hsl(220, 50%, 40%);
+.slidehub-container a {
   color: var(--sh-c-accent);
   text-decoration: none;
 }
 
-a:visited {
-  color: hsl(220, 50%, 30%);
+.slidehub-container a:visited {
   color: var(--sh-c-accent-dark);
 }
 
-a:hover,
-a:active {
+.slidehub-container a:hover,
+.slidehub-container a:active {
   text-decoration: underline;
   /* Improve visibility for focused links */
   outline: none;

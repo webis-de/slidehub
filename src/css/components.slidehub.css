@@ -15,6 +15,20 @@
   }
 }
 
+.slidehub-container kbd {
+  font-family: 'Fira Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+  padding: calc(var(--sh-spacing) / 4) calc(var(--sh-spacing) / 2);
+  border: 1px solid var(--sh-c-alt);
+  border-radius: 4px;
+  box-shadow: 0 1px var(--sh-c-alt-dark);
+}
+
+/* .slidehub-container *,
+.slidehub-container *::before,
+.slidehub-container *::after {
+  box-sizing: border-box;
+} */
+
 /*
 * Document
 */

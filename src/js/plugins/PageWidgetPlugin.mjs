@@ -30,7 +30,7 @@ class PageWidgetPlugin extends SlidehubPlugin {
   insertWidgetMarkup() {
     const widgetMarkup = `<div class="sh-page-widget" aria-hidden="hidden">
       Page
-      <span class="sh-page-widget__current-page" data-slidehub-current-page>0</span><span data-slidehub-total-pages>0</span>
+      <span class="sh-page-widget__current-page" data-slidehub-current-page>0</span>/<span data-slidehub-total-pages>0</span>
     </div>`;
 
     this.widgetHookNode.insertAdjacentHTML('beforeend', widgetMarkup);
