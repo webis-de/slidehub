@@ -1,34 +1,26 @@
 /**
  * Returns a function, that, as long as it continues to be invoked, will not
- * be triggered. The function will be called after it stops being called for
- * N milliseconds. If `immediate` is passed, trigger the function on the
- * leading edge, instead of the trailing.
+ * be triggered. The initial function will be called after the debounced
+ * function stops being called for a certain number of milliseconds.
  *
- * @see https://davidwalsh.name/javascript-debounce-function
- * @param {Function} func
- * @param {Number} wait
- * @param {Boolean?} immediate
- * @returns {Function}
+ * @param {Function} initialFunction Initial function to debounce
+ * @param {Number} waitTime Time to wait for recurring bounces
+ * @returns {Function} the debounced function.
  */
-function debounce(func, wait, immediate = false) {
-  let timeout;
+function debounce(initialFunction, waitTime) {
+  // Store timeout ID outside the returned function.
+  let timeoutID;
 
-  return function () {
-    const context = this, args = arguments;
-    const later = function () {
-      timeout = null;
-      if (!immediate) {
-        func.apply(context, args);
-      }
-    };
+  return (...args) => {
+    // If the debounced function was already invoked before, this will cancel
+    // the earlier timeout; thus, it’s callback will not be invoked.
+    clearTimeout(timeoutID);
 
-    const callNow = immediate && !timeout;
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-
-    if (callNow) {
-      func.apply(context, args);
-    }
+    // Starts a new timer which will call the initial function after the
+    // specified wait time unless the debounced function is called again.
+    timeoutID = setTimeout(() => {
+      initialFunction(...args);
+    }, waitTime);
   };
 };
 
