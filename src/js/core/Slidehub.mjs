@@ -33,7 +33,7 @@ class Slidehub {
     this._hoveredDocument = null;
     this._documentNavigator = new DocumentNavigator(this);
 
-    this._node = getNode();
+    this._node = getSlidehubNode();
     this._documents = getDocuments(this);
     this._targetDocument = this.determineTargetDocument();
 
@@ -289,9 +289,9 @@ class Slidehub {
  *
  * @returns {HTMLDivElement} the Slidehub DOM node.
  */
-function getNode() {
+function getSlidehubNode() {
   const existingNode = document.querySelector(config.selector.slidehub);
-  const slidehubNode = existingNode ? existingNode : createNode();
+  const slidehubNode = existingNode ? existingNode : createSlidehubNode();
 
   // Expose select/highlight color overrides to the DOM.
   // This allows CSS to use inside of a rule declaration.
@@ -315,7 +315,7 @@ function getNode() {
  *
  * @returns {HTMLDivElement} the empty Slidehub DOM node.
  */
-function createNode() {
+function createSlidehubNode() {
   const slidehubNode = document.createElement('div');
   slidehubNode.classList.add(config.className.slidehub);
 
