@@ -3,9 +3,9 @@
   flex-wrap: wrap;
 }
 
-.sh-shortcut-table {
-  margin: var(--sh-spacing);
-  vertical-align: baseline;
+.sh-shortcut-table kbd {
+  display: inline-block;
+  padding: calc(var(--sh-spacing) / 4) var(--sh-spacing);
 }
 
 .sh-shortcut-table tr:not(:last-child) {
@@ -19,25 +19,9 @@
 
 .sh-shortcut-table th {
   font-weight: bold;
-}
-
-.sh-shortcut-table kbd {
-  padding: calc(var(--sh-spacing) / 4) var(--sh-spacing);
-}
-
-.sh-shortcut-table__input {
-  text-align: right;
-  min-width: 10em;
-}
-
-.sh-shortcut-table__action {
   text-align: left;
 }
 
-.sh-shortcut-group:not(:last-child) {
-  margin-bottom: calc(var(--sh-spacing) / 2);
-}
-
-.sh-shortcut-group > kbd {
-  display: inline-block;
+.sh-shortcut-table td:nth-child(2n+1) {
+  text-align: right;
 }
