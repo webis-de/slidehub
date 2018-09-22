@@ -34,6 +34,7 @@ class Slidehub {
     this._documentNavigator = new DocumentNavigator(this);
 
     this._node = getSlidehubNode();
+    this.insertStatusBar();
     this._documents = getDocuments(this);
     this._targetDocument = this.determineTargetDocument();
 
@@ -281,6 +282,19 @@ class Slidehub {
    */
   exposeNumberOfVisibleItems() {
     this._visibleItems = Math.floor(this.scrollboxWidth / this.itemWidth);
+  }
+
+  /**
+   * Insert the status bar. This is done in JavaScript because at the moment, it’s only used for
+   * explanatory content relevant when JavaScript is activated.
+   */
+  insertStatusBar() {
+    const markup = `<footer class="sh-status-bar">
+      <div data-slidehub-page-widget></div>
+      <div data-slidehub-mousewheel-tip></div>
+      <div data-slidehub-modal-buttons></div>
+    </footer>`;
+    this.node.insertAdjacentHTML('beforebegin', markup);
   }
 };
 
