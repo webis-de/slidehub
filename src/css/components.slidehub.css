@@ -16,15 +16,15 @@
 }
 
 /*
-* Document
+Slidehub Document
 */
 .sh-doc {
   --sh-pages: 1;
   --sh-page-height: calc(var(--sh-page-width) / var(--sh-page-aspect-ratio));
 
-  width: 100%;
-  height: var(--sh-page-height);
   box-sizing: content-box;
+  width: calc(100% - calc(2 * var(--sh-border-width)));
+  height: var(--sh-page-height);
   position: relative;
   z-index: var(--sh-plane-document);
 
@@ -91,7 +91,7 @@
 
   /* Maintain aspect-ratio while filling the container */
   object-fit: contain;
-  line-height: var(--sh-page-height);
+  /* line-height: var(--sh-page-height); */
 }
 
 
