@@ -7,7 +7,7 @@
     "start": "parcel src/index.html --out-dir .",
     "static": "parcel src/static-test.html --out-dir .",
     "build": "npm run clean && parcel build src/index.html --out-dir . --public-url ./ --no-source-maps --no-content-hash && npm run hotfix-parcel",
-    "clean": "rm *.map slidehub.*.js app.*.js slidehub.*.css 2> /dev/null || true",
+    "clean": "rm *.map index.js slidehub.*.js app.*.js slidehub.*.css 2> /dev/null || true",
     "hotfix-parcel": "sed -i 's/parcelRequire=function/window.parcelRequire=function/' app.*.js"
   },
   "devDependencies": {
