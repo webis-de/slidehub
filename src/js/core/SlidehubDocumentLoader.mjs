@@ -27,7 +27,7 @@ class SlidehubDocumentLoader {
     // Obtain two iterators as pointers for which documents need to be
     // loaded next.
     const targetDocument = this.slidehub.targetDocument;
-    this.prevIterator = this.slidehub.documents.iteratorFor(targetDocument.name).reverse();
+    this.prevIterator = this.slidehub.documents.iteratorFor(targetDocument.name).reverseIterator();
     this.nextIterator = this.slidehub.documents.iteratorFor(targetDocument.name);
 
     // The target document will be loaded next by retrieving the iterator result

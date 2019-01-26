@@ -2,9 +2,9 @@
  * Parses the document data.
  */
 
+import ReverseIterableMap from 'reverse-iterable-map/dist/esm/reverse-iterable-map.mjs';
 import { config } from '../config.mjs';
 import { documentsData } from '../documents-data.mjs';
-import { ReverseIterableMap } from '../lib/reverse-iterable-map.mjs';
 import { SlidehubDocument } from './SlidehubDocument.mjs';
 
 /**
