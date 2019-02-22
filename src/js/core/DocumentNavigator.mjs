@@ -26,7 +26,7 @@ class DocumentNavigator {
    */
   up(distance) {
     const selectedDocumentName = this.slidehub.selectedDocument.name;
-    this.iterator = this.slidehub.documents.iteratorFor(selectedDocumentName).reverse();
+    this.iterator = this.slidehub.documents.iteratorFor(selectedDocumentName).reverseIterator();
     this.by(distance);
   }
 
