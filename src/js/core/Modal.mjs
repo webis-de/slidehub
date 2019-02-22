@@ -1,5 +1,3 @@
-import { listener } from '../util/passive-event-listener.mjs';
-
 /**
  * Modal window.
  *
@@ -66,9 +64,9 @@ function openModal(modal) {
   moveFocusToModal(modal);
 
   // Setup event listeners
-  document.addEventListener('keydown', closeOnEscape, listener.passive);
-  modal.addEventListener('keydown', trapTabKey, listener.active);
-  modal.addEventListener('click', closeOnBackground, listener.passive);
+  document.addEventListener('keydown', closeOnEscape, { passive: true });
+  modal.addEventListener('keydown', trapTabKey);
+  modal.addEventListener('click', closeOnBackground, { passive: true });
 }
 
 /**
@@ -95,9 +93,9 @@ function closeModal(modal) {
   modal.setAttribute('aria-hidden', 'true');
 
   // Clean up event listeners
-  document.removeEventListener('keydown', closeOnEscape, listener.passive);
-  modal.removeEventListener('keydown', trapTabKey, listener.active);
-  modal.removeEventListener('click', closeOnBackground, listener.passive);
+  document.removeEventListener('keydown', closeOnEscape);
+  modal.removeEventListener('keydown', trapTabKey);
+  modal.removeEventListener('click', closeOnBackground);
 
   // Restore previously focused element
   lastFocusedElement.focus();

@@ -1,5 +1,4 @@
 import { SlidehubPlugin } from '../core/SlidehubPlugin.mjs';
-import { listener } from '../util/passive-event-listener.mjs';
 
 class PageWidgetPlugin extends SlidehubPlugin {
   constructor(slidehub) {
@@ -15,8 +14,8 @@ class PageWidgetPlugin extends SlidehubPlugin {
 
   enable() {
     this.insertWidgetMarkup();
-    this.slidehub.node.addEventListener('SlidehubHoverDocument', this.boundExposeItemCount, listener.passive);
-    this.slidehub.node.addEventListener('SlidehubHoverItem', this.boundExposeCurrentItem, listener.passive);
+    this.slidehub.node.addEventListener('SlidehubHoverDocument', this.boundExposeItemCount, { passive: true });
+    this.slidehub.node.addEventListener('SlidehubHoverItem', this.boundExposeCurrentItem, { passive: true });
     super.enable();
   }
 

@@ -1,5 +1,4 @@
 import { SlidehubPlugin } from '../core/SlidehubPlugin.mjs';
-import { listener } from '../util/passive-event-listener.mjs';
 import { config } from '../config.mjs';
 
 /**
@@ -18,8 +17,8 @@ class DocumentSourceLinker extends SlidehubPlugin {
   }
 
   enable() {
-    document.addEventListener('keydown', this.boundEnterHandler, listener.passive);
-    document.addEventListener('dblclick', this.boundDoubleClickHandler, listener.passive);
+    document.addEventListener('keydown', this.boundEnterHandler, { passive: true });
+    document.addEventListener('dblclick', this.boundDoubleClickHandler, { passive: true });
     super.enable();
   }
 

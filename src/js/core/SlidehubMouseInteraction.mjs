@@ -1,5 +1,4 @@
 import { config } from '../config.mjs';
-import { listener } from '../util/passive-event-listener.mjs';
 import { debounce } from '../util/debounce.mjs';
 
 const scrolling = {
@@ -44,7 +43,7 @@ class SlidehubMouseInteraction {
    * @private
    */
   initStoreMousePosition() {
-    document.addEventListener('mousemove', this.storeMousePosition.bind(this), listener.passive);
+    document.addEventListener('mousemove', this.storeMousePosition.bind(this), { passive: true });
   }
 
   /**
@@ -72,7 +71,7 @@ class SlidehubMouseInteraction {
     document.addEventListener(
       'scroll',
       debounce(this.handleScrollDocumentHover.bind(this), 25),
-      listener.passive
+      { passive: true }
     );
   }
 
@@ -92,9 +91,9 @@ class SlidehubMouseInteraction {
    * @private
    */
   initMouseInteraction(docNode) {
-    docNode.addEventListener('wheel', this.handleWheelInteraction.bind(this), listener.active);
-    docNode.addEventListener('click', this.handleClickSelect.bind(this), listener.passive);
-    docNode.addEventListener('mousemove', this.handleMoveHover.bind(this), listener.passive);
+    docNode.addEventListener('wheel', this.handleWheelInteraction.bind(this));
+    docNode.addEventListener('click', this.handleClickSelect.bind(this), { passive: true });
+    docNode.addEventListener('mousemove', this.handleMoveHover.bind(this), { passive: true });
   }
 
   /**
@@ -107,7 +106,7 @@ class SlidehubMouseInteraction {
     scrollboxNode.addEventListener(
       'scroll',
       debounce(this.handleScrollDocumentHover.bind(this), 25),
-      listener.passive
+      { passive: true }
     );
   }
 
@@ -217,9 +216,9 @@ class SlidehubMouseInteraction {
    * @private
    */
   initModifiers() {
-    document.addEventListener('keydown', this.onModifierDown.bind(this), listener.passive);
-    document.addEventListener('keyup', this.onModifierUp.bind(this), listener.passive);
-    window.addEventListener('blur', this.onModifierBlur.bind(this), listener.passive);
+    document.addEventListener('keydown', this.onModifierDown.bind(this), { passive: true });
+    document.addEventListener('keyup', this.onModifierUp.bind(this), { passive: true });
+    window.addEventListener('blur', this.onModifierBlur.bind(this), { passive: true });
   }
 
   /**

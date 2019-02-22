@@ -1,5 +1,3 @@
-import { listener } from '../util/passive-event-listener.mjs';
-
 const controlKeyNames = {
   33: 'pageUp',
   34: 'pageDown',
@@ -63,7 +61,7 @@ class SlidehubKeyboardInteraction {
       }
     };
 
-    document.addEventListener('keydown', this.handleKeyboardInput.bind(this), listener.active);
+    document.addEventListener('keydown', this.handleKeyboardInput.bind(this));
   }
 
   /**
