@@ -143,6 +143,8 @@ class SlidehubMouseInteraction {
    * @private
    */
   handleWheelInteraction(event) {
+    event.stopPropagation();
+
     // Don’t handle scrolling on elements that are not inside a document
     const doc = this.slidehub.documents.get(event.currentTarget.id);
 
@@ -171,6 +173,8 @@ class SlidehubMouseInteraction {
    * @private
    */
   handleClickSelect(event) {
+    event.stopPropagation();
+
     const doc = this.slidehub.documents.get(event.currentTarget.id);
 
     if (!doc.loaded) {
@@ -184,7 +188,7 @@ class SlidehubMouseInteraction {
     }
 
     const item = event.target.closest(config.selector.item);
-    if (item) {
+    if (item !== null) {
       doc.selectItem(item);
     }
   }

@@ -107,6 +107,8 @@ class SlidehubPlugin {
    * @param {MouseEvent} event
    */
   handleToggleButton(event) {
+    event.stopPropagation();
+
     const button = event.currentTarget;
 
     if (button instanceof HTMLElement) {
