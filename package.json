@@ -11,7 +11,7 @@
     "hotfix-parcel": "sed -i 's/parcelRequire=function/window.parcelRequire=function/' app.*.js"
   },
   "devDependencies": {
-    "cssnano": "^4.1.8",
+    "cssnano": "^4.1.10",
     "parcel-bundler": "^1.11.0"
   },
   "dependencies": {
