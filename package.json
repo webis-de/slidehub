@@ -11,7 +11,7 @@
   },
   "devDependencies": {
     "cssnano": "^4.1.10",
-    "parcel-bundler": "^1.12.0"
+    "parcel-bundler": "^1.12.3"
   },
   "dependencies": {
     "reverse-iterable-map": "^4.0.4"
